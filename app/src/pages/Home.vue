@@ -1,9 +1,14 @@
 <template>
-  <h1>Home</h1>
+  <Home />
 </template>
 
 <script>
+import Home from '@/components/templates/Home'
+
 export default {
-  name: 'HomePage'
+  name: 'HomePage',
+  components: {
+    Home
+  }
 }
 </script>
