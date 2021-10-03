@@ -1,8 +1,8 @@
 <template>
 <div>
-  <button>会員登録</button>
-  <button>ログイン</button>
-  <button>ログアウト</button>
+  <router-link to="/signup" v-if="!isSignedIn">会員登録</router-link> |
+  <router-link to="/signin" v-if="!isSignedIn">ログイン</router-link>
+  <button v-if="isSignedIn">ログアウト</button>
   <div>Logo</div>
   <SearchWindow :searchword="searchword" @change="changeSearchword" @search="search" />
   <button>マイページ</button>
@@ -20,6 +20,11 @@ export default {
   data() {
     return {
       searchword: ''
+    }
+  },
+  computed: {
+    isSignedIn() {
+      return this.$store.getters['user/isSignedIn']
     }
   },
   methods: {
