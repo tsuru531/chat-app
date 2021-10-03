@@ -1,10 +1,16 @@
 <template>
 <div>
+  <Header />
 </div>
 </template>
 
 <script>
+import Header from '@/components/organisms/Header'
+
 export default {
-  name: 'Home'
+  name: 'Home',
+  components: {
+    Header
+  }
 }
 </script>
