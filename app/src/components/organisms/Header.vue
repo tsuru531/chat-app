@@ -1,12 +1,14 @@
 <template>
-<div>
+<header>
   <router-link to="/signup" v-if="!isSignedIn">会員登録</router-link> |
   <router-link to="/signin" v-if="!isSignedIn">ログイン</router-link>
   <button v-if="isSignedIn">ログアウト</button>
-  <div>Logo</div>
+  <div>
+    <router-link to="/">Logo</router-link>
+  </div>
   <SearchWindow :searchword="searchword" @change="changeSearchword" @search="search" />
-  <button>マイページ</button>
-</div>
+  <router-link to="/dashboard">マイページ</router-link>
+</header>
 </template>
 
 <script>
