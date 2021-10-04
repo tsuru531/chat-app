@@ -1,6 +1,6 @@
 <template>
 <header>
-  <router-link to="/signup" v-if="!isSignedIn">会員登録</router-link> |
+  <router-link to="/signup" v-if="!isSignedIn">新規登録</router-link> |
   <router-link to="/signin" v-if="!isSignedIn">ログイン</router-link>
   <button v-if="isSignedIn">ログアウト</button>
   <div>
