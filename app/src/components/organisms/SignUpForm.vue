@@ -22,7 +22,11 @@ export default {
   },
   methods: {
     signUp() {
-      console.log('signUp')
+      this.$store.dispatch('user/signUp', {
+        name: this.name,
+        email: this.email,
+        password: this.password
+      })
     }
   }
 }
