@@ -32,6 +32,9 @@ export const user = {
               })
           }
         })
+    },
+    signIn() {
+      console.log('signIn')
     }
   },
   modules: {

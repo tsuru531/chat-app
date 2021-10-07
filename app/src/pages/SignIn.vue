@@ -1,11 +1,14 @@
 <template>
-<div>
-  SignIn
-</div>
+<SignIn />
 </template>
 
 <script>
+import SignIn from '@/components/templates/SignIn'
+
 export default {
-  name: 'SignIn'
+  name: 'SignInPage',
+  components: {
+    SignIn
+  }
 }
 </script>
