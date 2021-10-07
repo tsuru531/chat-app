@@ -2,7 +2,8 @@ import Router from '@/router'
 import { auth, db, firebaseTimestamp } from '@/firebase'
 import {
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  signOut
 } from 'firebase/auth'
 
 export const user = {
@@ -21,6 +22,11 @@ export const user = {
       state.isSignedIn = true
       state.uid = uid
       state.name = name
+    },
+    signOut(state) {
+      state.isSignedIn = false
+      state.uid = ''
+      state.name = ''
     }
   },
   actions: {
@@ -53,6 +59,12 @@ export const user = {
         name: data.name
       })
       Router.push('/')
+    },
+    signOut({ commit }) {
+      signOut(auth).then(() => {
+        commit('signOut')
+        Router.push('/', () => {})
+      })
     }
   },
   modules: {

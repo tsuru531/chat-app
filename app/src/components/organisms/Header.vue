@@ -4,7 +4,7 @@
     <router-link to="/signup">新規登録</router-link> |
     <router-link to="/signin">ログイン</router-link>
   </div>
-  <button v-if="isSignedIn">ログアウト</button>
+  <button v-if="isSignedIn" @click="signOut">ログアウト</button>
   <div>
     <router-link to="/">Logo</router-link>
   </div>
@@ -36,6 +36,9 @@ export default {
     }
   },
   methods: {
+    signOut() {
+      this.$store.dispatch('user/signOut')
+    },
     changeSearchword(value) {
       this.searchword = value
     },
