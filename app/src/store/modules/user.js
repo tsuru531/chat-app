@@ -24,42 +24,35 @@ export const user = {
     }
   },
   actions: {
-    signUp(context, { name, email, password }) {
-      createUserWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          const user = userCredential.user
-          if (user) {
-            const uid = user.uid
-            const timestamp = firebaseTimestamp.now()
-            const data = {
-              created_at: timestamp,
-              uid,
-              email,
-              name
-            };
-            db.collection('users').doc(uid).set(data)
-              .then(() => {
-                Router.push('/signin')
-              })
-          }
-        })
+    async signUp(context, { name, email, password }) {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+      if (!user) return false
+      const uid = user.uid
+      const timestamp = firebaseTimestamp.now()
+      const data = {
+        created_at: timestamp,
+        uid,
+        email,
+        name
+      }
+      await db.collection('users').doc(uid).set(data)
+      .then(
+        Router.push('/signin')
+      )
     },
-    signIn({ commit }, { email, password }) {
-      signInWithEmailAndPassword(auth, email, password)
-        .then(userCredential => {
-          const user = userCredential.user
-          if (!user) return false
-          const uid = user.uid
-          db.collection('users').doc(uid).get()
-            .then(snapshot => {
-              const data = snapshot.data()
-              commit('signIn', {
-                uid,
-                name: data.name
-              })
-              Router.push('/')
-            })
-        })
+    async signIn({ commit }, { email, password }) {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password)
+      const user = userCredential.user
+      if (!user) return false
+      const uid = user.uid
+      const snapshot = await db.collection('users').doc(uid).get()
+      const data = snapshot.data()
+      commit('signIn', {
+        uid,
+        name: data.name
+      })
+      Router.push('/')
     }
   },
   modules: {
