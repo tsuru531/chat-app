@@ -1,16 +1,27 @@
 import Router from '@/router'
 import { auth, db, firebaseTimestamp } from '@/firebase'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from 'firebase/auth'
 
 export const user = {
   namespaced: true,
   state: {
-    isSignedIn: false
+    isSignedIn: false,
+    uid: '',
+    name: ''
   },
   getters: {
-    isSignedIn: state => state.isSignedIn
+    isSignedIn: state => state.isSignedIn,
+    name: state => state.name
   },
   mutations: {
+    signIn(state, { uid, name }) {
+      state.isSignedIn = true
+      state.uid = uid
+      state.name = name
+    }
   },
   actions: {
     signUp(context, { name, email, password }) {
@@ -33,8 +44,22 @@ export const user = {
           }
         })
     },
-    signIn() {
-      console.log('signIn')
+    signIn({ commit }, { email, password }) {
+      signInWithEmailAndPassword(auth, email, password)
+        .then(userCredential => {
+          const user = userCredential.user
+          if (!user) return false
+          const uid = user.uid
+          db.collection('users').doc(uid).get()
+            .then(snapshot => {
+              const data = snapshot.data()
+              commit('signIn', {
+                uid,
+                name: data.name
+              })
+              Router.push('/')
+            })
+        })
     }
   },
   modules: {
