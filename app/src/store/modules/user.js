@@ -1,10 +1,11 @@
 import Router from '@/router'
-import { auth, db, firebaseTimestamp } from '@/firebase'
+import { auth, db } from '@/firebase'
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 
 export const user = {
   namespaced: true,
@@ -35,17 +36,20 @@ export const user = {
       const user = userCredential.user
       if (!user) return false
       const uid = user.uid
-      const timestamp = firebaseTimestamp.now()
-      const data = {
-        created_at: timestamp,
+      const payload = {
         uid,
         email,
-        name
+        name,
+        created_at: serverTimestamp()
       }
-      await db.collection('users').doc(uid).set(data)
-      .then(
+      const collectionRef = collection(db, 'users')
+      try {
+        const docRef = await addDoc(collectionRef, payload)
+        console.log('Document written with ID: ', docRef.id)
         Router.push('/signin')
-      )
+      } catch (e) {
+        console.error('Error adding document: ', e)
+      }
     },
     async signIn({ commit }, { email, password }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)

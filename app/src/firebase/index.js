@@ -1,10 +1,9 @@
-import firebase from 'firebase/compat/app';
+import { initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth';
-import 'firebase/compat/firestore';
+import { getFirestore } from 'firebase/firestore'
 import { firebaseConfig } from './config';
 
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
 
-export const auth = getAuth();
-export const db = firebase.firestore();
-export const firebaseTimestamp = firebase.firestore.Timestamp;
+export const auth = getAuth(app);
+export const db = getFirestore(app);
