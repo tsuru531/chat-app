@@ -2,6 +2,7 @@ import Router from '@/router'
 import { auth, db } from '@/firebase'
 import {
   createUserWithEmailAndPassword,
+  sendEmailVerification,
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth'
@@ -44,11 +45,12 @@ export const user = {
       }
       const collectionRef = collection(db, 'users')
       try {
-        const docRef = await addDoc(collectionRef, payload)
-        console.log('Document written with ID: ', docRef.id)
+        await addDoc(collectionRef, payload)
+        await sendEmailVerification(user)
         Router.push('/signin')
-      } catch (e) {
-        console.error('Error adding document: ', e)
+        return userCredential
+      } catch (error) {
+        console.error(error)
       }
     },
     async signIn({ commit }, { email, password }) {
