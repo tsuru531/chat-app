@@ -6,7 +6,13 @@ import {
   signInWithEmailAndPassword,
   signOut
 } from 'firebase/auth'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  setDoc,
+  getDoc,
+  serverTimestamp
+} from 'firebase/firestore'
 
 export const user = {
   namespaced: true,
@@ -44,8 +50,9 @@ export const user = {
         created_at: serverTimestamp()
       }
       const collectionRef = collection(db, 'users')
+      const docRef = doc(collectionRef, uid)
       try {
-        await addDoc(collectionRef, payload)
+        await setDoc(docRef, payload)
         await sendEmailVerification(user)
         Router.push('/signin')
         return userCredential
@@ -58,8 +65,10 @@ export const user = {
       const user = userCredential.user
       if (!user) return false
       const uid = user.uid
-      const snapshot = await db.collection('users').doc(uid).get()
-      const data = snapshot.data()
+      const collectionRef = collection(db, 'users')
+      const docRef = doc(collectionRef, uid)
+      const docSnapshot = await getDoc(docRef)
+      const data = docSnapshot.data()
       commit('signIn', {
         uid,
         name: data.name
