@@ -1,11 +1,14 @@
 <template>
-<div>
-  Dashboard
-</div>
+<Dashboard />
 </template>
 
 <script>
+import Dashboard from '@/components/templates/Dashboard'
+
 export default {
-  name: 'Dashboard'
+  name: 'DashboardPage',
+  components: {
+    Dashboard
+  }
 }
 </script>

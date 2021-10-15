@@ -28,6 +28,12 @@ const routes = [
     name: 'Dashboard',
     component: () => import('@/pages/Dashboard'),
     meta: { requiresAuth: true }
+  },
+  {
+    path: '/thread/post',
+    name: 'CreateThread',
+    component: () => import('@/pages/CreateThread'),
+    meta: { requiresAuth: true }
   }
 ]
 
