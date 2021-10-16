@@ -1,6 +1,14 @@
 import Router from '@/router'
 import { db } from '@/firebase'
-import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import {
+  collection,
+  doc,
+  setDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
+} from 'firebase/firestore'
 
 export const thread = {
   namespaced: true,
@@ -14,9 +22,11 @@ export const thread = {
     place: '',
     show_id: false,
     character_limit: false,
-    limit_count: 0
+    limit_count: 0,
+    threads: [],
   },
   getters: {
+    threads: state => state.threads,
   },
   mutations: {
     createThread(state, { id, title, topic, gender, age, place, show_id, character_limit, limit_count }) {
@@ -40,6 +50,9 @@ export const thread = {
         isPinned,
         timestamp
       }]
+    },
+    setThreads(state, threads) {
+      state.threads = threads
     }
   },
   actions: {
@@ -107,7 +120,22 @@ export const thread = {
       } catch (error) {
         console.error(error)
       }
-    }
+    },
+    async watchThreads({ commit }) {
+      const collectionRef = collection(db, 'threads')
+      const q = query(collectionRef, orderBy('updated_at', 'desc'))
+      onSnapshot(q, querySnapshot => {
+        let newThreads = []
+        querySnapshot.forEach(doc => {
+          const data = doc.data()
+          newThreads = [
+            ...newThreads,
+            data
+          ]
+        })
+        commit('setThreads', newThreads)
+      })
+    },
   },
   modules: {
   }
