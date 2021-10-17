@@ -34,7 +34,12 @@ const routes = [
     name: 'CreateThread',
     component: () => import('@/pages/CreateThread'),
     meta: { requiresAuth: true }
-  }
+  },
+  {
+    path: '/thread/:thread_id',
+    name: 'ChatBoard',
+    component: () => import('@/pages/ChatBoard')
+  },
 ]
 
 const router = new VueRouter({

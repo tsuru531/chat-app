@@ -4,7 +4,9 @@ import {
   collection,
   doc,
   setDoc,
+  getDoc,
   query,
+  where,
   orderBy,
   onSnapshot,
   serverTimestamp
@@ -51,7 +53,7 @@ export const actions = {
     try {
       await setDoc(threadRef, threadPayload)
       await setDoc(commentRef, commentPayload)
-      commit('createThread', {
+      commit('setThread', {
         id: threadId,
         title,
         topic,
@@ -76,6 +78,13 @@ export const actions = {
       console.error(error)
     }
   },
+  async getThread({ commit }, threadId) {
+    const collectionRef = collection(db, 'threads')
+    const docRef = doc(collectionRef, threadId)
+    const docSnapshot = await getDoc(docRef)
+    const data = docSnapshot.data()
+    commit('setThread', { ...data })
+  },
   async watchThreads({ commit }) {
     const collectionRef = collection(db, 'threads')
     const q = query(collectionRef, orderBy('updated_at', 'desc'))
@@ -89,6 +98,22 @@ export const actions = {
         ]
       })
       commit('setThreads', newThreads)
+    })
+  },
+  async watchComments({ commit }, threadId) {
+    const collectionRef = collection(db, 'comments')
+    const q = query(collectionRef, where('thread_id', '==', threadId), orderBy('index'))
+    onSnapshot(q, querySnapshot => {
+      let newComments = []
+      querySnapshot.forEach(doc => {
+        const data = doc.data()
+        newComments = [
+          ...newComments,
+          data
+        ]
+        console.log(data)
+      })
+      commit('setComments', newComments)
     })
   },
 };

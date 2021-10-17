@@ -1,7 +1,7 @@
 <template>
 <ul>
   <li v-for="(thread) in threads" :key="thread.id">
-    {{ thread.title }}
+    <router-link :to="{ path: `/thread/${thread.id}` }">{{ thread.title }}</router-link>
   </li>
 </ul>
 </template>
