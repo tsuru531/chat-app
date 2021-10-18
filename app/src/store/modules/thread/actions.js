@@ -14,20 +14,15 @@ import {
 } from 'firebase/firestore'
 
 export const actions = {
-  async createThread({ commit, rootGetters }, { title, comment, topic, gender, age, place, show_id, character_limit, limit_count }) {
+  async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, show_id, character_limit, limit_count }) {
     const uid = rootGetters['user/uid']
-    const threadsRef = collection(db, 'threads')
-    const commentsRef = collection(db, 'comments')
-    const threadRef = doc(threadsRef)
-    const commentRef = doc(commentsRef)
-    const threadId = threadRef.id
-    const commentId = commentRef.id
-    const index = 1
-    const handlename = '名無しさん'
-    const isPinned = false
+    const collectionRef = collection(db, 'threads')
+    const docRef = doc(collectionRef)
+    const id = docRef.id
+    const handlename = ''
     const timestamp = serverTimestamp()
-    const threadPayload = {
-      id: threadId,
+    const payload = {
+      id,
       uid,
       title,
       topic,
@@ -40,22 +35,10 @@ export const actions = {
       created_at: timestamp,
       updated_at: timestamp
     }
-    const commentPayload = {
-      id: commentId,
-      uid,
-      thread_id: threadId,
-      content: comment,
-      index,
-      handlename,
-      isPinned,
-      created_at: timestamp,
-      updated_at: timestamp
-    }
     try {
-      await setDoc(threadRef, threadPayload)
-      await setDoc(commentRef, commentPayload)
+      await setDoc(docRef, payload)
       commit('setThread', {
-        id: threadId,
+        id,
         title,
         topic,
         gender,
@@ -65,16 +48,12 @@ export const actions = {
         character_limit,
         limit_count
       })
-      commit('addComment', {
-        id: commentId,
-        uid,
-        content: comment,
-        index,
+      dispatch('addComment', {
+        thread_id: id,
         handlename,
-        isPinned,
-        timestamp
+        content: comment
       })
-      Router.push('/')
+      Router.push(`/thread/${id}`)
     } catch (error) {
       console.error(error)
     }
@@ -86,7 +65,12 @@ export const actions = {
     const id = docRef.id
     const uid = rootGetters['user/uid']
     const comments = await dispatch('getComments', thread_id)
-    const lastComment = comments.slice(-1)[0]
+    let lastComment
+    if (comments[0]) {
+      lastComment = comments.slice(-1)[0]
+    } else {
+      lastComment = { index: 0 }
+    }
     const index = lastComment.index + 1
     const isPinned = false
     const timestamp = serverTimestamp()
