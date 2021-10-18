@@ -116,41 +116,27 @@ export const actions = {
       console.error(error)
     }
   },
-  async getThread({ commit }, threadId) {
+  async getThread({ commit }, thread_id) {
     const collectionRef = collection(db, 'threads')
-    const docRef = doc(collectionRef, threadId)
+    const docRef = doc(collectionRef, thread_id)
     const docSnapshot = await getDoc(docRef)
     const data = docSnapshot.data()
     commit('setThread', { ...data })
+    return data
   },
-  async watchThreads({ commit }) {
+  watchThreads({ commit }) {
     const collectionRef = collection(db, 'threads')
     const q = query(collectionRef, orderBy('updated_at', 'desc'))
     onSnapshot(q, querySnapshot => {
-      let newThreads = []
+      let threads = []
       querySnapshot.forEach(doc => {
         const data = doc.data()
-        newThreads = [
-          ...newThreads,
+        threads = [
+          ...threads,
           data
         ]
       })
-      commit('setThreads', newThreads)
-    })
-  },
-  async watchComments({ commit }, threadId) {
-    const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('thread_id', '==', threadId), orderBy('index'))
-    onSnapshot(q, querySnapshot => {
-      let newComments = []
-      querySnapshot.forEach(doc => {
-        const data = doc.data()
-        newComments = [
-          ...newComments,
-          data
-        ]
-      })
-      commit('setComments', newComments)
+      commit('setThreads', threads)
     })
   },
   async getComments({ commit }, thread_id) {
@@ -167,5 +153,20 @@ export const actions = {
     })
     commit('setComments', comments)
     return comments
+  },
+  watchComments({ commit }, thread_id) {
+    const collectionRef = collection(db, 'comments')
+    const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
+    onSnapshot(q, querySnapshot => {
+      let comments = []
+      querySnapshot.forEach(doc => {
+        const data = doc.data()
+        comments = [
+          ...comments,
+          data
+        ]
+      })
+      commit('setComments', comments)
+    })
   },
 };
