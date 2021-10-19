@@ -4,6 +4,7 @@ import {
   createUserWithEmailAndPassword,
   sendEmailVerification,
   signInWithEmailAndPassword,
+  onAuthStateChanged,
   signOut
 } from 'firebase/auth'
 import {
@@ -81,6 +82,28 @@ export const user = {
         commit('signOut')
         Router.push('/', () => {})
       })
+    },
+    checkSignedIn({ commit, getters }) {
+      const isSignedIn = getters['isSignedIn']
+      let uid = ''
+      if (isSignedIn) {
+        uid = getters['uid']
+      } else {
+        onAuthStateChanged(auth, async user => {
+          if (user) {
+            uid = user.uid
+            const collectionRef = collection(db, 'users')
+            const docRef = doc(collectionRef, uid)
+            const docSnapshot = await getDoc(docRef)
+            const data = docSnapshot.data()
+            commit('signIn', {
+              uid,
+              name: data.name
+            })
+          }
+        })
+      }
+      return uid
     }
   },
   modules: {
