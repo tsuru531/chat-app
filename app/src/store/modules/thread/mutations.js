@@ -10,17 +10,6 @@ export const mutations = {
     state.character_limit = character_limit
     state.limit_count = limit_count
   },
-  addComment(state, { id, uid, content, index, handlename, isPinned, created_at }) {
-    state.comments = [...state.comments, {
-      id,
-      uid,
-      content,
-      index,
-      handlename,
-      isPinned,
-      created_at
-    }]
-  },
   setComments(state, comments) {
     state.comments = comments
   },

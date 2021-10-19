@@ -86,16 +86,11 @@ export const actions = {
       updated_at: timestamp
     }
     try {
-      await setDoc(docRef, payload)
-      commit('addComment', {
-        id,
-        uid,
-        content,
-        index,
-        handlename,
-        isPinned,
-        timestamp
+      commit('setComments', {
+        ...comments,
+        payload
       })
+      await setDoc(docRef, payload)
     } catch (error) {
       console.error(error)
     }
