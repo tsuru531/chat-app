@@ -1,6 +1,7 @@
 export const mutations = {
-  setThread(state, { id, title, topic, gender, age, place, show_id, character_limit, limit_count }) {
+  setThread(state, { id, uid, title, topic, gender, age, place, show_id, character_limit, limit_count }) {
     state.id = id
+    state.uid = uid
     state.title = title
     state.topic = topic
     state.gender = gender

@@ -39,6 +39,7 @@ export const actions = {
       await setDoc(docRef, payload)
       commit('setThread', {
         id,
+        uid,
         title,
         topic,
         gender,
@@ -46,7 +47,7 @@ export const actions = {
         place,
         show_id,
         character_limit,
-        limit_count
+        limit_count,
       })
       dispatch('addComment', {
         thread_id: id,
@@ -57,6 +58,29 @@ export const actions = {
     } catch (error) {
       console.error(error)
     }
+  },
+  async getThread({ commit }, thread_id) {
+    const collectionRef = collection(db, 'threads')
+    const docRef = doc(collectionRef, thread_id)
+    const docSnapshot = await getDoc(docRef)
+    const data = docSnapshot.data()
+    commit('setThread', { ...data })
+    return data
+  },
+  watchThreads({ commit }) {
+    const collectionRef = collection(db, 'threads')
+    const q = query(collectionRef, orderBy('updated_at', 'desc'))
+    onSnapshot(q, querySnapshot => {
+      let threads = []
+      querySnapshot.forEach(doc => {
+        const data = doc.data()
+        threads = [
+          ...threads,
+          data
+        ]
+      })
+      commit('setThreads', threads)
+    })
   },
   async addComment({ commit, dispatch, rootGetters }, { thread_id, handlename, content }) {
     if (!handlename) handlename = '名無しさん'
@@ -94,29 +118,6 @@ export const actions = {
     } catch (error) {
       console.error(error)
     }
-  },
-  async getThread({ commit }, thread_id) {
-    const collectionRef = collection(db, 'threads')
-    const docRef = doc(collectionRef, thread_id)
-    const docSnapshot = await getDoc(docRef)
-    const data = docSnapshot.data()
-    commit('setThread', { ...data })
-    return data
-  },
-  watchThreads({ commit }) {
-    const collectionRef = collection(db, 'threads')
-    const q = query(collectionRef, orderBy('updated_at', 'desc'))
-    onSnapshot(q, querySnapshot => {
-      let threads = []
-      querySnapshot.forEach(doc => {
-        const data = doc.data()
-        threads = [
-          ...threads,
-          data
-        ]
-      })
-      commit('setThreads', threads)
-    })
   },
   async getComments({ commit }, thread_id) {
     const collectionRef = collection(db, 'comments')

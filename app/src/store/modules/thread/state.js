@@ -1,5 +1,6 @@
 export const state = {
   id: '',
+  uid: '',
   title: '',
   comments: [],
   topic: '',
