@@ -16,7 +16,9 @@ export default {
     }
   },
   created() {
-    return this.$store.dispatch('thread/getThread', this.$route.params.thread_id)
+    const threadId = this.$route.params.thread_id
+    this.$store.dispatch('thread/getThread', threadId)
+    this.$store.dispatch('thread/watchComments', threadId)
   }
 }
 </script>

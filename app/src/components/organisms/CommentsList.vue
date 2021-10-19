@@ -16,9 +16,6 @@ export default {
     comments() {
       return this.$store.getters['thread/comments']
     }
-  },
-  created() {
-    return this.$store.dispatch('thread/watchComments', this.$route.params.thread_id)
   }
 }
 </script>
