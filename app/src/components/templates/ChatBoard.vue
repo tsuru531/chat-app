@@ -2,6 +2,7 @@
 <div>
   <Header />
   <h1>{{ title }}</h1>
+  <router-link :to="{ path: `/thread/${threadId}/menu` }">メニュー</router-link>
   <CommentsList />
   <ResponseForm />
 </div>
@@ -20,7 +21,8 @@ export default {
     ResponseForm
   },
   props: {
-    title: String
+    title: String,
+    threadId: String,
   }
 }
 </script>

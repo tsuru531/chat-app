@@ -37,6 +37,11 @@ const routes = [
     name: 'ChatBoard',
     component: () => import('@/pages/ChatBoard')
   },
+  {
+    path: '/thread/:thread_id/menu',
+    name: 'ThreadMenu',
+    component: () => import('@/pages/ThreadMenu')
+  },
 ]
 
 const router = new VueRouter({

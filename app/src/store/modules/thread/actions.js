@@ -6,6 +6,7 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  deleteDoc,
   query,
   where,
   orderBy,
@@ -66,6 +67,14 @@ export const actions = {
     const data = docSnapshot.data()
     commit('setThread', { ...data })
     return data
+  },
+  async deleteThread({ commit, dispatch }, thread_id) {
+    dispatch('deleteComments', thread_id)
+    const collectionRef = collection(db, 'threads')
+    const docRef = doc(collectionRef, thread_id)
+    await deleteDoc(docRef)
+    commit('resetThread')
+    Router.push('/')
   },
   watchThreads({ commit }) {
     const collectionRef = collection(db, 'threads')
@@ -133,6 +142,16 @@ export const actions = {
     })
     commit('setComments', comments)
     return comments
+  },
+  async deleteComments({ commit }, thread_id) {
+    const collectionRef = collection(db, 'comments')
+    const q = query(collectionRef, where('thread_id', '==', thread_id))
+    const querySnapshot = await getDocs(q)
+    querySnapshot.forEach(async doc => {
+      const docRef = doc.ref
+      await deleteDoc(docRef)
+    })
+    commit('resetComments')
   },
   watchComments({ commit }, thread_id) {
     const collectionRef = collection(db, 'comments')

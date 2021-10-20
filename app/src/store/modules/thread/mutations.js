@@ -1,3 +1,5 @@
+import { initialState } from './state';
+
 export const mutations = {
   setThread(state, { id, uid, title, topic, gender, age, place, show_id, character_limit, limit_count }) {
     state.id = id
@@ -11,8 +13,18 @@ export const mutations = {
     state.character_limit = character_limit
     state.limit_count = limit_count
   },
+  resetThread(state) {
+    Object.assign(state, {
+      ...initialState,
+      comments: state.comments,
+      threads: state.threads,
+    })
+  },
   setComments(state, comments) {
     state.comments = comments
+  },
+  resetComments(state) {
+    state.comments = []
   },
   setThreads(state, threads) {
     state.threads = threads

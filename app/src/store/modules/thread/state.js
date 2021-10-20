@@ -1,4 +1,4 @@
-export const state = {
+export const initialState = {
   id: '',
   uid: '',
   title: '',
@@ -12,3 +12,5 @@ export const state = {
   limit_count: 0,
   threads: [],
 };
+
+export const state = { ...initialState };
