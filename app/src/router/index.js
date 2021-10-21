@@ -42,6 +42,11 @@ const routes = [
     name: 'ThreadMenu',
     component: () => import('@/pages/ThreadMenu')
   },
+  {
+    path: '/not_email_verified',
+    name: 'NotEmailVerified',
+    component: () => import('@/pages/NotEmailVerified')
+  },
 ]
 
 const router = new VueRouter({
@@ -51,12 +56,16 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  Store.dispatch('user/checkEmailVerified')
   const requiresAuth = to.matched.some(record => record.meta.requiresAuth)
-  const uid = Store.dispatch('user/checkSignedIn')
-
-  if (requiresAuth && !uid) next('/signin')
-
-  next()
+  const isEmailVerified = Store.getters['user/isEmailVerified']
+  const isSignedIn = Store.getters['user/isSignedIn']
+  if (requiresAuth) {
+    if (isEmailVerified) next()
+    else if (isSignedIn) next('/not_email_verified')
+    else next('/signin')
+  }
+  else next()
 })
 
 export default router

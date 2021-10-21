@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore'
 
 export const actions = {
-  async signUp(context, { name, email, password }) {
+  async signUp({ commit }, { name, email, password }) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
     if (!user) return false
@@ -32,8 +32,11 @@ export const actions = {
     try {
       await setDoc(docRef, payload)
       await sendEmailVerification(user)
-      Router.push('/signin')
-      return userCredential
+      commit('signIn', {
+        uid,
+        name
+      })
+      Router.push('/')
     } catch (error) {
       console.error(error)
     }
@@ -59,26 +62,30 @@ export const actions = {
       Router.push('/', () => {})
     })
   },
-  checkSignedIn({ commit, getters }) {
-    const isSignedIn = getters['isSignedIn']
-    let uid = ''
-    if (isSignedIn) {
-      uid = getters['uid']
-    } else {
-      onAuthStateChanged(auth, async user => {
-        if (user) {
-          uid = user.uid
-          const collectionRef = collection(db, 'users')
-          const docRef = doc(collectionRef, uid)
-          const docSnapshot = await getDoc(docRef)
-          const data = docSnapshot.data()
-          commit('signIn', {
-            uid,
-            name: data.name
-          })
-        }
-      })
-    }
-    return uid
+  checkEmailVerified({ commit, getters }) {
+    const isEmailVerified = getters['isEmailVerified']
+    if (isEmailVerified) return true
+    onAuthStateChanged(auth, async user => {
+      if (!user) return false
+      const uid = user.uid
+      const emailVerified = user.emailVerified
+      const isSignedIn = getters['isSignedIn']
+      if (!isSignedIn) {
+        const collectionRef = collection(db, 'users')
+        const docRef = doc(collectionRef, uid)
+        const docSnapshot = await getDoc(docRef)
+        const data = docSnapshot.data()
+        commit('signIn', {
+          uid,
+          name: data.name
+        })
+      }
+      if (emailVerified) {
+        commit('emailVerification')
+        return true
+      } else {
+        return false
+      }
+    })
   }
 }
