@@ -5,7 +5,10 @@ import {
   sendEmailVerification,
   signInWithEmailAndPassword,
   onAuthStateChanged,
-  signOut
+  signOut,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult
 } from 'firebase/auth'
 import {
   collection,
@@ -39,6 +42,33 @@ export const actions = {
       Router.push('/')
     } catch (error) {
       console.error(error)
+    }
+  },
+  async signInWithGoogle() {
+    const provider = new GoogleAuthProvider()
+    await signInWithRedirect(auth, provider)
+  },
+  async snsSignUp({ commit }) {
+    const result = await getRedirectResult(auth)
+    if (result) {
+      const user = result.user
+      const uid = user.uid
+      const userInfo = user.providerData[0]
+      const name = userInfo.displayName
+      const payload = {
+        uid,
+        email: '',
+        name,
+        created_at: serverTimestamp()
+      }
+      const collectionRef = collection(db, 'users')
+      const docRef = doc(collectionRef, uid)
+      await setDoc(docRef, payload)
+      commit('signIn', {
+        uid,
+        name
+      })
+      Router.push('/')
     }
   },
   async signIn({ commit }, { email, password }) {
