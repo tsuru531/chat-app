@@ -76,27 +76,25 @@ export const actions = {
       Router.push('/')
     }
   },
-  async providerSignIn({ commit }) {
+  async providerSignIn({ dispatch }) {
     const result = await getRedirectResult(auth)
     if (result) {
       const user = result.user
       const uid = user.uid
-      const collectionRef = collection(db, 'users')
-      const docRef = doc(collectionRef, uid)
-      const docSnapshot = await getDoc(docRef)
-      const data = docSnapshot.data()
-      commit('signIn', {
-        uid,
-        name: data.name
-      })
+      dispatch('signIn', uid)
       Router.push('/')
     }
   },
-  async signIn({ commit }, { email, password }) {
+  async signInWithEmailNPassword({ dispatch }, { email, password }) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
-    if (!user) return false
-    const uid = user.uid
+    if (user) {
+      const uid = user.uid
+      dispatch('signIn', uid)
+      Router.push('/')
+    }
+  },
+  async signIn({ commit }, uid) {
     const collectionRef = collection(db, 'users')
     const docRef = doc(collectionRef, uid)
     const docSnapshot = await getDoc(docRef)
@@ -105,7 +103,6 @@ export const actions = {
       uid,
       name: data.name
     })
-    Router.push('/')
   },
   signOut({ commit }) {
     signOut(auth).then(() => {

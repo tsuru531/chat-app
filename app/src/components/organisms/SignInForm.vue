@@ -36,7 +36,7 @@ export default {
   },
   methods: {
     signIn() {
-      this.$store.dispatch('user/signIn', {
+      this.$store.dispatch('user/signInWithEmailNPassword', {
         email: this.email,
         password: this.password
       })
