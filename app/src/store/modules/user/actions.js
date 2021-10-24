@@ -76,6 +76,22 @@ export const actions = {
       Router.push('/')
     }
   },
+  async providerSignIn({ commit }) {
+    const result = await getRedirectResult(auth)
+    if (result) {
+      const user = result.user
+      const uid = user.uid
+      const collectionRef = collection(db, 'users')
+      const docRef = doc(collectionRef, uid)
+      const docSnapshot = await getDoc(docRef)
+      const data = docSnapshot.data()
+      commit('signIn', {
+        uid,
+        name: data.name
+      })
+      Router.push('/')
+    }
+  },
   async signIn({ commit }, { email, password }) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
     const user = userCredential.user
