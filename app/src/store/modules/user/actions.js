@@ -7,6 +7,7 @@ import {
   onAuthStateChanged,
   signOut,
   GoogleAuthProvider,
+  TwitterAuthProvider,
   signInWithRedirect,
   getRedirectResult
 } from 'firebase/auth'
@@ -46,6 +47,10 @@ export const actions = {
   },
   async signInWithGoogle() {
     const provider = new GoogleAuthProvider()
+    await signInWithRedirect(auth, provider)
+  },
+  async signInByTwitter() {
+    const provider = new TwitterAuthProvider()
     await signInWithRedirect(auth, provider)
   },
   async snsSignUp({ commit }) {

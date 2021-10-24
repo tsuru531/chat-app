@@ -18,6 +18,9 @@
   <div>
     <button type="button" @click="signInWithGoogle">Google アカウントでログイン</button>
   </div>
+  <div>
+    <button type="button" @click="signInByTwitter">Twitter アカウントでログイン</button>
+  </div>
 </form>
 </template>
 
@@ -44,6 +47,9 @@ export default {
     },
     signInWithGoogle() {
       this.$store.dispatch('user/signInWithGoogle')
+    },
+    signInByTwitter() {
+      this.$store.dispatch('user/signInByTwitter')
     }
   }
 }
