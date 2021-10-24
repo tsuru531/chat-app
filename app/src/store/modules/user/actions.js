@@ -53,7 +53,7 @@ export const actions = {
     const provider = new TwitterAuthProvider()
     await signInWithRedirect(auth, provider)
   },
-  async snsSignUp({ commit }) {
+  async providerSignUp({ commit }) {
     const result = await getRedirectResult(auth)
     if (result) {
       const user = result.user
