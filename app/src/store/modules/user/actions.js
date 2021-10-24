@@ -104,6 +104,7 @@ export const actions = {
       if (!user) return false
       const uid = user.uid
       const emailVerified = user.emailVerified
+      const providerData = user.providerData
       const isSignedIn = getters['isSignedIn']
       if (!isSignedIn) {
         const collectionRef = collection(db, 'users')
@@ -115,7 +116,7 @@ export const actions = {
           name: data.name
         })
       }
-      if (emailVerified) {
+      if (emailVerified || providerData.length) {
         commit('emailVerification')
         return true
       } else {
