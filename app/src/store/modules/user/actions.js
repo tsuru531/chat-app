@@ -20,11 +20,7 @@ import {
 } from 'firebase/firestore'
 
 export const actions = {
-  async signUp({ commit }, { name, email, password }) {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
-    if (!user) return false
-    const uid = user.uid
+  async signUp({ commit }, { uid, email, name }) {
     const payload = {
       uid,
       email,
@@ -33,64 +29,27 @@ export const actions = {
     }
     const collectionRef = collection(db, 'users')
     const docRef = doc(collectionRef, uid)
-    try {
-      await setDoc(docRef, payload)
+    await setDoc(docRef, payload)
+    commit('signIn', { uid, name })
+  },
+  async signUpWithEmailNPassword({ dispatch }, { name, email, password }) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    if (user) {
+      const uid = user.uid
+      await dispatch('signUp', { uid, email, name })
       await sendEmailVerification(user)
-      commit('signIn', {
-        uid,
-        name
-      })
       Router.push('/')
-    } catch (error) {
-      console.error(error)
     }
   },
-  async signInWithGoogle() {
-    const provider = new GoogleAuthProvider()
-    await signInWithRedirect(auth, provider)
-  },
-  async signInByTwitter() {
-    const provider = new TwitterAuthProvider()
-    await signInWithRedirect(auth, provider)
-  },
-  async providerSignUp({ commit }) {
+  async providerSignUp({ dispatch }) {
     const result = await getRedirectResult(auth)
     if (result) {
       const user = result.user
       const uid = user.uid
       const userInfo = user.providerData[0]
       const name = userInfo.displayName
-      const payload = {
-        uid,
-        email: '',
-        name,
-        created_at: serverTimestamp()
-      }
-      const collectionRef = collection(db, 'users')
-      const docRef = doc(collectionRef, uid)
-      await setDoc(docRef, payload)
-      commit('signIn', {
-        uid,
-        name
-      })
-      Router.push('/')
-    }
-  },
-  async providerSignIn({ dispatch }) {
-    const result = await getRedirectResult(auth)
-    if (result) {
-      const user = result.user
-      const uid = user.uid
-      dispatch('signIn', uid)
-      Router.push('/')
-    }
-  },
-  async signInWithEmailNPassword({ dispatch }, { email, password }) {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
-    if (user) {
-      const uid = user.uid
-      dispatch('signIn', uid)
+      dispatch('signUp', { uid, email: '', name })
       Router.push('/')
     }
   },
@@ -104,13 +63,39 @@ export const actions = {
       name: data.name
     })
   },
+  async signInWithEmailNPassword({ dispatch }, { email, password }) {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    if (user) {
+      const uid = user.uid
+      dispatch('signIn', uid)
+      Router.push('/')
+    }
+  },
+  async providerSignIn({ dispatch }) {
+    const result = await getRedirectResult(auth)
+    if (result) {
+      const user = result.user
+      const uid = user.uid
+      dispatch('signIn', uid)
+      Router.push('/')
+    }
+  },
+  async signInWithGoogle() {
+    const provider = new GoogleAuthProvider()
+    await signInWithRedirect(auth, provider)
+  },
+  async signInByTwitter() {
+    const provider = new TwitterAuthProvider()
+    await signInWithRedirect(auth, provider)
+  },
   signOut({ commit }) {
     signOut(auth).then(() => {
       commit('signOut')
       Router.push('/', () => {})
     })
   },
-  checkEmailVerified({ commit, getters }) {
+  checkEmailVerified({ commit, dispatch, getters }) {
     const isEmailVerified = getters['isEmailVerified']
     if (isEmailVerified) return true
     onAuthStateChanged(auth, async user => {
@@ -119,16 +104,7 @@ export const actions = {
       const emailVerified = user.emailVerified
       const providerData = user.providerData
       const isSignedIn = getters['isSignedIn']
-      if (!isSignedIn) {
-        const collectionRef = collection(db, 'users')
-        const docRef = doc(collectionRef, uid)
-        const docSnapshot = await getDoc(docRef)
-        const data = docSnapshot.data()
-        commit('signIn', {
-          uid,
-          name: data.name
-        })
-      }
+      if (!isSignedIn) dispatch('signIn', uid)
       if (emailVerified || providerData.length) {
         commit('emailVerification')
         return true
