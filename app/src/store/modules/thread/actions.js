@@ -13,6 +13,7 @@ import {
   onSnapshot,
   serverTimestamp
 } from 'firebase/firestore'
+import { convertToCommentDate } from '@/helpers/definition'
 
 export const actions = {
   async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, show_id, character_limit, limit_count }) {
@@ -128,20 +129,38 @@ export const actions = {
       console.error(error)
     }
   },
-  async getComments({ commit }, thread_id) {
+  setComments({ commit }, commentsSnap) {
+    if (commentsSnap) {
+      let comments = []
+      commentsSnap.forEach(doc => {
+        const data = doc.data()
+        const date = data.created_at.toDate()
+        const created_at = convertToCommentDate(date)
+        comments = [
+          ...comments,
+          {
+            ...data,
+            created_at
+          }
+        ]
+      })
+      commit('setComments', comments)
+      return comments
+    }
+  },
+  async getComments({ dispatch }, thread_id) {
     const collectionRef = collection(db, 'comments')
     const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
     const querySnapshot = await getDocs(q)
-    let comments = []
-    querySnapshot.forEach(doc => {
-      const data = doc.data()
-      comments = [
-        ...comments,
-        data
-      ]
-    })
-    commit('setComments', comments)
+    const comments = dispatch('setComments', querySnapshot)
     return comments
+  },
+  watchComments({ dispatch }, thread_id) {
+    const collectionRef = collection(db, 'comments')
+    const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
+    onSnapshot(q, querySnapshot => {
+      dispatch('setComments', querySnapshot)
+    })
   },
   async deleteComments({ commit }, thread_id) {
     const collectionRef = collection(db, 'comments')
@@ -152,20 +171,5 @@ export const actions = {
       await deleteDoc(docRef)
     })
     commit('resetComments')
-  },
-  watchComments({ commit }, thread_id) {
-    const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
-    onSnapshot(q, querySnapshot => {
-      let comments = []
-      querySnapshot.forEach(doc => {
-        const data = doc.data()
-        comments = [
-          ...comments,
-          data
-        ]
-      })
-      commit('setComments', comments)
-    })
   },
 };
