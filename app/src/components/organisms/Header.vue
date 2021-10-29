@@ -1,26 +1,38 @@
 <template>
 <header>
-  <div v-if="!isSignedIn">
-    <router-link to="/signup">新規登録</router-link> |
-    <router-link to="/signin">ログイン</router-link>
-  </div>
-  <button v-if="isSignedIn" @click="signOut">ログアウト</button>
   <div>
-    <router-link to="/">Logo</router-link>
+    <router-link to="/">
+      <LogoText />
+    </router-link>
   </div>
   <SearchWindow :searchword="searchword" @change="changeSearchword" @search="search" />
+  <div v-if="!isSignedIn">
+    <router-link to="/signup">
+      <TextButton value="新規登録" />
+    </router-link>
+    <router-link to="/signin">
+      <TextButton value="ログイン" />
+    </router-link>
+  </div>
+  <TextButton v-if="isSignedIn" @click="signOut" value="ログアウト" />
   <p>{{ userName }}</p>
-  <router-link to="/dashboard">マイページ</router-link>
+  <router-link to="/dashboard">
+    <TextButton value="マイページ" />
+  </router-link>
 </header>
 </template>
 
 <script>
+import LogoText from '@/components/atoms/LogoText'
+import TextButton from '@/components/atoms/TextButton'
 import SearchWindow from '@/components/molecules/SearchWindow'
 
 export default {
   name: 'Header',
   components: {
-    SearchWindow
+    LogoText,
+    SearchWindow,
+    TextButton
   },
   data() {
     return {
@@ -49,3 +61,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+header {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 8px;
+}
+</style>
