@@ -1,19 +1,30 @@
 <template>
 <div>
-  <CardTitle :value="title" />
+  <CardTitle :value="thread.title" />
+  <ChipsList :values="chipValues" />
 </div>
 </template>
 
 <script>
 import CardTitle from '@/components/atoms/CardTitle'
+import ChipsList from '@/components/molecules/ChipsList'
 
 export default {
   name: 'ThreadCard',
   components: {
-    CardTitle
+    CardTitle,
+    ChipsList
   },
   props: {
-    title: String
+    thread: Object
+  },
+  computed: {
+    chipValues: vm => {
+      const { topic, gender, age, place } = vm.thread
+      const originValues = [topic, gender, age, place]
+      const filterValues = originValues.filter(value => value !== '')
+      return filterValues
+    }
   }
 }
 </script>

@@ -1,15 +1,15 @@
 <template>
 <ul>
-  <li v-for="{ id, title } in threads" :key="id">
-    <router-link :to="{ path: `/thread/${id}` }">
-      <ThreadCard :title="title" />
+  <li v-for="thread in threads" :key="thread.id">
+    <router-link :to="{ path: `/thread/${thread.id}` }">
+      <ThreadCard :thread="thread" />
     </router-link>
   </li>
 </ul>
 </template>
 
 <script>
-import ThreadCard from '@/components/molecules/ThreadCard'
+import ThreadCard from '@/components/organisms/ThreadCard'
 
 export default {
   name: 'ThreadsList',
