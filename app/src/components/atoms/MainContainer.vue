@@ -14,5 +14,6 @@ export default {
 div {
   width: 100%;
   max-width: 680px;
+  padding: 0 16px;
 }
 </style>
