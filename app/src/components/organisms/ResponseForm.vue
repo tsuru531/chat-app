@@ -1,5 +1,5 @@
 <template>
-<form>
+<form class="response-form width-main">
   <div>
     <label for="handlename">ハンドルネーム</label>
     <input name="handlename" id="handlename" type="text" placeholder="名無しさん" v-model="handlename">
@@ -33,3 +33,12 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.response-form {
+  box-sizing: border-box;
+  position: fixed;
+  bottom: 0;
+  padding: 0 16px 32px;
+}
+</style>
