@@ -1,17 +1,19 @@
 <template>
 <ul>
   <li v-for="(comment) in comments" :key="comment.id">
-    <div>{{ comment.index }}</div>
-    <div>{{ comment.handlename }}</div>
-    <p>{{ comment.content }}</p>
-    <time>{{ comment.created_at }}</time>
+    <CommentItem :comment="comment" />
   </li>
 </ul>
 </template>
 
 <script>
+import CommentItem from '@/components/molecules/CommentItem'
+
 export default {
   name: 'CommentsList',
+  components: {
+    CommentItem
+  },
   computed: {
     comments() {
       return this.$store.getters['thread/comments']
@@ -19,3 +21,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+ul {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  margin: 0;
+}
+li {
+  list-style: none;
+}
+</style>
