@@ -21,16 +21,13 @@ import {
 
 export const actions = {
   async signUp({ commit }, { uid, email, name }) {
-    const payload = {
-      uid,
-      email,
-      name,
-      created_at: serverTimestamp()
-    }
+    const role = 'general'
+    const created_at = serverTimestamp()
+    const payload = { uid, email, name, role, created_at }
     const collectionRef = collection(db, 'users')
     const docRef = doc(collectionRef, uid)
     await setDoc(docRef, payload)
-    commit('signIn', { uid, name })
+    commit('signIn', { uid, name, role })
   },
   async signUpWithEmailNPassword({ dispatch }, { name, email, password }) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password)
@@ -58,10 +55,8 @@ export const actions = {
     const docRef = doc(collectionRef, uid)
     const docSnapshot = await getDoc(docRef)
     const data = docSnapshot.data()
-    commit('signIn', {
-      uid,
-      name: data.name
-    })
+    const { name, role } = data
+    commit('signIn', { uid, name, role })
   },
   async signInWithEmailNPassword({ dispatch }, { email, password }) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password)
@@ -100,9 +95,7 @@ export const actions = {
     if (isEmailVerified) return true
     onAuthStateChanged(auth, async user => {
       if (!user) return false
-      const uid = user.uid
-      const emailVerified = user.emailVerified
-      const providerData = user.providerData
+      const { uid, emailVerified, providerData } = user
       const isSignedIn = getters['isSignedIn']
       if (!isSignedIn) dispatch('signIn', uid)
       if (emailVerified || providerData.length) {
