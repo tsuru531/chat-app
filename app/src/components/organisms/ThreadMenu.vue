@@ -1,6 +1,6 @@
 <template>
 <div>
-  <button v-if="isThreadOwner" @click="deleteThread">スレッドを削除する</button>
+  <button v-if="isHaveThreadPermission" @click="deleteThread">スレッドを削除する</button>
 </div>
 </template>
 
@@ -8,8 +8,8 @@
 export default {
   name: 'ThreadMenu',
   computed: {
-    isThreadOwner() {
-      return this.$store.getters['user/isThreadOwner']
+    isHaveThreadPermission() {
+      return this.$store.getters['user/isHaveThreadPermission']
     },
     threadId() {
       return this.$store.getters['thread/id']
@@ -17,7 +17,7 @@ export default {
   },
   methods: {
     deleteThread() {
-      this.$store.dispatch('thread/deleteThread', this.threadId)
+      this.$store.dispatch('thread/delete', this.threadId)
     }
   }
 }

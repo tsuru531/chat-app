@@ -69,7 +69,7 @@ export const actions = {
     commit('setThread', { ...data })
     return data
   },
-  async deleteThread({ commit, dispatch }, thread_id) {
+  async delete({ commit, dispatch }, thread_id) {
     dispatch('deleteComments', thread_id)
     const collectionRef = collection(db, 'threads')
     const docRef = doc(collectionRef, thread_id)

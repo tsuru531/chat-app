@@ -3,10 +3,12 @@ export const getters = {
   isEmailVerified: state => state.isEmailVerified,
   uid: state => state.uid,
   name: state => state.name,
-  isThreadOwner: (state, getters, rootState, rootGetters) => {
+  isHaveThreadPermission: (state, getters, rootState, rootGetters) => {
+    const role = state.role
     const uid = state.uid
     const threadUid = rootGetters['thread/uid']
-    const isThreadOwner = uid === threadUid
-    return isThreadOwner
+    if (role === 'admin') return true
+    if (uid === threadUid) return true
+    return false
   }
 }
