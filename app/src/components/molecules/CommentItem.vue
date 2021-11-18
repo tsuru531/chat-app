@@ -6,14 +6,25 @@
   </div>
   <p class="content">{{ comment.content }}</p>
   <time class="created_at font-caption">{{ comment.created_at }}</time>
+  <DeleteButton @click="deleteItem" />
 </div>
 </template>
 
 <script>
+import DeleteButton from '@/components/atoms/DeleteButton'
+
 export default {
   name: 'CommentItem',
+  components: {
+    DeleteButton
+  },
   props: {
     comment: Object
+  },
+  methods: {
+    deleteItem() {
+      this.$emit('deleteItem')
+    }
   }
 }
 </script>

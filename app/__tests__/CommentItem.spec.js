@@ -1,5 +1,6 @@
 import { shallowMount } from '@vue/test-utils'
 import CommentItem from '@/components/molecules/CommentItem'
+import DeleteButton from '@/components/atoms/DeleteButton'
 
 describe('CommentItem.vue', () => {
   const comment = {
@@ -11,6 +12,9 @@ describe('CommentItem.vue', () => {
   let wrapper
   beforeEach(() => {
     wrapper = shallowMount(CommentItem, {
+      stubs: {
+        DeleteButton
+      },
       propsData: { comment }
     })
   })
@@ -23,5 +27,14 @@ describe('CommentItem.vue', () => {
     Object.keys(comment).forEach(key => {
       expect(wrapper.html()).toContain(`${comment[key]}`)
     })
+  })
+  it('DeleteButton exists', () => {
+    const deleteButton = wrapper.findComponent(DeleteButton)
+    expect(deleteButton.exists()).toBe(true)
+  })
+  it('Can emit by clicking the DeleteButton', () => {
+    const deleteButton = wrapper.findComponent(DeleteButton)
+    deleteButton.trigger('click')
+    expect(wrapper.emitted().deleteItem.length).toBe(1)
   })
 })
