@@ -22,8 +22,8 @@
 
 <script>
 import Button from '@/components/atoms/Button'
-import CommentItem from '@/components/molecules/CommentItem'
 import ModalDialog from '@/components/molecules/ModalDialog'
+import CommentItem from '@/components/organisms/CommentItem'
 
 export default {
   name: 'CommentsList',

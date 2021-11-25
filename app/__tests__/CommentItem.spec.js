@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import CommentItem from '@/components/molecules/CommentItem'
+import CommentItem from '@/components/organisms/CommentItem'
 import DeleteButton from '@/components/atoms/DeleteButton'
 
 describe('CommentItem.vue', () => {
