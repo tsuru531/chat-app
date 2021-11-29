@@ -6,6 +6,7 @@ import {
   setDoc,
   getDoc,
   getDocs,
+  updateDoc,
   deleteDoc,
   query,
   where,
@@ -162,6 +163,14 @@ export const actions = {
       dispatch('setComments', querySnapshot)
     })
   },
+  async deleteComment(context, id) {
+    const collectionRef = collection(db, 'comments')
+    const docRef = doc(collectionRef, id)
+    await updateDoc(docRef, {
+      isDeleted: true,
+      updatedAt: serverTimestamp()
+    })
+  },
   async deleteComments({ commit }, thread_id) {
     const collectionRef = collection(db, 'comments')
     const q = query(collectionRef, where('thread_id', '==', thread_id))
@@ -171,5 +180,5 @@ export const actions = {
       await deleteDoc(docRef)
     })
     commit('resetComments')
-  },
+  }
 };

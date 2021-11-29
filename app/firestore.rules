@@ -10,6 +10,24 @@ service cloud.firestore {
     function isAdmin() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
+    function isValidComment(comment) {
+      return comment.size() == 10
+          && 'id' in comment && comment.id is string
+          && 'uid' in comment && comment.uid is string
+          && 'threadId' in comment && comment.threadId is string
+          && 'handlename' in comment && comment.handlename is string
+          && 'index' in comment && comment.index is number
+          && 'content' in comment && comment.content is string
+          && 'isPinned' in comment && comment.isPinned is bool
+          && 'isDeleted' in comment && comment.isDeleted is bool
+          && 'createdAt' in comment && comment.createdAt is timestamp
+          && 'updatedAt' in comment && comment.updatedAt is timestamp
+    }
+    function isValidCommentUpdate(data) {
+      return 'updatedAt' in data && data.updatedAt is timestamp
+          && ('isPinned' in data && data.isPinned is bool
+          || 'isDeleted' in data && data.isDeleted is bool);
+    }
     match /users/{uid} {
       allow get: if isUserAuthenticated(uid);
     }
@@ -17,15 +35,18 @@ service cloud.firestore {
       allow read: if true;
       allow create: if isAuthenticated();
       allow delete: if isAuthenticated()
-        && request.auth.uid == resource.data.uid
-        || isAdmin();
+                    && request.auth.uid == resource.data.uid
+                    || isAdmin();
     }
     match /comments/{commentId} {
       allow read: if true;
-      allow create: if true;
+      allow create: if isValidComment(request.resource.data);
+      allow update: if isValidCommentUpdate(request.resource.data)
+                    && resource.data.uid == request.auth.uid
+                    || isAdmin();
       allow delete: if isAuthenticated()
-        && request.auth.uid == get(/databases/$(database)/documents/threads/$(resource.data.thread_id)).data.uid
-        || isAdmin();
+                    && request.auth.uid == get(/databases/$(database)/documents/threads/$(resource.data.threadId)).data.uid
+                    || isAdmin();
     }
   }
 }

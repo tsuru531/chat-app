@@ -4,9 +4,9 @@
     <span class="index">{{ comment.index }}. </span>
     <span class="handlename">{{ comment.handlename }}</span>
   </div>
-  <p class="content">{{ comment.content }}</p>
+  <p class="content">{{ comment.isDeleted ? 'このコメントは削除されました' : comment.content }}</p>
   <time class="created_at font-caption">{{ comment.created_at }}</time>
-  <DeleteButton @click="deleteItem" />
+  <DeleteButton v-if="isOwner" @click="deleteItem" />
 </div>
 </template>
 
@@ -20,6 +20,14 @@ export default {
   },
   props: {
     comment: Object
+  },
+  computed: {
+    isOwner() {
+      const uid = this.$store.getters['user/uid']
+      const isAdmin = this.$store.getters['user/isAdmin']
+      const isOwner = uid === this.comment.uid || isAdmin
+      return isOwner
+    }
   },
   methods: {
     deleteItem() {
