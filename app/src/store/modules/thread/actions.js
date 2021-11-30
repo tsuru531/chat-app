@@ -14,16 +14,14 @@ import {
   onSnapshot,
   serverTimestamp
 } from 'firebase/firestore'
-import { convertToCommentDate } from '@/helpers/definition'
 
 export const actions = {
-  async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, show_id, character_limit, limit_count }) {
+  async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, showId, characterLimit, limitCount }) {
     const uid = rootGetters['user/uid']
     const collectionRef = collection(db, 'threads')
     const docRef = doc(collectionRef)
     const id = docRef.id
     const handlename = ''
-    const timestamp = serverTimestamp()
     const payload = {
       id,
       uid,
@@ -32,11 +30,11 @@ export const actions = {
       gender,
       age,
       place,
-      show_id,
-      character_limit,
-      limit_count,
-      created_at: timestamp,
-      updated_at: timestamp
+      showId,
+      characterLimit,
+      limitCount,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }
     try {
       await setDoc(docRef, payload)
@@ -48,12 +46,12 @@ export const actions = {
         gender,
         age,
         place,
-        show_id,
-        character_limit,
-        limit_count,
+        showId,
+        characterLimit,
+        limitCount,
       })
       dispatch('addComment', {
-        thread_id: id,
+        threadId: id,
         handlename,
         content: comment
       })
@@ -62,25 +60,25 @@ export const actions = {
       console.error(error)
     }
   },
-  async getThread({ commit }, thread_id) {
+  async getThread({ commit }, threadId) {
     const collectionRef = collection(db, 'threads')
-    const docRef = doc(collectionRef, thread_id)
+    const docRef = doc(collectionRef, threadId)
     const docSnapshot = await getDoc(docRef)
     const data = docSnapshot.data()
     commit('setThread', { ...data })
     return data
   },
-  async delete({ commit, dispatch }, thread_id) {
-    dispatch('deleteComments', thread_id)
+  async delete({ commit, dispatch }, threadId) {
+    dispatch('deleteComments', threadId)
     const collectionRef = collection(db, 'threads')
-    const docRef = doc(collectionRef, thread_id)
+    const docRef = doc(collectionRef, threadId)
     await deleteDoc(docRef)
     commit('resetThread')
     Router.push('/')
   },
   watchThreads({ commit }) {
     const collectionRef = collection(db, 'threads')
-    const q = query(collectionRef, orderBy('updated_at', 'desc'))
+    const q = query(collectionRef, orderBy('updatedAt', 'desc'))
     onSnapshot(q, querySnapshot => {
       let threads = []
       querySnapshot.forEach(doc => {
@@ -93,13 +91,13 @@ export const actions = {
       commit('setThreads', threads)
     })
   },
-  async addComment({ commit, dispatch, rootGetters }, { thread_id, handlename, content }) {
+  async addComment({ commit, dispatch, rootGetters }, { threadId, handlename, content }) {
     if (!handlename) handlename = '名無しさん'
     const collectionRef = collection(db, 'comments')
     const docRef = doc(collectionRef)
     const id = docRef.id
     const uid = rootGetters['user/uid']
-    const comments = await dispatch('getComments', thread_id)
+    const comments = await dispatch('getComments', threadId)
     let lastComment
     if (comments[0]) {
       lastComment = comments.slice(-1)[0]
@@ -108,17 +106,16 @@ export const actions = {
     }
     const index = lastComment.index + 1
     const isPinned = false
-    const timestamp = serverTimestamp()
     const payload = {
       id,
       uid,
-      thread_id,
+      threadId,
       content,
       index,
       handlename,
       isPinned,
-      created_at: timestamp,
-      updated_at: timestamp
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }
     try {
       commit('setComments', {
@@ -135,13 +132,12 @@ export const actions = {
       let comments = []
       commentsSnap.forEach(doc => {
         const data = doc.data()
-        const date = data.created_at.toDate()
-        const created_at = convertToCommentDate(date)
+        const createdAt = data.createdAt.toDate()
         comments = [
           ...comments,
           {
             ...data,
-            created_at
+            createdAt
           }
         ]
       })
@@ -149,16 +145,16 @@ export const actions = {
       return comments
     }
   },
-  async getComments({ dispatch }, thread_id) {
+  async getComments({ dispatch }, threadId) {
     const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
+    const q = query(collectionRef, where('threadId', '==', threadId), orderBy('index'))
     const querySnapshot = await getDocs(q)
     const comments = dispatch('setComments', querySnapshot)
     return comments
   },
-  watchComments({ dispatch }, thread_id) {
+  watchComments({ dispatch }, threadId) {
     const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('thread_id', '==', thread_id), orderBy('index'))
+    const q = query(collectionRef, where('threadId', '==', threadId), orderBy('index'))
     onSnapshot(q, querySnapshot => {
       dispatch('setComments', querySnapshot)
     })
@@ -171,9 +167,9 @@ export const actions = {
       updatedAt: serverTimestamp()
     })
   },
-  async deleteComments({ commit }, thread_id) {
+  async deleteComments({ commit }, threadId) {
     const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('thread_id', '==', thread_id))
+    const q = query(collectionRef, where('threadId', '==', threadId))
     const querySnapshot = await getDocs(q)
     querySnapshot.forEach(async doc => {
       const docRef = doc.ref

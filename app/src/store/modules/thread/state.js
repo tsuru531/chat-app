@@ -7,9 +7,9 @@ export const initialState = {
   gender: '',
   age: '',
   place: '',
-  show_id: false,
-  character_limit: false,
-  limit_count: 0,
+  showId: false,
+  characterLimit: false,
+  limitLount: 0,
   threads: [],
 };
 
