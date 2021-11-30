@@ -1,17 +1,19 @@
 <template>
-<div>
+<Card>
   <CardTitle :value="thread.title" />
   <ChipsList :values="chipValues" />
-</div>
+</Card>
 </template>
 
 <script>
+import Card from '@/components/atoms/Card'
 import CardTitle from '@/components/atoms/CardTitle'
 import ChipsList from '@/components/molecules/ChipsList'
 
 export default {
   name: 'ThreadCard',
   components: {
+    Card,
     CardTitle,
     ChipsList
   },
@@ -19,8 +21,8 @@ export default {
     thread: Object
   },
   computed: {
-    chipValues: vm => {
-      const { topic, gender, age, place } = vm.thread
+    chipValues() {
+      const { topic, gender, age, place } = this.thread
       const originValues = [topic, gender, age, place]
       const filterValues = originValues.filter(value => value !== '')
       return filterValues
@@ -30,16 +32,5 @@ export default {
 </script>
 
 <style scoped>
-div {
-  background-color: #FFFFFF;
-  padding: 16px;
-  border-radius: 4px;
-  box-shadow:
-    0px 2px 1px -1px rgb(0 0 0 / 20%),
-    0px 1px 1px 0px rgb(0 0 0 / 14%),
-    0px 1px 3px 0px rgb(0 0 0 / 12%);
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
+
 </style>
