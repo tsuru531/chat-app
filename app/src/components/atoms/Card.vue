@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="wrapper">
   <slot></slot>
 </div>
 </template>
@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style scoped>
-div {
+div.wrapper {
   background-color: #FFFFFF;
   padding: 16px;
   border-radius: 4px;
