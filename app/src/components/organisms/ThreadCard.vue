@@ -1,6 +1,7 @@
 <template>
 <Card>
   <CardTitle :value="thread.title" />
+  <CommentsCounter :count="thread.commentsCount" />
   <ChipsList :values="chipValues" />
 </Card>
 </template>
@@ -8,6 +9,7 @@
 <script>
 import Card from '@/components/atoms/Card'
 import CardTitle from '@/components/atoms/CardTitle'
+import CommentsCounter from '@/components/atoms/CommentsCounter'
 import ChipsList from '@/components/molecules/ChipsList'
 
 export default {
@@ -15,6 +17,7 @@ export default {
   components: {
     Card,
     CardTitle,
+    CommentsCounter,
     ChipsList
   },
   props: {
