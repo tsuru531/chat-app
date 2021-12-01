@@ -3,6 +3,7 @@ export const initialState = {
   uid: '',
   title: '',
   comments: [],
+  commentsCount: 0,
   topic: '',
   gender: '',
   age: '',

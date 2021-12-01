@@ -22,7 +22,8 @@ export const actions = {
     const docRef = doc(collectionRef)
     const id = docRef.id
     const handlename = ''
-    const payload = {
+    const commentsCount = 1
+    const threadData = {
       id,
       uid,
       title,
@@ -33,23 +34,16 @@ export const actions = {
       showId,
       characterLimit,
       limitCount,
+      commentsCount,
+    }
+    const payload = {
+      ...threadData,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
     try {
       await setDoc(docRef, payload)
-      commit('setThread', {
-        id,
-        uid,
-        title,
-        topic,
-        gender,
-        age,
-        place,
-        showId,
-        characterLimit,
-        limitCount,
-      })
+      commit('setThread', threadData)
       dispatch('addComment', {
         threadId: id,
         handlename,
@@ -106,6 +100,7 @@ export const actions = {
     }
     const index = lastComment.index + 1
     const isPinned = false
+    const isDeleted = false
     const payload = {
       id,
       uid,
@@ -114,6 +109,7 @@ export const actions = {
       index,
       handlename,
       isPinned,
+      isDeleted,
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
@@ -123,6 +119,10 @@ export const actions = {
         payload
       })
       await setDoc(docRef, payload)
+      await updateDoc(doc(collection(db, 'threads'), threadId), {
+        commentsCount: index,
+        updatedAt: serverTimestamp()
+      })
     } catch (error) {
       console.error(error)
     }
