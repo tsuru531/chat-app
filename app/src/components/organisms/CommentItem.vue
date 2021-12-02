@@ -5,13 +5,14 @@
     <span class="handlename">{{ comment.handlename }}</span>
   </div>
   <p class="content">{{ comment.isDeleted ? 'このコメントは削除されました' : comment.content }}</p>
-  <time class="created_at font-caption">{{ comment.created_at }}</time>
+  <time class="created_at font-caption">{{ convertedCreatedAt }}</time>
   <DeleteButton v-if="isOwner" @click="deleteItem" />
 </div>
 </template>
 
 <script>
 import DeleteButton from '@/components/atoms/DeleteButton'
+import { convertToCommentDate } from '@/helpers/definition'
 
 export default {
   name: 'CommentItem',
@@ -27,6 +28,9 @@ export default {
       const isAdmin = this.$store.getters['user/isAdmin']
       const isOwner = uid === this.comment.uid || isAdmin
       return isOwner
+    },
+    convertedCreatedAt() {
+      return convertToCommentDate(this.comment.createdAt)
     }
   },
   methods: {
