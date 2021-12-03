@@ -4,4 +4,5 @@ export const getters = {
   title: state => state.title,
   threads: state => state.threads,
   comments: state => state.comments,
+  commentsCount: state => state.commentsCount
 };

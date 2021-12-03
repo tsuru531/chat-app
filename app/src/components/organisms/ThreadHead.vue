@@ -1,14 +1,19 @@
 <template>
 <div>
-  <h1>{{ title }}</h1>
   <router-link :to="{ path: `/thread/${threadId}/menu` }">メニュー</router-link>
+  <h1>{{ title }}</h1>
+  <CommentsCounter :count="commentsCount" />
 </div>
 </template>
 
 <script>
+import CommentsCounter from '@/components/atoms/CommentsCounter'
+
 export default {
   name: 'ThreadHead',
-  components: {},
+  components: {
+    CommentsCounter
+  },
   data() {
     return {}
   },
@@ -18,6 +23,9 @@ export default {
     },
     threadId() {
       return this.$store.getters['thread/id']
+    },
+    commentsCount() {
+      return this.$store.getters['thread/commentsCount']
     }
   },
   methods: {}
