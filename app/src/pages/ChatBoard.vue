@@ -1,8 +1,5 @@
 <template>
-<ChatBoard
-  :title="title"
-  :threadId="threadId"
-/>
+<ChatBoard />
 </template>
 
 <script>
@@ -14,9 +11,6 @@ export default {
     ChatBoard
   },
   computed: {
-    title() {
-      return this.$store.getters['thread/title']
-    },
     threadId() {
       return this.$route.params.thread_id
     }

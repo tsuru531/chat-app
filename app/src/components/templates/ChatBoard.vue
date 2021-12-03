@@ -3,8 +3,7 @@
   <Header />
   <div class="wrapper">
     <section class="width-main">
-      <h1>{{ title }}</h1>
-      <router-link :to="{ path: `/thread/${threadId}/menu` }">メニュー</router-link>
+      <ThreadHead />
       <CommentsList />
       <ResponseForm />
     </section>
@@ -14,6 +13,7 @@
 
 <script>
 import Header from '@/components/organisms/Header'
+import ThreadHead from '@/components/organisms/ThreadHead'
 import CommentsList from '@/components/organisms/CommentsList'
 import ResponseForm from '@/components/organisms/ResponseForm'
 
@@ -21,12 +21,9 @@ export default {
   name: 'ChatBoard',
   components: {
     Header,
+    ThreadHead,
     CommentsList,
     ResponseForm
-  },
-  props: {
-    title: String,
-    threadId: String,
   }
 }
 </script>
