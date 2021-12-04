@@ -32,15 +32,14 @@ service cloud.firestore {
       allow get: if isUserAuthenticated(uid);
     }
     match /threads/{threadId} {
-      function isValidUpdateCommentsCount(request, resource) {
-        return request.data.size() == 2
-            && 'commentsCount' in request.data && request.data.commentsCount is number
-            && 'updatedAt' in request.data && request.data.updatedAt is timestamp
-            && request.data.commentsCount > resource.data.commentsCount
+      function isValidUpdateCommentsCount(requestData, resourceData) {
+        return 'commentsCount' in requestData && requestData.commentsCount is number
+            && 'updatedAt' in requestData && requestData.updatedAt is timestamp
+            && requestData.commentsCount > resourceData.commentsCount;
       }
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update: if isValidUpdateCommentsCount(request, resource);
+      allow update: if isValidUpdateCommentsCount(request.resource.data, resource.data);
       allow delete: if isAuthenticated()
                     && request.auth.uid == resource.data.uid
                     || isAdmin();
