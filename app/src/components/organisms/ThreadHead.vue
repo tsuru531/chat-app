@@ -25,7 +25,8 @@ export default {
       return this.$store.getters['thread/id']
     },
     commentsCount() {
-      return this.$store.getters['thread/commentsCount']
+      const comments = this.$store.getters['thread/comments']
+      return comments.length
     }
   },
   methods: {}
