@@ -24,7 +24,7 @@ export default {
   methods: {
     addComment() {
       this.$store.dispatch('thread/addComment', {
-        thread_id: this.$route.params.thread_id,
+        threadId: this.$route.params.thread_id,
         handlename: this.handlename,
         content: this.response
       })
