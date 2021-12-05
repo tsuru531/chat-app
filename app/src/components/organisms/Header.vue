@@ -64,8 +64,10 @@ export default {
 
 <style scoped>
 header {
+  box-sizing: border-box;
   display: flex;
   align-items: center;
+  width: 100vw;
   height: 64px;
   padding: 8px;
 }

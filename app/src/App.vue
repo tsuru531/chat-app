@@ -12,10 +12,6 @@ a {
   color: inherit;
   text-decoration: none;
 }
-.width-main {
-  width: 100%;
-  max-width: 680px;
-}
 .font-caption {
   font-family: 'Roboto';
   font-size: 12px;

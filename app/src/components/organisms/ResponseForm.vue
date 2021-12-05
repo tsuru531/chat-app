@@ -37,8 +37,6 @@ export default {
 <style scoped>
 .response-form {
   box-sizing: border-box;
-  position: fixed;
-  bottom: 0;
-  padding: 0 16px 32px;
+  padding: 0;
 }
 </style>
