@@ -1,12 +1,14 @@
 <template>
-<div class="comment-item">
-  <div class="info font-caption">
-    <span class="index">{{ comment.index }}. </span>
-    <span class="handlename">{{ comment.handlename }}</span>
+<div class="comment-item wrapper">
+  <div class="comment-item info font-caption">
+    <span class="comment-item index">{{ comment.index }}. </span>
+    <span class="comment-item handlename">{{ comment.handlename }}</span>
   </div>
-  <p class="content">{{ comment.isDeleted ? 'このコメントは削除されました' : comment.content }}</p>
-  <time class="created_at font-caption">{{ convertedCreatedAt }}</time>
-  <DeleteButton v-if="isOwner" @click="deleteItem" />
+  <div class="comment-item body">
+    <p class="comment-item content">{{ comment.isDeleted ? 'このコメントは削除されました' : comment.content }}</p>
+    <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
+    <DeleteButton v-if="isOwner" @click="deleteItem" />
+  </div>
 </div>
 </template>
 
@@ -42,14 +44,21 @@ export default {
 </script>
 
 <style scoped>
-.comment-item > .content {
-  display: inline;
+.comment-item.content {
+  display: inline-block;
+  vertical-align: top;
   box-sizing: border-box;
   border: solid 1px rgba(0, 0, 0, .4);
   border-radius: 16px;
+  margin: 0;
   padding: 4px 8px;
+  white-space: pre-wrap;
 }
-.comment-item > .created_at {
-  margin-left: 4px;
+.comment-item.body {
+  display: flex;
+  align-items: flex-end;
+}
+.comment-item.created-at {
+  padding: 4px;
 }
 </style>
