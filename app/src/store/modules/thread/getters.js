@@ -4,5 +4,8 @@ export const getters = {
   title: state => state.title,
   threads: state => state.threads,
   comments: state => state.comments,
-  commentsCount: state => state.commentsCount
+  commentsCount: state => state.commentsCount,
+  comment: state => index => {
+    return state.comments.find(comment => comment.index == index)
+  }
 };

@@ -5,7 +5,7 @@
     <span class="comment-item handlename">{{ comment.handlename }}</span>
   </div>
   <div class="comment-item body">
-    <p class="comment-item content">{{ comment.isDeleted ? 'このコメントは削除されました' : comment.content }}</p>
+    <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
     <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
     <DeleteButton v-if="isOwner" @click="deleteItem" />
   </div>
@@ -13,7 +13,9 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import DeleteButton from '@/components/atoms/DeleteButton'
+import Anchor from '@/components/atoms/Anchor'
 import { convertToCommentDate } from '@/helpers/definition'
 
 export default {
@@ -23,6 +25,11 @@ export default {
   },
   props: {
     comment: Object
+  },
+  data() {
+    return {
+      deletedText: 'このコメントは削除されました'
+    }
   },
   computed: {
     isOwner() {
@@ -38,6 +45,23 @@ export default {
   methods: {
     deleteItem() {
       this.$emit('deleteItem')
+    }
+  },
+  mounted() {
+    const anchorRegexp = /&gt;&gt;(\d+)/g
+    const ref = this.$refs.content
+    if (ref.innerHTML.match(anchorRegexp)) {
+      const replaceHTML = ref.innerHTML.replace(anchorRegexp, '<span>$1</span>')
+      ref.innerHTML = replaceHTML
+      const nodeList = ref.querySelectorAll('span')
+      nodeList.forEach(item => {
+        const index = Number(item.textContent)
+        const comment = this.$store.getters['thread/comment'](index)
+        const AnchorComponent = Vue.extend(Anchor)
+        const instance = new AnchorComponent({ propsData: { index: comment.index }})
+        instance.$mount()
+        item.replaceWith(instance.$el)
+      })
     }
   }
 }
