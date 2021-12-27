@@ -12,7 +12,13 @@
     </section>
   </div>
   <div class="zoning-bottom">
-    <ResponseForm />
+    <ResponseForm
+      :response="response"
+      :handlename="handlename"
+      @change_response="changeResponse"
+      @change_handlename="changeHandlename"
+      @send="sendComment"
+    />
   </div>
 </div>
 </template>
@@ -21,7 +27,7 @@
 import Header from '@/components/organisms/Header'
 import ThreadHead from '@/components/organisms/ThreadHead'
 import CommentsList from '@/components/organisms/CommentsList'
-import ResponseForm from '@/components/organisms/ResponseForm'
+import ResponseForm from '@/components/molecules/ResponseForm'
 
 export default {
   name: 'ChatBoard',
@@ -31,9 +37,31 @@ export default {
     CommentsList,
     ResponseForm
   },
+  data() {
+    return {
+      response: '',
+      handlename: ''
+    }
+  },
   computed: {
     threadId() {
       return this.$route.params.thread_id
+    }
+  },
+  methods: {
+    changeResponse(value) {
+      this.response = value
+    },
+    changeHandlename(value) {
+      this.handlename = value
+    },
+    sendComment() {
+      this.$store.dispatch('thread/addComment', {
+        threadId: this.threadId,
+        handlename: this.handlename,
+        content: this.response
+      })
+      this.response = ''
     }
   },
   created() {
