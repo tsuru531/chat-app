@@ -1,17 +1,21 @@
 <template>
-<form>
-  <textarea type="text" v-model="textarea_response"></textarea>
-  <input type="text" placeholder="名無しさん" v-model="input_handlename">
-  <SendIconButton @click="send" />
+<form class="response_form wrapper">
+  <ResizeTextarea :text="response" @change="changeResponse" />
+  <div class="response_form bottom">
+    <input type="text" placeholder="名無しさん" v-model="modelHandlename">
+    <SendIconButton @click="send" />
+  </div>
 </form>
 </template>
 
 <script>
+import ResizeTextarea from '@/components/atoms/ResizeTextarea'
 import SendIconButton from '@/components/atoms/SendIconButton'
 
 export default {
   name: 'ResponseForm',
   components: {
+    ResizeTextarea,
     SendIconButton
   },
   props: {
@@ -19,15 +23,7 @@ export default {
     handlename: String
   },
   computed: {
-    textarea_response: {
-      get() {
-        return this.response
-      },
-      set(value) {
-        this.$emit('change_response', value)
-      }
-    },
-    input_handlename: {
+    modelHandlename: {
       get() {
         return this.handlename
       },
@@ -37,6 +33,9 @@ export default {
     }
   },
   methods: {
+    changeResponse(value) {
+      this.$emit('change_response', value)
+    },
     send() {
       this.$emit('send')
     }
@@ -45,5 +44,16 @@ export default {
 </script>
 
 <style scoped>
-
+.response_form.wrapper {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+}
+.response_form.bottom {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  padding: 4px;
+}
 </style>

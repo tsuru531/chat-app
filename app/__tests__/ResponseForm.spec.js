@@ -4,7 +4,8 @@ import SendIconButton from '@/components/atoms/SendIconButton'
 
 describe('ResponseForm.vue', () => {
   const propsData = {
-    response: ''
+    response: '',
+    handlename: ''
   }
   let wrapper
   beforeEach(() => {
@@ -19,11 +20,6 @@ describe('ResponseForm.vue', () => {
     Object.keys(propsData).forEach(key => {
       expect(wrapper.props()[key]).toBe(propsData[key])
     })
-  })
-  it('Emit when changing response', async () => {
-    const textarea = wrapper.find('textarea')
-    await textarea.setValue('text')
-    expect(wrapper.emitted('change_response')).toBeTruthy()
   })
   it('Emit when changing handlename', async () => {
     const input = wrapper.find('input')
