@@ -2,7 +2,7 @@
 <div>
   <ul>
     <li v-for="(comment) in comments" :key="comment.id">
-      <CommentItem :comment="comment" @deleteItem="displayModal(comment)" />
+      <CommentItem :comment="comment" @deleteItem="displayModal(comment)" @reply="reply" />
     </li>
   </ul>
   <ModalDialog v-if="modal.isDisplayed" @close="hideModal">
@@ -61,6 +61,9 @@ export default {
     deleteComment() {
       this.$store.dispatch('thread/deleteComment', this.modal.comment_id)
       this.hideModal()
+    },
+    reply(index) {
+      this.$emit('reply', index)
     }
   }
 }

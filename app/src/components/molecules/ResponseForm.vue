@@ -1,6 +1,6 @@
 <template>
 <form class="response_form wrapper">
-  <ResizeTextarea :text="response" @change="changeResponse" />
+  <ResizeTextarea ref="resize_textarea" :text="response" @change="changeResponse" />
   <div class="response_form bottom">
     <input type="text" placeholder="名無しさん" v-model="modelHandlename">
     <SendIconButton @click="send" />
@@ -38,6 +38,9 @@ export default {
     },
     send() {
       this.$emit('send')
+    },
+    focusTextarea() {
+      this.$refs.resize_textarea.focus()
     }
   }
 }

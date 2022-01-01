@@ -7,12 +7,13 @@
         <ThreadHead />
       </header>
       <main>
-        <CommentsList />
+        <CommentsList @reply="reply" />
       </main>
     </section>
   </div>
   <div class="zoning-bottom">
     <ResponseForm
+      ref="response_form"
       :response="response"
       :handlename="handlename"
       @change_response="changeResponse"
@@ -49,6 +50,10 @@ export default {
     }
   },
   methods: {
+    reply(index) {
+      this.response = `>>${index}\n${this.response}`
+      this.$refs.response_form.focusTextarea()
+    },
     changeResponse(value) {
       this.response = value
     },

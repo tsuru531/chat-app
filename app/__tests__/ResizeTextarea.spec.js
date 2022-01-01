@@ -7,7 +7,10 @@ describe('ResizeTextarea.vue', () => {
   }
   let wrapper
   beforeEach(() => {
-    wrapper = shallowMount(ResizeTextarea, { propsData })
+    wrapper = shallowMount(ResizeTextarea, {
+      attachTo: document.body,
+      propsData
+    })
   })
   it('Receive props', () => {
     Object.keys(propsData).forEach(key => {
@@ -24,5 +27,10 @@ describe('ResizeTextarea.vue', () => {
     expect(textarea.clientHeight).toBe(textarea.scrollHeight)
     await textarea.setValue('\n\n\n')
     expect(textarea.clientHeight).toBe(textarea.scrollHeight)
+  })
+  it('execute the focus method, textarea will be focused.', () => {
+    const textarea = wrapper.find('textarea').element
+    wrapper.vm.focus()
+    expect(textarea).toBe(document.activeElement)
   })
 })

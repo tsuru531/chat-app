@@ -7,6 +7,7 @@
   <div class="comment-item body">
     <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
     <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
+    <ReplyButton @click="reply" />
     <DeleteButton v-if="isOwner" @click="deleteItem" />
   </div>
 </div>
@@ -14,6 +15,7 @@
 
 <script>
 import Vue from 'vue'
+import ReplyButton from '@/components/atoms/ReplyButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
 import Anchor from '@/components/atoms/Anchor'
 import { convertToCommentDate } from '@/helpers/definition'
@@ -21,6 +23,7 @@ import { convertToCommentDate } from '@/helpers/definition'
 export default {
   name: 'CommentItem',
   components: {
+    ReplyButton,
     DeleteButton
   },
   props: {
@@ -28,7 +31,7 @@ export default {
   },
   data() {
     return {
-      deletedText: 'このコメントは削除されました'
+      deletedText: 'このコメントは削除されました',
     }
   },
   computed: {
@@ -45,6 +48,9 @@ export default {
   methods: {
     deleteItem() {
       this.$emit('deleteItem')
+    },
+    reply() {
+      this.$emit('reply', this.comment.index)
     }
   },
   mounted() {

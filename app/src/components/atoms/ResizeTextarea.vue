@@ -39,6 +39,9 @@ export default {
       this.$nextTick(() => {
         this.height = `${this.$refs.textarea.scrollHeight}px`
       })
+    },
+    focus() {
+      this.$refs.textarea.focus()
     }
   },
   mounted() {
