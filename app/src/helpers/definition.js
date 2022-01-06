@@ -1,4 +1,5 @@
-export const convertToCommentDate = date => {
+export const convertToCommentDate = value => {
+  const date = new Date(value)
   const padding = number => number.toString().padStart(2, '0');
   const year = date.getFullYear();
   const month = padding(date.getMonth() + 1);

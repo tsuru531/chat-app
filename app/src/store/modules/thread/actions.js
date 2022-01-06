@@ -131,7 +131,7 @@ export const actions = {
     if (commentsSnap) {
       let comments = []
       commentsSnap.forEach(doc => {
-        const data = doc.data()
+        const data = doc.data({ serverTimestamps: "estimate" })
         const createdAt = data.createdAt.toDate()
         comments = [
           ...comments,
