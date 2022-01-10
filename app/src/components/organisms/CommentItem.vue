@@ -62,9 +62,8 @@ export default {
       const nodeList = ref.querySelectorAll('span')
       nodeList.forEach(item => {
         const index = Number(item.textContent)
-        const comment = this.$store.getters['thread/comment'](index)
         const AnchorComponent = Vue.extend(Anchor)
-        const instance = new AnchorComponent({ propsData: { index: comment.index }})
+        const instance = new AnchorComponent({ propsData: { index }})
         instance.$mount()
         item.replaceWith(instance.$el)
       })
