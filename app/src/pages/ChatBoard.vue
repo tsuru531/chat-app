@@ -72,6 +72,7 @@ export default {
   created() {
     this.$store.dispatch('thread/getThread', this.threadId)
     this.$store.dispatch('thread/watchComments', this.threadId)
+    this.$store.dispatch('thread/likes/watch', this.threadId)
   }
 }
 </script>

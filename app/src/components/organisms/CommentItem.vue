@@ -8,6 +8,7 @@
     <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
     <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
     <ReplyButton @click="reply" />
+    <LikeButton :isLike="isLike" @click="switchLike"/>
     <DeleteButton v-if="isOwner" @click="deleteItem" />
   </div>
 </div>
@@ -16,6 +17,7 @@
 <script>
 import Vue from 'vue'
 import ReplyButton from '@/components/atoms/ReplyButton'
+import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
 import Anchor from '@/components/atoms/Anchor'
 import { convertToCommentDate } from '@/helpers/definition'
@@ -24,6 +26,7 @@ export default {
   name: 'CommentItem',
   components: {
     ReplyButton,
+    LikeButton,
     DeleteButton
   },
   props: {
@@ -35,6 +38,13 @@ export default {
     }
   },
   computed: {
+    threadId() {
+      return this.$store.getters['thread/id']
+    },
+    userId() {
+      const userId = this.$store.getters['user/uid']
+      return userId
+    },
     isOwner() {
       const uid = this.$store.getters['user/uid']
       const isAdmin = this.$store.getters['user/isAdmin']
@@ -43,6 +53,10 @@ export default {
     },
     convertedCreatedAt() {
       return convertToCommentDate(this.comment.createdAt)
+    },
+    isLike() {
+      const isExist = Boolean(this.$store.getters['thread/likes/findById'](`${this.userId}${this.comment.id}`))
+      return isExist
     }
   },
   methods: {
@@ -51,6 +65,13 @@ export default {
     },
     reply() {
       this.$emit('reply', this.comment.index)
+    },
+    switchLike() {
+      this.$store.dispatch('thread/likes/switch', {
+        userId: this.userId,
+        commentId: this.comment.id,
+        threadId: this.threadId
+      })
     }
   },
   mounted() {
