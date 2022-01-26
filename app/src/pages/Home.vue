@@ -1,14 +1,19 @@
 <template>
-  <Home />
+<div>
+  <Header />
+  <ThreadsList />
+</div>
 </template>
 
 <script>
-import Home from '@/components/templates/Home'
+import Header from '@/components/organisms/Header'
+import ThreadsList from '@/components/organisms/ThreadsList'
 
 export default {
-  name: 'HomePage',
+  name: 'Home',
   components: {
-    Home
+    Header,
+    ThreadsList
   }
 }
 </script>
