@@ -43,16 +43,16 @@
     </select>
   </div>
   <div>
-    <input name="show_id" id="show_id" type="checkbox" v-model="show_id">
+    <input name="show_id" id="show_id" type="checkbox" v-model="showId">
     <label for="show_id">スレッド内でIDを表示する</label>
   </div>
   <div>
-    <input name="character_limit" id="character_limit" type="checkbox" v-model="character_limit">
+    <input name="character_limit" id="character_limit" type="checkbox" v-model="characterLimit">
     <label for="character_limit">レスポンスの文字数を制限する</label>
   </div>
   <div>
     <label for="limit_count">文字数</label>
-    <input name="limit_count" id="limit_count" type="number" v-model="limit_count">
+    <input name="limit_count" id="limit_count" type="number" v-model="limitCount">
   </div>
   <button type="button" @click="createThread">スレッドを作成する</button>
 </form>
@@ -69,9 +69,9 @@ export default {
       gender: '',
       age: '',
       place: '',
-      show_id: false,
-      character_limit: false,
-      limit_count: 0
+      showId: false,
+      characterLimit: false,
+      limitCount: 0
     }
   },
   methods: {
@@ -83,9 +83,9 @@ export default {
         gender: this.gender,
         age: this.age,
         place: this.place,
-        show_id: this.show_id,
-        character_limit: this.character_limit,
-        limit_count: this.limit_count
+        showId: this.showId,
+        characterLimit: this.characterLimit,
+        limitCount: this.limitCount
       })
     }
   }
