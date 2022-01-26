@@ -70,21 +70,6 @@ export const actions = {
     commit('resetThread')
     Router.push('/')
   },
-  watchThreads({ commit }) {
-    const collectionRef = collection(db, 'threads')
-    const q = query(collectionRef, orderBy('updatedAt', 'desc'))
-    onSnapshot(q, querySnapshot => {
-      let threads = []
-      querySnapshot.forEach(doc => {
-        const data = doc.data()
-        threads = [
-          ...threads,
-          data
-        ]
-      })
-      commit('setThreads', threads)
-    })
-  },
   async addComment({ commit, dispatch, rootGetters }, { threadId, handlename, content }) {
     if (!handlename) handlename = '名無しさん'
     const collectionRef = collection(db, 'comments')

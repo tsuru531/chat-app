@@ -10,8 +10,7 @@ export const initialState = {
   place: '',
   showId: false,
   characterLimit: false,
-  limitLount: 0,
-  threads: [],
+  limitLount: 0
 };
 
 export const state = { ...initialState };

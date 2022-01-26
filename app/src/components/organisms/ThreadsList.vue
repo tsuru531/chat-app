@@ -18,11 +18,11 @@ export default {
   },
   computed: {
     threads() {
-      return this.$store.getters['thread/threads']
+      return this.$store.getters['threads/all']
     }
   },
   created() {
-    return this.$store.dispatch('thread/watchThreads')
+    return this.$store.dispatch('threads/watch')
   }
 }
 </script>
