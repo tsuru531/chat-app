@@ -22,7 +22,7 @@ export const actions = {
     const docRef = doc(collectionRef)
     const id = docRef.id
     const handlename = ''
-    const commentsCount = 1
+    const commentsCount = 0
     const threadData = {
       id,
       uid,
