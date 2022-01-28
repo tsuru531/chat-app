@@ -1,13 +1,18 @@
 <template>
-<form>
+<form class="search_window">
   <input type="search" v-model="input_searchword"/>
-  <button type="button" @click="search">検索</button>
+  <SearchIconButton @click="search" />
 </form>
 </template>
 
 <script>
+import SearchIconButton from '@/components/atoms/SearchIconButton'
+
 export default {
   name: 'SearchWindow',
+  components: {
+    SearchIconButton
+  },
   props: {
     searchword: String
   },
@@ -28,3 +33,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.search_window {
+  display: flex;
+}
+</style>
