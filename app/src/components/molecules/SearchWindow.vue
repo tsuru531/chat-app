@@ -1,7 +1,7 @@
 <template>
 <form class="search_window">
-  <input type="search" v-model="input_searchword"/>
   <SearchIconButton @click="search" />
+  <input class="search_window-input" type="search" placeholder="スレッドを検索する" v-model="input_searchword"/>
 </form>
 </template>
 
@@ -37,5 +37,15 @@ export default {
 <style scoped>
 .search_window {
   display: flex;
+  border: solid 1px rgba(0, 0, 0, 0.5);
+  border-radius: 7px;
+  overflow: hidden;
+  padding: 4px;
+  box-sizing: border-box;
+}
+.search_window-input {
+  appearance: none;
+  outline: none;
+  border: none;
 }
 </style>
