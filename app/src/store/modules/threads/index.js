@@ -2,7 +2,7 @@ import { state } from './state';
 import { getters } from './getters';
 import { mutations } from './mutations';
 import { actions } from './actions';
-import { search } from './search';
+import { filter } from './filter';
 
 export const threads = {
   namespaced: true,
@@ -11,6 +11,6 @@ export const threads = {
   mutations,
   actions,
   modules: {
-    search
+    filter
   }
 };

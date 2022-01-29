@@ -3,7 +3,7 @@ import { getters } from './getters';
 import { mutations } from './mutations';
 import { actions } from './actions';
 
-export const search = {
+export const filter = {
   namespaced: true,
   state,
   getters,
