@@ -55,8 +55,7 @@ export default {
       this.searchword = value
     },
     search() {
-      console.log(`search: ${this.searchword}`)
-      this.searchword = ''
+      this.$store.dispatch('threads/search/setWord', this.searchword)
     }
   }
 }

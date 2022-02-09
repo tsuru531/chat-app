@@ -1,3 +1,4 @@
 export const state = {
-  word: ''
+  hits: [],
+  word: '',
 };
