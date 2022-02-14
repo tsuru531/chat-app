@@ -1,7 +1,14 @@
 <template>
 <form class="search_window">
   <SearchIconButton @click="search" />
-  <input class="search_window-input" type="search" placeholder="スレッドを検索する" v-model="input_searchword"/>
+  <input
+    class="search_window-input"
+    type="search"
+    placeholder="スレッドを検索する"
+    v-model="input_searchword"
+    @keydown.enter.exact.prevent
+    @keyup.enter.exact="search"
+  />
 </form>
 </template>
 

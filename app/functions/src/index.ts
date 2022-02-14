@@ -17,6 +17,16 @@ exports.indexThread = functions.firestore
         ...data,
       });
     });
+exports.updateThread = functions.firestore
+    .document("threads/{docId}")
+    .onUpdate((snap) => {
+      const data = snap.after.data();
+      const objectID = snap.after.id;
+      return threadsIndex.partialUpdateObject({
+        objectID,
+        ...data,
+      });
+    });
 exports.unindexThread = functions.firestore
     .document("threads/{docId}")
     .onDelete((snap) => {

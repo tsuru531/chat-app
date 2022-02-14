@@ -34,17 +34,15 @@ export default {
     SearchWindow,
     TextButton
   },
-  data() {
-    return {
-      searchword: ''
-    }
-  },
   computed: {
     isSignedIn() {
       return this.$store.getters['user/isSignedIn']
     },
     userName() {
       return this.$store.getters['user/name']
+    },
+    searchword() {
+      return this.$store.getters['threads/search/word']
     }
   },
   methods: {
@@ -52,10 +50,10 @@ export default {
       this.$store.dispatch('user/signOut')
     },
     changeSearchword(value) {
-      this.searchword = value
+      this.$store.dispatch('threads/search/setWord', value)
     },
     search() {
-      this.$store.dispatch('threads/search/setWord', this.searchword)
+      this.$store.dispatch('threads/search/search')
     }
   }
 }

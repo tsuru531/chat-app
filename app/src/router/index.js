@@ -47,6 +47,11 @@ const routes = [
     name: 'NotEmailVerified',
     component: () => import('@/pages/NotEmailVerified')
   },
+  {
+    path: '/search',
+    name: 'Search',
+    component: () => import('@/pages/Search')
+  },
 ]
 
 const router = new VueRouter({

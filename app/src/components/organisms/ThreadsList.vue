@@ -21,9 +21,6 @@ export default {
       return this.$store.getters['threads/all']
     }
   },
-  created() {
-    return this.$store.dispatch('threads/watch')
-  }
 }
 </script>
 

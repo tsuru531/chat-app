@@ -1,5 +1,7 @@
 import { shallowMount } from '@vue/test-utils'
 import SearchWindow from '@/components/molecules/SearchWindow'
+import SearchIconButton from '@/components/atoms/SearchIconButton';
+
 
 describe('SearchWindow.vue', () => {
   let wrapper
@@ -7,9 +9,12 @@ describe('SearchWindow.vue', () => {
     wrapper = shallowMount(SearchWindow, {
       propsData: {
         searchword: 'initial value'
-      }
-    })
-  })
+      },
+      stubs: {
+        SearchIconButton,
+      },
+    });
+  });
   it('props', () => {
     const input = wrapper.find('input[type="search"]')
     expect(input.element.value).toBe('initial value')
@@ -19,9 +24,14 @@ describe('SearchWindow.vue', () => {
     input.setValue('searchword')
     expect(wrapper.emitted().change[0]).toEqual(['searchword'])
   })
-  it('click search-button', () => {
-    const button = wrapper.find('button[type="button"]')
-    button.trigger('click')
-    expect(wrapper.emitted().search.length).toBe(1)
-  })
+  it('keyup enter', async () => {
+    const input = wrapper.find('input[type="search"]');
+    await input.trigger('keyup.enter');
+    expect(wrapper.emitted('search')).toBeTruthy();
+  });
+  it('click search-button', async () => {
+    const button = wrapper.findComponent(SearchIconButton);
+    await button.vm.$emit('click');
+    expect(wrapper.emitted('search')).toBeTruthy();
+  });
 })

@@ -1,3 +1,4 @@
+import Router from '@/router';
 import algoliasearch from 'algoliasearch/lite';
 
 export const actions = {
@@ -5,10 +6,12 @@ export const actions = {
         const client = algoliasearch('W25I3XQJCT', '846e461288dfcc5978792ef1a59468b0');
         const index = client.initIndex('threads');
         const hits = await index.search(state.word);
-        commit('setHits', hits.hits);
+        commit('threads/set', hits.hits, { root: true });
+        if (Router.currentRoute.path !== '/search') {
+            Router.push('/search');
+        }
     },
-    setWord({ commit, dispatch }, word) {
+    setWord({ commit }, word) {
         commit('setWord', word);
-        dispatch('search');
     },
 };

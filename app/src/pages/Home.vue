@@ -14,6 +14,9 @@ export default {
   components: {
     Header,
     ThreadsList
-  }
+  },
+  created() {
+    return this.$store.dispatch('threads/watch')
+  },
 }
 </script>
