@@ -6,5 +6,16 @@ export const getters = {
   commentsCount: state => state.commentsCount,
   comment: state => index => {
     return state.comments.find(comment => comment.index == index)
-  }
+  },
+  commentWithId: state => id => {
+    const comment = state.comments.find(comment => comment.id == id);
+    return comment;
+  },
+  commentIsReported: (state, getters, rootState, rootGetters) => commentId => {
+    const uid = rootGetters['user/uid'];
+    const comment = state.comments.find(comment => comment.id == commentId);
+    const report = comment.report;
+    const isReported = report.includes(uid);
+    return isReported;
+  },
 };

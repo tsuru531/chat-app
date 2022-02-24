@@ -3,6 +3,7 @@
   <div class="comment-item info font-caption">
     <span class="comment-item index">{{ comment.index }}. </span>
     <span class="comment-item handlename">{{ comment.handlename }}</span>
+    <ReportButton :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
     <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
@@ -16,6 +17,7 @@
 
 <script>
 import Vue from 'vue'
+import ReportButton from '@/components/atoms/ReportButton'
 import ReplyButton from '@/components/atoms/ReplyButton'
 import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
@@ -25,6 +27,7 @@ import { convertToCommentDate } from '@/helpers/definition'
 export default {
   name: 'CommentItem',
   components: {
+    ReportButton,
     ReplyButton,
     LikeButton,
     DeleteButton
@@ -38,6 +41,9 @@ export default {
     }
   },
   computed: {
+    isReported() {
+      return this.$store.getters['thread/commentIsReported'](this.comment.id)
+    },
     threadId() {
       return this.$store.getters['thread/id']
     },
@@ -57,9 +63,12 @@ export default {
     isLike() {
       const isExist = Boolean(this.$store.getters['thread/likes/findById'](`${this.userId}${this.comment.id}`))
       return isExist
-    }
+    },
   },
   methods: {
+    switchReport() {
+      this.$store.dispatch('thread/switchCommentReport', this.comment.id)
+    },
     deleteItem() {
       this.$emit('deleteItem')
     },
@@ -72,7 +81,7 @@ export default {
         commentId: this.comment.id,
         threadId: this.threadId
       })
-    }
+    },
   },
   mounted() {
     const anchorRegexp = /&gt;&gt;(\d+)/g

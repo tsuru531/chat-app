@@ -95,6 +95,7 @@ export const actions = {
       handlename,
       isPinned,
       isDeleted,
+      report: [],
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }
@@ -161,5 +162,22 @@ export const actions = {
       await deleteDoc(docRef)
     })
     commit('resetComments')
-  }
+  },
+  async switchCommentReport({ getters, rootGetters }, commentId) {
+    const comment = getters.commentWithId(commentId);
+    const uid = rootGetters['user/uid'];
+    const isReported = getters.commentIsReported(commentId);
+    let report;
+    if (isReported) {
+      report = comment.report.filter(id => id !== uid);
+    } else {
+      report = [...comment.report, uid];
+    }
+    const collectionRef = collection(db, 'comments');
+    const docRef = doc(collectionRef, commentId);
+    await updateDoc(docRef, {
+      report,
+      updatedAt: serverTimestamp(),
+    });
+  },
 };

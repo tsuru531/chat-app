@@ -11,7 +11,7 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
     function isValidComment(comment) {
-      return comment.size() == 10
+      return comment.size() == 11
           && 'id' in comment && comment.id is string
           && 'uid' in comment && comment.uid is string
           && 'threadId' in comment && comment.threadId is string
@@ -20,13 +20,15 @@ service cloud.firestore {
           && 'content' in comment && comment.content is string
           && 'isPinned' in comment && comment.isPinned is bool
           && 'isDeleted' in comment && comment.isDeleted is bool
+          && 'report' in comment && comment.report is list
           && 'createdAt' in comment && comment.createdAt is timestamp
           && 'updatedAt' in comment && comment.updatedAt is timestamp
     }
     function isValidCommentUpdate(data) {
       return 'updatedAt' in data && data.updatedAt is timestamp
           && ('isPinned' in data && data.isPinned is bool
-          || 'isDeleted' in data && data.isDeleted is bool);
+          || 'isDeleted' in data && data.isDeleted is bool
+          || 'report' in data && data.report is list);
     }
     match /users/{uid} {
       allow get: if isUserAuthenticated(uid);
