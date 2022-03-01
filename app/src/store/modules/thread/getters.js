@@ -12,6 +12,7 @@ export const getters = {
     return comment;
   },
   commentIsReported: (state, getters, rootState, rootGetters) => commentId => {
+    if (typeof state.comments.find === 'undefined') return false;
     const uid = rootGetters['user/uid'];
     const comment = state.comments.find(comment => comment.id == commentId);
     const report = comment.report;
