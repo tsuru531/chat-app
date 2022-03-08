@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils'
-import Anchor from '@/components/atoms/Anchor'
+import Anchor from '@/components/molecules/Anchor'
 
 describe('Anchor.vue', () => {
   const propsData = {

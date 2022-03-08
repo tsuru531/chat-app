@@ -21,7 +21,7 @@ import ReportButton from '@/components/atoms/ReportButton'
 import ReplyButton from '@/components/atoms/ReplyButton'
 import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
-import Anchor from '@/components/atoms/Anchor'
+import Anchor from '@/components/molecules/Anchor'
 import { convertToCommentDate } from '@/helpers/definition'
 
 export default {
@@ -92,8 +92,10 @@ export default {
       const nodeList = ref.querySelectorAll('span')
       nodeList.forEach(item => {
         const index = Number(item.textContent)
+        const anchor = this.$store.getters['thread/comment'](index)
+        const text = anchor.content
         const AnchorComponent = Vue.extend(Anchor)
-        const instance = new AnchorComponent({ propsData: { index }})
+        const instance = new AnchorComponent({ propsData: { index, text }})
         instance.$mount()
         item.replaceWith(instance.$el)
       })
