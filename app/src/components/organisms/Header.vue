@@ -53,7 +53,12 @@ export default {
       this.$store.dispatch('threads/search/setWord', value)
     },
     search() {
-      this.$store.dispatch('threads/search/search')
+      this.$router.push({
+        path: '/search',
+        query: {
+          word: this.searchword,
+        },
+      })
     }
   }
 }

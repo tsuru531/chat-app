@@ -16,12 +16,11 @@ export default {
 		Header,
 		ThreadsList,
 	},
-	props: {},
-	data() {
-		return {}
+	mounted() {
+		const query = this.$route.query
+		this.$store.dispatch('threads/search/setWord', query.word)
+		this.$store.dispatch('threads/search/search')
 	},
-	computed: {},
-	methods: {}
 }
 </script>
 
