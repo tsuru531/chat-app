@@ -53,12 +53,21 @@ export default {
       this.$store.dispatch('threads/search/setWord', value)
     },
     search() {
-      this.$router.push({
-        path: '/search',
-        query: {
-          word: this.searchword,
-        },
-      })
+      const isSearchPage = this.$router.currentRoute.path === '/search'
+      const isMatchQuery = this.$route.query.word === this.searchword
+      if (!isMatchQuery) {
+        this.$router.push({
+          path: '/search',
+          query: {
+            word: this.searchword,
+          },
+        })
+        if (isSearchPage) {
+          const query = this.$route.query
+          this.$store.dispatch('threads/search/setWord', query.word)
+          this.$store.dispatch('threads/search/search')
+        }
+      }
     }
   }
 }
