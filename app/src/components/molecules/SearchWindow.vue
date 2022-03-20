@@ -9,16 +9,19 @@
     @keydown.enter.exact.prevent
     @keyup.enter.exact="search"
   />
+  <FilterIconButton @click="filter" />
 </form>
 </template>
 
 <script>
 import SearchIconButton from '@/components/atoms/SearchIconButton'
+import FilterIconButton from '@/components/atoms/FilterIconButton'
 
 export default {
   name: 'SearchWindow',
   components: {
-    SearchIconButton
+    SearchIconButton,
+    FilterIconButton,
   },
   props: {
     searchword: String
@@ -36,7 +39,10 @@ export default {
   methods: {
     search() {
       this.$emit('search')
-    }
+    },
+    filter() {
+      this.$emit('filter')
+    },
   }
 }
 </script>
