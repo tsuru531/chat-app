@@ -1,14 +1,20 @@
 <template>
-<CreateThread />
+<div>
+  <Header />
+  <h1>スレッド作成</h1>
+  <CreateThreadForm />
+</div>
 </template>
 
 <script>
-import CreateThread from '@/components/templates/CreateThread'
+import Header from '@/components/organisms/Header'
+import CreateThreadForm from '@/components/organisms/CreateThreadForm'
 
 export default {
-  name: 'CreateThreadPage',
+  name: 'CreateThread',
   components: {
-    CreateThread
+    Header,
+    CreateThreadForm
   }
 }
 </script>
