@@ -21,12 +21,6 @@ const routes = [
     component: () => import('@/pages/SignIn')
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: () => import('@/pages/Dashboard'),
-    meta: { requiresAuth: true }
-  },
-  {
     path: '/thread/post',
     name: 'CreateThread',
     component: () => import('@/pages/CreateThread'),

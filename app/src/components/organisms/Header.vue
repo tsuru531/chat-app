@@ -1,54 +1,60 @@
 <template>
-<header>
-  <div>
-    <router-link to="/">
-      <LogoText />
-    </router-link>
+<div class="header-wrapper">
+  <header class="header">
+    <div>
+      <router-link to="/">
+        <LogoText />
+      </router-link>
+    </div>
+    <SearchWindow
+      :searchword="searchword"
+      @change="changeSearchword"
+      @search="search"
+      @filter="toggleFilter"
+    />
+    <AccountIconButton @click="toggleDropDown" />
+  </header>
+  <div class="header -filter -overlay" v-if="isOpenFilter">
+    <div class="header -filter">
+      <FilterWindow />
+    </div>
   </div>
-  <SearchWindow :searchword="searchword" @change="changeSearchword" @search="search" />
-  <div v-if="!isSignedIn">
-    <router-link to="/signup">
-      <TextButton value="新規登録" />
-    </router-link>
-    <router-link to="/signin">
-      <TextButton value="ログイン" />
-    </router-link>
+  <div class="header -drop_down -overlay" v-if="isOpenDropDown">
+    <div class="header -drop_down">
+      <DropDownMenu />
+    </div>
   </div>
-  <TextButton v-if="isSignedIn" @click="signOut" value="ログアウト" />
-  <p>{{ userName }}</p>
-  <router-link to="/dashboard">
-    <TextButton value="マイページ" />
-  </router-link>
-</header>
+</div>
 </template>
 
 <script>
 import LogoText from '@/components/atoms/LogoText'
-import TextButton from '@/components/atoms/TextButton'
+import AccountIconButton from '@/components/atoms/AccountIconButton'
 import SearchWindow from '@/components/molecules/SearchWindow'
+import FilterWindow from '@/components/molecules/FilterWindow'
+import DropDownMenu from '@/components/organisms/DropDownMenu'
 
 export default {
   name: 'Header',
   components: {
     LogoText,
+    AccountIconButton,
     SearchWindow,
-    TextButton
+    FilterWindow,
+    DropDownMenu,
+  },
+  data() {
+    return {
+      isOpenFilter: false,
+      isOpenDropDown: false,
+    }
   },
   computed: {
-    isSignedIn() {
-      return this.$store.getters['user/isSignedIn']
-    },
-    userName() {
-      return this.$store.getters['user/name']
-    },
     searchword() {
       return this.$store.getters['threads/search/word']
     }
   },
   methods: {
-    signOut() {
-      this.$store.dispatch('user/signOut')
-    },
     changeSearchword(value) {
       this.$store.dispatch('threads/search/setWord', value)
     },
@@ -68,13 +74,19 @@ export default {
           this.$store.dispatch('threads/search/search')
         }
       }
-    }
+    },
+    toggleFilter() {
+      this.isOpenFilter = !this.isOpenFilter
+    },
+    toggleDropDown() {
+      this.isOpenDropDown = !this.isOpenDropDown
+    },
   }
 }
 </script>
 
 <style scoped>
-header {
+.header {
   box-sizing: border-box;
   display: flex;
   align-items: center;
