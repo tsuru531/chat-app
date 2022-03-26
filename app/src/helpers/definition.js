@@ -12,6 +12,7 @@ export const convertToCommentDate = value => {
 
 export const threadOptions = {
   topic: [
+    { value: "", label: "なんでもいい"},
     { value: "雑談", label: "雑談" },
   ],
   gender: [

@@ -14,13 +14,13 @@
     />
     <AccountIconButton @click="toggleDropDown" />
   </header>
-  <div class="header -filter -overlay" v-if="isOpenFilter">
-    <div class="header -filter">
+  <div class="header-filter-overlay" v-if="isOpenFilter">
+    <div class="header-filter">
       <FilterWindow />
     </div>
   </div>
-  <div class="header -drop_down -overlay" v-if="isOpenDropDown">
-    <div class="header -drop_down">
+  <div class="header-drop_down-overlay" v-if="isOpenDropDown">
+    <div class="header-drop_down">
       <DropDownMenu />
     </div>
   </div>
@@ -31,7 +31,7 @@
 import LogoText from '@/components/atoms/LogoText'
 import AccountIconButton from '@/components/atoms/AccountIconButton'
 import SearchWindow from '@/components/molecules/SearchWindow'
-import FilterWindow from '@/components/molecules/FilterWindow'
+import FilterWindow from '@/components/organisms/FilterWindow'
 import DropDownMenu from '@/components/organisms/DropDownMenu'
 
 export default {
