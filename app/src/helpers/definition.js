@@ -34,3 +34,34 @@ export const threadOptions = {
     { value: "東京都", label: "東京都" },
   ],
 };
+
+export function shapeFilters(filters) {
+  const topics = filters.topics.map(topic => {
+    if (topic === "") return undefined;
+    return `topic:${topic}`;
+  });
+  let gender = undefined;
+  if (filters.gender !== "") {
+    gender = `gender:${filters.gender}`;
+  }
+  const ages = filters.ages.map(age => {
+    if (age === "") return undefined;
+    return `age:${age}`;
+  });
+  const places = filters.places.map(place => {
+    if (place === "") return undefined;
+    return `place:${place}`;
+  });
+  const shapedFilters = [topics, gender, ages, places]
+      .map(filter => {
+        if (typeof filter === 'object') {
+          if (filter[0] === undefined) return undefined;
+          return `(${filter.join(' OR ')})`;
+        }
+        if (filter === undefined) return undefined;
+        return filter;
+      })
+      .filter(v => v)
+      .join(' AND ');
+  return shapedFilters;
+}

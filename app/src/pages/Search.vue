@@ -17,8 +17,6 @@ export default {
 		ThreadsList,
 	},
 	mounted() {
-		const query = this.$route.query
-		this.$store.dispatch('threads/search/setWord', query.word)
 		this.$store.dispatch('threads/search/search')
 	},
 }
