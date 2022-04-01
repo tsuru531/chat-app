@@ -6,22 +6,24 @@
         <LogoText />
       </router-link>
     </div>
-    <SearchWindow
-      :searchword="searchword"
-      @change="changeSearchword"
-      @search="search"
-      @filter="toggleFilter"
-    />
-    <AccountIconButton @click="toggleDropDown" />
+    <div class="header-right">
+      <SearchWindow
+        :searchword="searchword"
+        @change="changeSearchword"
+        @search="search"
+        @filter="toggleFilter"
+      />
+      <div class="header-account-wrapper">
+        <AccountIconButton @click="toggleDropDown" />
+        <div class="header-drop_down" v-if="isOpenDropDown">
+          <DropDownMenu />
+        </div>
+      </div>
+    </div>
   </header>
   <div class="header-filter-overlay" v-if="isOpenFilter">
     <div class="header-filter">
       <FilterWindow />
-    </div>
-  </div>
-  <div class="header-drop_down-overlay" v-if="isOpenDropDown">
-    <div class="header-drop_down">
-      <DropDownMenu />
     </div>
   </div>
 </div>
@@ -73,11 +75,33 @@ export default {
 
 <style scoped>
 .header {
+  display: flex;
+  justify-content: space-between;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   width: 100vw;
   height: 64px;
   padding: 8px;
+}
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.header-account-wrapper {
+  position: relative;
+}
+.header-drop_down {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 100;
+  width: 240px;
+  height: 0px;
+  margin-top: 44px;
+  margin-right: 4px;
+  max-height: calc(-44px + 100vh);
+  max-width: calc(-24px + 100vw);
 }
 </style>

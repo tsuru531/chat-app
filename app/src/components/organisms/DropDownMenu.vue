@@ -58,6 +58,7 @@ export default {
 
 <style scoped>
 .drop_down_menu.-wrapper {
+  background-color: #fff;
   border: solid 1px rgba(0, 0, 0, 0.1);
   border-radius: 6px;
   box-shadow:
