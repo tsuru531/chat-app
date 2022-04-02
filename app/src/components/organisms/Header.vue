@@ -7,12 +7,7 @@
       </router-link>
     </div>
     <div class="header-right">
-      <SearchWindow
-        :searchword="searchword"
-        @change="changeSearchword"
-        @search="search"
-        @filter="toggleFilter"
-      />
+      <SearchWindow />
       <div class="header-account-wrapper">
         <AccountIconButton @click="toggleDropDown" />
         <div class="header-drop_down" v-if="isOpenDropDown">
@@ -21,19 +16,13 @@
       </div>
     </div>
   </header>
-  <div class="header-filter-overlay" v-if="isOpenFilter">
-    <div class="header-filter">
-      <FilterWindow />
-    </div>
-  </div>
 </div>
 </template>
 
 <script>
 import LogoText from '@/components/atoms/LogoText'
 import AccountIconButton from '@/components/atoms/AccountIconButton'
-import SearchWindow from '@/components/molecules/SearchWindow'
-import FilterWindow from '@/components/organisms/FilterWindow'
+import SearchWindow from '@/components/organisms/SearchWindow'
 import DropDownMenu from '@/components/organisms/DropDownMenu'
 
 export default {
@@ -42,30 +31,14 @@ export default {
     LogoText,
     AccountIconButton,
     SearchWindow,
-    FilterWindow,
     DropDownMenu,
   },
   data() {
     return {
-      isOpenFilter: false,
       isOpenDropDown: false,
     }
   },
-  computed: {
-    searchword() {
-      return this.$store.getters['threads/search/word']
-    }
-  },
   methods: {
-    changeSearchword(value) {
-      this.$store.dispatch('threads/search/setWord', value)
-    },
-    search() {
-      this.$store.dispatch('threads/search/search')
-    },
-    toggleFilter() {
-      this.isOpenFilter = !this.isOpenFilter
-    },
     toggleDropDown() {
       this.isOpenDropDown = !this.isOpenDropDown
     },

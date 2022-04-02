@@ -28,7 +28,6 @@ export default {
   components: {
     SelectBox,
   },
-  props: {},
   data() {
     return {
       options: threadOptions,
