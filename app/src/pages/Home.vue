@@ -15,8 +15,8 @@ export default {
     Header,
     ThreadsList
   },
-  created() {
-    return this.$store.dispatch('threads/watch')
+  mounted() {
+    return this.$store.dispatch('threads/getPopularity')
   },
 }
 </script>

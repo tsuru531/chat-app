@@ -1,5 +1,5 @@
-import Router from '@/router'
-import { db } from '@/firebase'
+import Router from '@/router';
+import { db } from '@/firebase';
 import {
   collection,
   doc,
@@ -7,9 +7,16 @@ import {
   query,
   orderBy,
   onSnapshot
-} from 'firebase/firestore'
+} from 'firebase/firestore';
+import { popularityThreadsIndex } from '@/algoliasearch';
 
 export const actions = {
+  async getPopularity({ commit }) {
+    const response = await popularityThreadsIndex.search('', {
+      hitsPerPage: 50,
+    });
+    commit('set', response.hits);
+  },
   async delete({ commit, dispatch }, threadId) {
     dispatch('thread/deleteComments', threadId)
     const collectionRef = collection(db, 'threads')
