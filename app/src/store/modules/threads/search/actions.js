@@ -1,5 +1,5 @@
 import Router from '@/router';
-import algoliasearch from 'algoliasearch/lite';
+import { threadsIndex } from '@/algoliasearch';
 import { shapeFilters } from '@/helpers/definition';
 import { initialState } from './state';
 
@@ -12,10 +12,8 @@ export const actions = {
 			places: state.places,
 		};
 		async function searchWithAlgolia() {
-			const client = algoliasearch('W25I3XQJCT', '846e461288dfcc5978792ef1a59468b0');
-			const index = client.initIndex('threads');
 			const shapedFilters = shapeFilters(filters);
-			const response = await index.search(state.word, { filters: shapedFilters });
+			const response = await threadsIndex.search(state.word, { filters: shapedFilters });
 			commit('threads/set', response.hits, { root: true });
 		}
 		function linkToSearch() {
