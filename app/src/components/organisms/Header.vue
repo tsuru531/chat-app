@@ -8,7 +8,7 @@
     </div>
     <div class="header-right">
       <SearchWindow />
-      <div class="header-account-wrapper">
+      <div class="header-account-wrapper" ref="dropDown">
         <AccountIconButton @click="toggleDropDown" />
         <div class="header-drop_down" v-if="isOpenDropDown">
           <DropDownMenu />
@@ -42,7 +42,16 @@ export default {
     toggleDropDown() {
       this.isOpenDropDown = !this.isOpenDropDown
     },
-  }
+  },
+  mounted() {
+    window.addEventListener('click', this._onBlurHandler = (event) => {
+      if (this.$refs.dropDown.contains(event.target)) return false;
+      this.$data.isOpenDropDown = false;
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this._onBlurHandler);
+  },
 }
 </script>
 

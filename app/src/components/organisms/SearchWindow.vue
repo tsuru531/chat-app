@@ -9,7 +9,7 @@
     @keydown.enter.exact.prevent
     @keyup.enter.exact="search"
   />
-  <div class="search_window-filter_wrapper">
+  <div class="search_window-filter_wrapper" ref="filterWindow">
     <FilterIconButton @click="toggleFilter" />
     <div class="search_window-filter_window" v-if="isOpenFilter">
       <FilterWindow />
@@ -52,7 +52,16 @@ export default {
     toggleFilter() {
       this.isOpenFilter = !this.isOpenFilter
     },
-  }
+  },
+  mounted() {
+    window.addEventListener('click', this._onBlurHandler = (event) => {
+      if (this.$refs.filterWindow.contains(event.target)) return false;
+      this.$data.isOpenFilter = false;
+    });
+  },
+  beforeDestroy() {
+    window.removeEventListener('click', this._onBlurHandler);
+  },
 }
 </script>
 
