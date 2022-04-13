@@ -1,45 +1,35 @@
 <template>
-<form>
-  <div>
-    <label for="title">タイトル</label>
-    <input name="title" id="title" type="text" v-model="title">
-  </div>
-  <div>
-    <label for="comment">本文</label>
-    <textarea name="comment" id="comment" rows="5" v-model="comment"></textarea>
-  </div>
-  <div>
-    <label for="topic">話題</label>
-    <SelectBox v-model="topic" name="topic" :options="this.options.topic" />
-  </div>
-  <div>
-    <label for="gender">性別</label>
-    <SelectBox v-model="gender" name="gender" :options="this.options.gender" />
-  </div>
-  <div>
-    <label for="age">年齢層</label>
-    <SelectBox v-model="age" name="age" :options="this.options.age" />
-  </div>
-  <div>
-    <label for="place">場所</label>
-    <SelectBox v-model="place" name="place" :options="this.options.place" />
-  </div>
+<form class="create_thread_form">
+  <InputTitle v-model="title" />
+  <AreaComment v-model="comment" />
+  <SelectTopic v-model="topic" />
+  <SelectGender v-model="gender" />
+  <SelectAge v-model="age" />
+  <SelectPlace v-model="place" />
   <button type="button" @click="createThread">スレッドを作成する</button>
 </form>
 </template>
 
 <script>
-import { threadOptions } from '@/helpers/definition'
-import SelectBox from '@/components/atoms/SelectBox'
+import InputTitle from '@/components/molecules/InputTitle'
+import AreaComment from '@/components/molecules/AreaComment'
+import SelectTopic from '@/components/molecules/SelectTopic'
+import SelectGender from '@/components/molecules/SelectGender'
+import SelectAge from '@/components/molecules/SelectAge'
+import SelectPlace from '@/components/molecules/SelectPlace'
 
 export default {
   name: 'CreateThreadForm',
   components: {
-    SelectBox,
+    InputTitle,
+    AreaComment,
+    SelectTopic,
+    SelectGender,
+    SelectAge,
+    SelectPlace,
   },
   data() {
     return {
-      options: threadOptions,
       title: '',
       comment: '',
       topic: '',
@@ -68,3 +58,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .create_thread_form {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: min(100%, 400px);
+    padding: 16px;
+    border: solid 1px rgba(0, 0, 0, 0.5);
+    border-radius: 6px;
+  }
+</style>

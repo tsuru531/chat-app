@@ -1,8 +1,10 @@
 <template>
 <div>
   <Header />
-  <h1>スレッド作成</h1>
-  <CreateThreadForm />
+  <div class="content">
+    <h1>スレッド作成</h1>
+    <CreateThreadForm />
+  </div>
 </div>
 </template>
 
@@ -18,3 +20,10 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+  .content {
+    box-sizing: border-box;
+    padding: 0 16px;
+  }
+</style>
