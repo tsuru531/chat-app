@@ -1,6 +1,6 @@
 <template>
 <span>
-  Logo
+  Seesy
 </span>
 </template>
 
