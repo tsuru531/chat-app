@@ -22,8 +22,8 @@ import {
 export const actions = {
   async signUp({ commit }, { uid, email, name }) {
     const role = 'general'
-    const created_at = serverTimestamp()
-    const payload = { uid, email, name, role, created_at }
+    const createdAt = serverTimestamp()
+    const payload = { uid, email, name, role, createdAt }
     const collectionRef = collection(db, 'users')
     const docRef = doc(collectionRef, uid)
     await setDoc(docRef, payload)

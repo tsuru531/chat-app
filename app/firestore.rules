@@ -31,7 +31,16 @@ service cloud.firestore {
           || 'report' in data && data.report is list);
     }
     match /users/{uid} {
+      function isValid(user) {
+        return user.size() == 5
+        && 'uid' in user && user.uid is string
+        && 'email' in user && user.email is string
+        && 'name' in user && user.name is string
+        && 'role' in user && user.role is string
+        && 'createdAt' in user && user.createdAt is timestamp
+      }
       allow get: if isUserAuthenticated(uid);
+      allow create: if isValid(request.resource.data);
     }
     match /threads/{threadId} {
       function isValidUpdateCommentsCount(requestData, resourceData) {
