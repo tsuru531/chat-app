@@ -39,16 +39,20 @@ export const actions = {
       Router.push('/')
     }
   },
-  async providerSignUp({ dispatch }) {
-    const result = await getRedirectResult(auth)
-    if (result) {
-      const user = result.user
-      const uid = user.uid
-      const userInfo = user.providerData[0]
-      const name = userInfo.displayName
-      dispatch('signUp', { uid, email: '', name })
-      Router.push('/')
-    }
+  providerSignUp({ dispatch }) {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const user = result.user;
+          const uid = user.uid;
+          const userInfo = user.providerData[0];
+          const name = userInfo.displayName;
+          dispatch('signUp', { uid, email: '', name });
+          Router.push('/', () => {});
+        }
+      }
+    });
   },
   async signIn({ commit }, uid) {
     const collectionRef = collection(db, 'users')
@@ -68,13 +72,17 @@ export const actions = {
     }
   },
   async providerSignIn({ dispatch }) {
-    const result = await getRedirectResult(auth)
-    if (result) {
-      const user = result.user
-      const uid = user.uid
-      dispatch('signIn', uid)
-      Router.push('/')
-    }
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const user = result.user;
+          const uid = user.uid;
+          dispatch('signIn', uid);
+          Router.push('/', () => {});
+        }
+      }
+    });
   },
   async signInWithGoogle() {
     const provider = new GoogleAuthProvider()
@@ -85,10 +93,13 @@ export const actions = {
     await signInWithRedirect(auth, provider)
   },
   signOut({ commit }) {
-    signOut(auth).then(() => {
-      commit('signOut')
-      Router.push('/', () => {})
-    })
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await signOut(auth);
+        commit('signOut');
+        Router.push('/', () => {});
+      }
+    });
   },
   checkEmailVerified({ commit, dispatch, getters }) {
     const isEmailVerified = getters['isEmailVerified']

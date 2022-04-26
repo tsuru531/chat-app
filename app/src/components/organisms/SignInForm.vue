@@ -31,9 +31,6 @@ export default {
       password: ''
     }
   },
-  mounted() {
-    this.$store.dispatch('user/providerSignIn')
-  },
   methods: {
     signIn() {
       this.$store.dispatch('user/signInWithEmailNPassword', {

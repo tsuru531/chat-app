@@ -26,6 +26,7 @@ export default {
     }
   },
   mounted() {
+    this.$store.dispatch('user/providerSignIn')
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.$router.push('/')
