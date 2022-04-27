@@ -1,9 +1,11 @@
 <template>
 <div>
   <Header />
-  <h2>新規登録</h2>
-  <SignUpForm v-if="isLoaded" />
-  <Loading v-else />
+  <div class="signup_container">
+    <h1>新規登録</h1>
+    <SignUpForm v-if="isLoaded" />
+    <Loading v-else />
+  </div>
 </div>
 </template>
 
@@ -38,3 +40,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.signup_container {
+  box-sizing: border-box;
+  padding: 0 16px;
+}
+</style>

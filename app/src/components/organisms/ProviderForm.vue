@@ -1,11 +1,7 @@
 <template>
-<form>
-  <div>
-    <button type="button" @click="signInWithGoogle">Google アカウントでログイン</button>
-  </div>
-  <div>
-    <button type="button" @click="signInByTwitter">Twitter アカウントでログイン</button>
-  </div>
+<form class="form">
+  <button type="button" @click="signInWithGoogle">Google アカウントでログイン</button>
+  <button type="button" @click="signInByTwitter">Twitter アカウントでログイン</button>
 </form>
 </template>
 
@@ -22,3 +18,16 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(100%, 400px);
+  padding: 16px;
+  border: solid 1px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+}
+</style>

@@ -1,8 +1,11 @@
 <template>
 <div>
   <Header />
-  <SignInForm v-if="isLoaded" />
-  <Loading v-else />
+  <div class="signin_container">
+    <h1>ログイン</h1>
+    <SignInForm v-if="isLoaded" />
+    <Loading v-else />
+  </div>
 </div>
 </template>
 
@@ -37,3 +40,10 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+.signin_container {
+  box-sizing: border-box;
+  padding: 0 16px;
+}
+</style>
