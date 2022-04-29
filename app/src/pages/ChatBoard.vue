@@ -2,7 +2,8 @@
 <div class="zoning">
   <div class="zoning-top centering">
     <Header />
-    <Thread @reply="reply" />
+    <Thread v-if="isLoaded" @reply="reply" />
+    <Loading v-else />
   </div>
   <div class="zoning-bottom">
     <ResponseForm
@@ -18,6 +19,7 @@
 </template>
 
 <script>
+import Loading from '@/components/atoms/Loading'
 import Header from '@/components/organisms/Header'
 import Thread from '@/components/organisms/Thread'
 import ResponseForm from '@/components/molecules/ResponseForm'
@@ -25,14 +27,16 @@ import ResponseForm from '@/components/molecules/ResponseForm'
 export default {
   name: 'ChatBoard',
   components: {
+    Loading,
     Header,
     Thread,
     ResponseForm,
   },
   data() {
     return {
+      isLoaded: false,
       response: '',
-      handlename: ''
+      handlename: '',
     }
   },
   computed: {
@@ -60,8 +64,9 @@ export default {
       this.response = ''
     }
   },
-  created() {
-    this.$store.dispatch('thread/getThread', this.threadId)
+  async mounted() {
+    await this.$store.dispatch('thread/getThread', this.threadId)
+    this.isLoaded = true
     this.$store.dispatch('thread/watchComments', this.threadId)
     this.$store.dispatch('thread/likes/watch', this.threadId)
   }
