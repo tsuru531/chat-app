@@ -2,14 +2,7 @@
 <div class="zoning">
   <div class="zoning-top centering">
     <Header />
-    <section class="container">
-      <header>
-        <ThreadHead />
-      </header>
-      <main>
-        <CommentsList @reply="reply" />
-      </main>
-    </section>
+    <Thread @reply="reply" />
   </div>
   <div class="zoning-bottom">
     <ResponseForm
@@ -26,17 +19,15 @@
 
 <script>
 import Header from '@/components/organisms/Header'
-import ThreadHead from '@/components/organisms/ThreadHead'
-import CommentsList from '@/components/organisms/CommentsList'
+import Thread from '@/components/organisms/Thread'
 import ResponseForm from '@/components/molecules/ResponseForm'
 
 export default {
   name: 'ChatBoard',
   components: {
     Header,
-    ThreadHead,
-    CommentsList,
-    ResponseForm
+    Thread,
+    ResponseForm,
   },
   data() {
     return {
@@ -95,14 +86,5 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-}
-.container {
-  display: flex;
-  flex-direction: column;
-  gap: 32px;
-  width: 100%;
-  max-width: 680px;
-  box-sizing: border-box;
-  padding: 16px;
 }
 </style>
