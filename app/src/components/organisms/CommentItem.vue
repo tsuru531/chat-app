@@ -1,8 +1,10 @@
 <template>
-<div class="comment-item wrapper">
-  <div class="comment-item info font-caption">
-    <span class="comment-item index">{{ comment.index }}. </span>
-    <span class="comment-item handlename">{{ comment.handlename }}</span>
+<div class="comment_item-wrapper">
+  <div class="comment_item-info font-caption">
+    <span>
+      <span class="comment-item index">{{ comment.index }}. </span>
+      <span class="comment-item handlename">{{ comment.handlename }}</span>
+    </span>
     <ReportButton :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
@@ -105,6 +107,11 @@ export default {
 </script>
 
 <style scoped>
+.comment_item-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 .comment-item.content {
   display: inline-block;
   vertical-align: top;
@@ -121,5 +128,9 @@ export default {
 }
 .comment-item.created-at {
   padding: 4px;
+}
+.comment_item-info {
+  display: flex;
+  gap: 4px;
 }
 </style>

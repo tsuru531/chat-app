@@ -17,4 +17,13 @@ export default {
 </script>
 
 <style scoped>
+button {
+  background-color: transparent;
+  border: 0;
+  border-bottom: solid 1px rgba(0, 0, 0, 1);
+  cursor: pointer;
+  outline: none;
+  padding: 0;
+  appearance: none;
+}
 </style>
