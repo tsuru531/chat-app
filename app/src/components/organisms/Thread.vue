@@ -35,6 +35,5 @@ export default {
   width: 100%;
   max-width: 680px;
   box-sizing: border-box;
-  padding: 16px;
 }
 </style>
