@@ -1,37 +1,25 @@
 <template>
 <div class="filter_window -wrapper">
-  <div>
-    <label for="topic">話題</label>
-    <SelectBox v-model="topic" name="topic" :options="this.options.topic" />
-  </div>
-  <div>
-    <label for="gender">性別</label>
-    <SelectBox v-model="gender" name="gender" :options="this.options.gender" />
-  </div>
-  <div>
-    <label for="age">年齢層</label>
-    <SelectBox v-model="age" name="age" :options="this.options.age" />
-  </div>
-  <div>
-    <label for="place">場所</label>
-    <SelectBox v-model="place" name="place" :options="this.options.place" />
-  </div>
+  <SelectTopic v-model="topic" />
+  <SelectGender v-model="gender" />
+  <SelectAge v-model="age" />
+  <SelectPlace v-model="place" />
 </div>
 </template>
 
 <script>
-import { threadOptions } from '@/helpers/definition'
-import SelectBox from '@/components/atoms/SelectBox'
+import SelectTopic from '@/components/molecules/SelectTopic'
+import SelectGender from '@/components/molecules/SelectGender'
+import SelectAge from '@/components/molecules/SelectAge'
+import SelectPlace from '@/components/molecules/SelectPlace'
 
 export default {
   name: 'FilterWindow',
   components: {
-    SelectBox,
-  },
-  data() {
-    return {
-      options: threadOptions,
-    }
+    SelectTopic,
+    SelectGender,
+    SelectAge,
+    SelectPlace,
   },
   computed: {
     topic: {
@@ -67,7 +55,6 @@ export default {
       }
     },
   },
-  methods: {}
 }
 </script>
 
