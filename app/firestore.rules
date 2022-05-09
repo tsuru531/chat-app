@@ -10,26 +10,6 @@ service cloud.firestore {
     function isAdmin() {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
     }
-    function isValidComment(comment) {
-      return comment.size() == 11
-          && 'id' in comment && comment.id is string
-          && 'uid' in comment && comment.uid is string
-          && 'threadId' in comment && comment.threadId is string
-          && 'handlename' in comment && comment.handlename is string
-          && 'index' in comment && comment.index is number
-          && 'content' in comment && comment.content is string
-          && 'isPinned' in comment && comment.isPinned is bool
-          && 'isDeleted' in comment && comment.isDeleted is bool
-          && 'report' in comment && comment.report is list
-          && 'createdAt' in comment && comment.createdAt is timestamp
-          && 'updatedAt' in comment && comment.updatedAt is timestamp
-    }
-    function isValidCommentUpdate(data) {
-      return 'updatedAt' in data && data.updatedAt is timestamp
-          && ('isPinned' in data && data.isPinned is bool
-          || 'isDeleted' in data && data.isDeleted is bool
-          || 'report' in data && data.report is list);
-    }
     match /users/{uid} {
       function isValid(user) {
         return user.size() == 5
@@ -56,11 +36,32 @@ service cloud.firestore {
                     || isAdmin();
     }
     match /comments/{commentId} {
+      function isValid(comment) {
+        return comment.size() == 11
+            && 'id' in comment && comment.id is string
+            && 'uid' in comment && comment.uid is string
+            && 'threadId' in comment && comment.threadId is string
+            && 'handlename' in comment && comment.handlename is string
+            && 'index' in comment && comment.index is number
+            && 'content' in comment && comment.content is string
+            && 'isPinned' in comment && comment.isPinned is bool
+            && 'isDeleted' in comment && comment.isDeleted is bool
+            && 'report' in comment && comment.report is list
+            && 'createdAt' in comment && comment.createdAt is timestamp
+            && 'updatedAt' in comment && comment.updatedAt is timestamp
+      }
       allow read: if true;
-      allow create: if isValidComment(request.resource.data);
-      allow update: if isValidCommentUpdate(request.resource.data)
-                    && resource.data.uid == request.auth.uid
-                    || isAdmin();
+      allow create: if isValid(request.resource.data);
+      allow update: if isAuthenticated()
+                    && isValid(request.resource.data)
+                    && request.resource.data.id == resource.data.id
+                    && request.resource.data.uid == resource.data.uid
+                    && request.resource.data.threadId == resource.data.threadId
+                    && request.resource.data.handlename == resource.data.handlename
+                    && request.resource.data.index == resource.data.index
+                    && request.resource.data.content == resource.data.content
+                    && request.resource.data.createdAt == resource.data.createdAt
+                    && request.resource.data.updatedAt > resource.data.updatedAt;
       allow delete: if isAuthenticated()
                     && request.auth.uid == get(/databases/$(database)/documents/threads/$(resource.data.threadId)).data.uid
                     || isAdmin();
