@@ -32,11 +32,6 @@ const routes = [
     component: () => import('@/pages/ChatBoard')
   },
   {
-    path: '/thread/:thread_id/menu',
-    name: 'ThreadMenu',
-    component: () => import('@/pages/ThreadMenu')
-  },
-  {
     path: '/not_email_verified',
     name: 'NotEmailVerified',
     component: () => import('@/pages/NotEmailVerified')

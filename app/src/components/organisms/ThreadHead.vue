@@ -1,8 +1,8 @@
 <template>
 <div>
-  <router-link :to="{ path: `/thread/${threadId}/menu` }">メニュー</router-link>
   <h1>{{ title }}</h1>
   <CommentsCounter :count="commentsCount" />
+  <button v-if="isHaveThreadPermission" @click="deleteThread">スレッドを削除する</button>
 </div>
 </template>
 
@@ -24,12 +24,19 @@ export default {
     threadId() {
       return this.$store.getters['thread/id']
     },
+    isHaveThreadPermission() {
+      return this.$store.getters['user/isHaveThreadPermission']
+    },
     commentsCount() {
       const comments = this.$store.getters['thread/comments']
       return comments.length
     }
   },
-  methods: {}
+  methods: {
+    deleteThread() {
+      this.$store.dispatch('thread/delete', this.threadId)
+    }
+  },
 }
 </script>
 
