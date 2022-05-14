@@ -63,12 +63,12 @@ export const actions = {
     return data
   },
   async delete({ commit, dispatch }, threadId) {
-    dispatch('deleteComments', threadId)
-    const collectionRef = collection(db, 'threads')
-    const docRef = doc(collectionRef, threadId)
-    await deleteDoc(docRef)
-    commit('resetThread')
-    Router.push('/')
+    await dispatch('deleteComments', threadId);
+    const collectionRef = collection(db, 'threads');
+    const docRef = doc(collectionRef, threadId);
+    await deleteDoc(docRef);
+    commit('resetThread');
+    Router.push('/');
   },
   async addComment({ commit, dispatch, rootGetters }, { threadId, handlename, content }) {
     if (!handlename) handlename = '名無しさん'
