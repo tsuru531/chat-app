@@ -34,5 +34,6 @@ ul {
   gap: 16px;
   padding: 16px;
   margin: 0;
+  width: min(100%, 760px);
 }
 </style>

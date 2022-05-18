@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="home-wrapper">
   <Header />
   <ThreadsList />
 </div>
@@ -20,3 +20,11 @@ export default {
   },
 }
 </script>
+
+<style scoped>
+  .home-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+</style>
