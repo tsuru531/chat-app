@@ -100,10 +100,10 @@ export const actions = {
       updatedAt: serverTimestamp()
     }
     try {
-      commit('setComments', {
+      commit('setComments', [
         ...comments,
-        payload
-      })
+        { ...payload },
+      ])
       await setDoc(docRef, payload)
       await updateDoc(doc(collection(db, 'threads'), threadId), {
         commentsCount: index,
