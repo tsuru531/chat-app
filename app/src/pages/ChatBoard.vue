@@ -1,7 +1,7 @@
 <template>
 <div class="chatboard">
   <Header />
-  <div class="chatboard-thread_wrapper">
+  <div class="chatboard-thread_wrapper" ref="thread">
     <div class="chatboard-thread">
       <Thread v-if="isLoaded" @reply="reply" />
       <Loading v-else />
@@ -41,6 +41,7 @@ export default {
       isLoaded: false,
       response: '',
       handlename: '',
+      isScrolledBottom: false,
     }
   },
   computed: {
@@ -69,10 +70,34 @@ export default {
     }
   },
   async mounted() {
+    const threadElement = this.$refs.thread
     await this.$store.dispatch('thread/getThread', this.threadId)
     this.isLoaded = true
     this.$store.dispatch('thread/watchComments', this.threadId)
     this.$store.dispatch('thread/likes/watch', this.threadId)
+    threadElement.addEventListener('scroll', () => {
+      if (threadElement.scrollHeight - threadElement.scrollTop - threadElement.clientHeight <= 10) {
+        if (!this.isScrolledBottom) {
+          this.isScrolledBottom = true
+        }
+      } else {
+        if (this.isScrolledBottom) {
+          this.isScrolledBottom = false
+        }
+      }
+    })
+    this.$store.subscribe((mutation) => {
+      if (mutation.type === 'thread/setComments') {
+        if (this.isScrolledBottom) {
+          const scrollOptions = {
+            left: 0,
+            top: threadElement.clientHeight,
+            behavior: 'smooth'
+          }
+          threadElement.scrollTo(scrollOptions)
+        }
+      }
+    })
   }
 }
 </script>
