@@ -26,6 +26,7 @@ button {
   justify-content: center;
   align-items: center;
   width: 34px;
+  min-width: 34px;
   height: 34px;
   background-color: transparent;
   border: none;
