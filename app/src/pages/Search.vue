@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="search-wrapper">
 	<Header />
 	<h1>検索結果</h1>
 	<ThreadsList />
@@ -23,5 +23,9 @@ export default {
 </script>
 
 <style scoped>
-
+	.search-wrapper {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
 </style>
