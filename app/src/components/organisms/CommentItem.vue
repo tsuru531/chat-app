@@ -5,14 +5,16 @@
       <span class="comment-item index">{{ comment.index }}. </span>
       <span class="comment-item handlename">{{ comment.handlename }}</span>
     </span>
-    <ReportButton :isReported="isReported" @click="switchReport" />
+    <ReportButton v-if="!comment.isDeleted" :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
     <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
     <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
-    <ReplyButton @click="reply" />
-    <LikeButton :isLike="isLike" @click="switchLike"/>
-    <DeleteButton v-if="isOwner" @click="deleteItem" />
+    <div v-if="!comment.isDeleted">
+      <ReplyButton @click="reply" />
+      <LikeButton :isLike="isLike" @click="switchLike" />
+      <DeleteButton v-if="isDisplayedDelete" @click="deleteItem" />
+    </div>
   </div>
 </div>
 </template>
@@ -53,11 +55,11 @@ export default {
       const userId = this.$store.getters['user/uid']
       return userId
     },
-    isOwner() {
+    isDisplayedDelete() {
       const uid = this.$store.getters['user/uid']
+      const isOwner = uid === this.comment.uid
       const isAdmin = this.$store.getters['user/isAdmin']
-      const isOwner = uid === this.comment.uid || isAdmin
-      return isOwner
+      return isOwner || isAdmin
     },
     convertedCreatedAt() {
       return convertToCommentDate(this.comment.createdAt)
