@@ -64,7 +64,7 @@ export default {
   align-items: center;
   width: 100vw;
   height: 64px;
-  padding: 8px;
+  padding: 8px 16px;
 }
 .header-right {
   display: flex;
