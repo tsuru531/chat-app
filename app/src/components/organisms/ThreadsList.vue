@@ -29,6 +29,7 @@ li {
   list-style: none;
 }
 ul {
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: 16px;
