@@ -57,7 +57,7 @@ export default {
     },
     isDisplayedDelete() {
       const uid = this.$store.getters['user/uid']
-      const isOwner = uid === this.comment.uid
+      const isOwner = uid === this.comment.uid && uid !== ''
       const isAdmin = this.$store.getters['user/isAdmin']
       return isOwner || isAdmin
     },
