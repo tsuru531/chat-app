@@ -21,22 +21,36 @@ import {
 
 export const actions = {
   async signUp({ commit }, { uid, email, name }) {
-    const role = 'general'
-    const createdAt = serverTimestamp()
-    const payload = { uid, email, name, role, createdAt }
-    const collectionRef = collection(db, 'users')
-    const docRef = doc(collectionRef, uid)
-    await setDoc(docRef, payload)
-    commit('signIn', { uid, name, role })
+    if (typeof uid !== 'string') return false;
+    if (typeof email !== 'string') return false;
+    if (typeof name !== 'string') return false;
+    const role = 'general';
+    const createdAt = serverTimestamp();
+    const payload = { uid, email, name, role, createdAt };
+    const collectionRef = collection(db, 'users');
+    const docRef = doc(collectionRef, uid);
+    try {
+      await setDoc(docRef, payload);
+      commit('signIn', { uid, name, role });
+    } catch (e) {
+      console.error(e);
+    }
   },
-  async signUpWithEmailNPassword({ dispatch }, { name, email, password }) {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
-    if (user) {
-      const uid = user.uid
-      await dispatch('signUp', { uid, email, name })
-      await sendEmailVerification(user)
-      Router.push('/')
+  async signUpWithEmailAndPassword({ dispatch }, { name, email, password }) {
+    if (typeof name !== 'string') return false;
+    if (typeof email !== 'string') return false;
+    if (typeof password !== 'string') return false;
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      if (user) {
+        const uid = user.uid;
+        await dispatch('signUp', { uid, email, name });
+        await sendEmailVerification(user);
+        Router.push('/', () => {});
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
   providerSignUp({ dispatch }) {
@@ -55,20 +69,31 @@ export const actions = {
     });
   },
   async signIn({ commit }, uid) {
-    const collectionRef = collection(db, 'users')
-    const docRef = doc(collectionRef, uid)
-    const docSnapshot = await getDoc(docRef)
-    const data = docSnapshot.data()
-    const { name, role } = data
-    commit('signIn', { uid, name, role })
+    if (typeof uid !== 'string') return false;
+    const collectionRef = collection(db, 'users');
+    const docRef = doc(collectionRef, uid);
+    try {
+      const docSnapshot = await getDoc(docRef);
+      const data = docSnapshot.data();
+      const { name, role } = data;
+      commit('signIn', { uid, name, role });
+    } catch (e) {
+      console.error(e);
+    }
   },
-  async signInWithEmailNPassword({ dispatch }, { email, password }) {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password)
-    const user = userCredential.user
-    if (user) {
-      const uid = user.uid
-      dispatch('signIn', uid)
-      Router.push('/')
+  async signInWithEmailAndPassword({ dispatch }, { email, password }) {
+    if (typeof email !== 'string') return false;
+    if (typeof password !== 'string') return false;
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      if (user) {
+        const uid = user.uid;
+        dispatch('signIn', uid);
+        Router.push('/', () => {});
+      }
+    } catch (e) {
+      console.error(e);
     }
   },
   async providerSignIn({ dispatch }) {

@@ -1,8 +1,8 @@
 <template>
 <div class="form_wrapper">
   <form class="signin_form">
-    <InputEmail v-model="email" />
-    <InputPassword v-model="password" />
+    <InputEmail :value="email" @change="changeEmail" />
+    <InputPassword :value="password" @change="changePassword" />
     <button type="button" @click="signIn">ログイン</button>
   </form>
   <ProviderForm />
@@ -28,8 +28,14 @@ export default {
     }
   },
   methods: {
+    changeEmail(email) {
+      this.email = email
+    },
+    changePassword(password) {
+      this.password = password
+    },
     signIn() {
-      this.$store.dispatch('user/signInWithEmailNPassword', {
+      this.$store.dispatch('user/signInWithEmailAndPassword', {
         email: this.email,
         password: this.password
       })

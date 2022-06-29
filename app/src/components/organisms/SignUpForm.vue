@@ -1,9 +1,9 @@
 <template>
 <div class="form_wrapper">
   <form class="signup_form">
-    <InputName v-model="name" />
-    <InputEmail v-model="email" />
-    <InputPassword v-model="password" />
+    <InputName :value="name" @change="changeName" />
+    <InputEmail :value="email" @change="changeEmail" />
+    <InputPassword :value="password" @change="changePassword" />
     <button type="button" @click="signUp">新規登録</button>
   </form>
   <ProviderForm />
@@ -28,17 +28,26 @@ export default {
     return {
       name: '',
       email: '',
-      password: ''
+      password: '',
     }
   },
   methods: {
+    changeName(name) {
+      this.name = name
+    },
+    changeEmail(email) {
+      this.email = email
+    },
+    changePassword(password) {
+      this.password = password
+    },
     signUp() {
-      this.$store.dispatch('user/signUpWithEmailNPassword', {
+      this.$store.dispatch('user/signUpWithEmailAndPassword', {
         name: this.name,
         email: this.email,
         password: this.password
       })
-    }
+    },
   }
 }
 </script>

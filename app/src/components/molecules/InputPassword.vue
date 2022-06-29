@@ -1,7 +1,7 @@
 <template>
 <div>
   <Label>パスワード</Label>
-  <input name="password" id="password" :type="isDisplayed ? 'text' : 'password'" @input="input">
+  <input name="password" id="password" :type="isDisplayed ? 'text' : 'password'" v-model="input_value">
   <button type="button" @click="switchDisplay">{{ isDisplayed ? '非表示' : '表示' }}</button>
 </div>
 </template>
@@ -22,10 +22,17 @@ export default {
   props: {
     value: { type: String, required: true },
   },
+  computed: {
+    input_value: {
+      get: function() {
+        return this.value
+      },
+      set: function(value) {
+        this.$emit('change', value)
+      },
+    }
+  },
   methods: {
-    input: function(e) {
-      this.$emit('input', e.target.value);
-    },
     switchDisplay: function() {
       this.isDisplayed = !this.isDisplayed
     },

@@ -1,7 +1,7 @@
 <template>
 <div>
   <Label>メールアドレス</Label>
-  <input name="email" id="email" type="text" @input="input">
+  <input name="email" id="email" type="text" v-model="input_value">
 </div>
 </template>
 
@@ -16,10 +16,15 @@ export default {
   props: {
     value: { type: String, required: true },
   },
-  methods: {
-    input: function(e) {
-      this.$emit('input', e.target.value);
-    },
+  computed: {
+    input_value: {
+      get: function() {
+        return this.value
+      },
+      set: function(value) {
+        this.$emit('change', value)
+      },
+    }
   },
 }
 </script>
