@@ -91,7 +91,7 @@ export default {
         if (this.isScrolledBottom) {
           const scrollOptions = {
             left: 0,
-            top: threadElement.clientHeight,
+            top: threadElement.scrollHeight - threadElement.clientHeight,
             behavior: 'smooth'
           }
           threadElement.scrollTo(scrollOptions)
