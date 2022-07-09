@@ -1,21 +1,11 @@
 import Router from '@/router';
 import { db } from '@/firebase';
-import {
-  collection,
-  doc,
-  deleteDoc,
-  query,
-  orderBy,
-  onSnapshot
-} from 'firebase/firestore';
-import { popularityThreadsIndex } from '@/algoliasearch';
+import { collection, doc, deleteDoc } from 'firebase/firestore';
+import { watchThreads } from '@/modules';
 
 export const actions = {
-  async getPopularity({ commit }) {
-    const response = await popularityThreadsIndex.search('', {
-      hitsPerPage: 50,
-    });
-    commit('set', response.hits);
+  add({ commit }, thread) {
+    commit('add', thread);
   },
   async delete({ commit, dispatch }, threadId) {
     dispatch('thread/deleteComments', threadId)
@@ -25,19 +15,10 @@ export const actions = {
     commit('thread/reset', { root: true })
     Router.push('/')
   },
-  watch({ commit }) {
-    const collectionRef = collection(db, 'threads')
-    const q = query(collectionRef, orderBy('updatedAt', 'desc'))
-    onSnapshot(q, querySnapshot => {
-      let threads = []
-      querySnapshot.forEach(doc => {
-        const data = doc.data()
-        threads = [
-          ...threads,
-          data
-        ]
-      })
-      commit('set', threads)
-    })
-  }
+  async watch({ commit }) {
+    const unsubscribe = await watchThreads((threads) => {
+      commit('set', threads);
+    });
+    return unsubscribe;
+  },
 };

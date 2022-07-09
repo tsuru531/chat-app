@@ -55,19 +55,19 @@ export default {
         limitCount: this.limitCount
       })
     }
-  }
+  },
 }
 </script>
 
 <style scoped>
-  .create_thread_form {
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    width: min(100%, 400px);
-    padding: 16px;
-    border: solid 1px rgba(0, 0, 0, 0.5);
-    border-radius: 6px;
-  }
+.create_thread_form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: min(100%, 400px);
+  padding: 16px;
+  border: solid 1px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;
+}
 </style>
