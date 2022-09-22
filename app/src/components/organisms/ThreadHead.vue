@@ -28,7 +28,7 @@ export default {
       return this.$store.getters['user/isHaveThreadPermission']
     },
     commentsCount() {
-      const comments = this.$store.getters['thread/comments']
+      const comments = this.$store.getters['thread/comments/array']
       return comments.length
     }
   },

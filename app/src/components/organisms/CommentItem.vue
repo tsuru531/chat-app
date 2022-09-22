@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     isReported() {
-      return this.$store.getters['thread/commentIsReported'](this.comment.id)
+      return this.$store.getters['thread/comments/isReported'](this.comment.id)
     },
     threadId() {
       return this.$store.getters['thread/id']
@@ -95,11 +95,12 @@ export default {
       ref.innerHTML = replaceHTML
       const nodeList = ref.querySelectorAll('span')
       nodeList.forEach(item => {
-        const index = Number(item.textContent)
-        const anchor = this.$store.getters['thread/comment'](index)
-        const text = anchor.content
+        const anchorNumber = Number(item.textContent)
+        const comments = this.$store.getters['thread/comments/array']
+        const anchorComment = comments[anchorNumber - 1]
+        const text = anchorComment.content
         const AnchorComponent = Vue.extend(Anchor)
-        const instance = new AnchorComponent({ propsData: { index, text }})
+        const instance = new AnchorComponent({ propsData: { index: anchorNumber, text }})
         instance.$mount()
         item.replaceWith(instance.$el)
       })

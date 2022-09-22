@@ -61,7 +61,7 @@ export default {
       this.handlename = value
     },
     sendComment() {
-      this.$store.dispatch('thread/addComment', {
+      this.$store.dispatch('thread/comments/create', {
         threadId: this.threadId,
         handlename: this.handlename,
         content: this.response
@@ -73,7 +73,7 @@ export default {
     const threadElement = this.$refs.thread
     await this.$store.dispatch('thread/getThread', this.threadId)
     this.isLoaded = true
-    this.$store.dispatch('thread/watchComments', this.threadId)
+    this.$store.dispatch('thread/comments/watch', this.threadId)
     this.$store.dispatch('thread/likes/watch', this.threadId)
     threadElement.addEventListener('scroll', () => {
       if (threadElement.scrollHeight - threadElement.scrollTop - threadElement.clientHeight <= 10) {

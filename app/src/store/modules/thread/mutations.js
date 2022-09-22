@@ -21,10 +21,4 @@ export const mutations = {
       threads: state.threads,
     })
   },
-  setComments(state, comments) {
-    state.comments = comments
-  },
-  resetComments(state) {
-    state.comments = []
-  }
-};
+}

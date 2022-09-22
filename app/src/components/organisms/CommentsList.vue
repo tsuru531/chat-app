@@ -43,7 +43,7 @@ export default {
   },
   computed: {
     comments() {
-      return this.$store.getters['thread/comments']
+      return this.$store.getters['thread/comments/array']
     }
   },
   methods: {
