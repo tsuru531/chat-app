@@ -1,11 +1,10 @@
-import { createComment } from '@/modules'
+import { createComment, getComments } from '@/modules'
 import { db } from '@/firebase'
 import {
   collection,
   query,
   where,
   orderBy,
-  getDocs,
   onSnapshot,
   doc,
   updateDoc,
@@ -13,26 +12,22 @@ import {
 } from 'firebase/firestore'
 
 export const actions = {
-  async create ({ commit, dispatch, rootGetters }, { threadId, handlename, content }) {
-    if (!handlename) handlename = '名無しさん';
-    const uid = rootGetters['user/uid'];
-    const comments = await dispatch('getComments', threadId);
-    let lastComment;
+  async create ({ dispatch, rootGetters }, { threadId, handlename, content }) {
+    if (!handlename) handlename = '名無しさん'
+    const uid = rootGetters['user/uid']
+    const comments = await dispatch('get', threadId)
+    let lastComment
     if (comments[0]) {
       lastComment = comments.slice(-1)[0]
     } else {
       lastComment = { index: 0 }
     }
-    const index = lastComment.index + 1;
-    const isPinned = false;
-    const isDeleted = false;
-    const commentData = { uid, threadId, content, index, handlename, isPinned, isDeleted, report: [] };
+    const index = lastComment.index + 1
+    const isPinned = false
+    const isDeleted = false
+    const commentData = { uid, threadId, content, index, handlename, isPinned, isDeleted, report: [] }
     try {
-      const payload = await createComment(commentData);
-      commit('set', [
-        ...comments,
-        { ...payload },
-      ])
+      await createComment(commentData)
     } catch (error) {
       console.error(error)
     }
@@ -56,9 +51,7 @@ export const actions = {
     }
   },
   async get ({ dispatch }, threadId) {
-    const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('threadId', '==', threadId), orderBy('index'))
-    const querySnapshot = await getDocs(q)
+    const querySnapshot = await getComments(threadId)
     const comments = dispatch('set', querySnapshot)
     return comments
   },
