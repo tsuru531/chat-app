@@ -1,4 +1,5 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthenticated() {
@@ -23,38 +24,36 @@ service cloud.firestore {
       allow create: if isValid(request.resource.data);
     }
     match /threads/{threadId} {
-      function isValidUpdateCommentsCount(requestData, resourceData) {
-        return 'commentsCount' in requestData && requestData.commentsCount is number
-            && 'updatedAt' in requestData && requestData.updatedAt is timestamp
-            && requestData.commentsCount > resourceData.commentsCount;
+      function isValidCreateComment(data, resourceData) {
+        return data.keys().hasAll(['comments', 'updatedAt'])
+            && data.comments.size() == resourceData.comments.size() + 1
       }
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update: if isValidUpdateCommentsCount(request.resource.data, resource.data);
+      allow update: if isValidCreateComment(request.resource.data, resource.data);
       allow delete: if isAuthenticated()
                     && request.auth.uid == resource.data.uid
                     || isAdmin();
+      match /comments/{commentId} {
+        function isValidCreateComment(data) {
+          return data.size() == 7
+              && data.keys().hasAll(['id', 'threadId', 'uid', 'handlename', 'content', 'reports', 'createdAt'])
+              && data.id is string
+              && data.threadId is string
+              && data.uid is string
+              && data.handlename is string
+              && data.content is string
+              && data.reports is list
+              && data.createdAt is timestamp
+        }
+        allow create: if isValidCreateComment(request.resource.data);
+      }
     }
     match /comments/{commentId} {
-      function isValid(comment) {
-        return comment.size() == 11
-            && 'id' in comment && comment.id is string
-            && 'uid' in comment && comment.uid is string
-            && 'threadId' in comment && comment.threadId is string
-            && 'handlename' in comment && comment.handlename is string
-            && 'index' in comment && comment.index is number
-            && 'content' in comment && comment.content is string
-            && 'isPinned' in comment && comment.isPinned is bool
-            && 'isDeleted' in comment && comment.isDeleted is bool
-            && 'report' in comment && comment.report is list
-            && 'createdAt' in comment && comment.createdAt is timestamp
-            && 'updatedAt' in comment && comment.updatedAt is timestamp
-      }
       function isThreadOwner(uid) {
         return uid == get(/databases/$(database)/documents/threads/$(resource.data.threadId)).data.uid
       }
       allow read: if true;
-      allow create: if isValid(request.resource.data);
       allow update: if isAuthenticated()
                     && isValid(request.resource.data)
                     && request.resource.data.id == resource.data.id

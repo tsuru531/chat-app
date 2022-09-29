@@ -12,25 +12,10 @@ import {
 } from 'firebase/firestore'
 
 export const actions = {
-  async create ({ dispatch, rootGetters }, { threadId, handlename, content }) {
+  async create ({ rootGetters }, { threadId, handlename, content }) {
     if (!handlename) handlename = '名無しさん'
     const uid = rootGetters['user/uid']
-    const comments = await dispatch('get', threadId)
-    let lastComment
-    if (comments[0]) {
-      lastComment = comments.slice(-1)[0]
-    } else {
-      lastComment = { index: 0 }
-    }
-    const index = lastComment.index + 1
-    const isPinned = false
-    const isDeleted = false
-    const commentData = { uid, threadId, content, index, handlename, isPinned, isDeleted, report: [] }
-    try {
-      await createComment(commentData)
-    } catch (error) {
-      console.error(error)
-    }
+    await createComment(threadId, uid, handlename, content)
   },
   set ({ commit }, commentsSnap) {
     if (commentsSnap) {
