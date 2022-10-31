@@ -1,15 +1,16 @@
-import { createComment, getComments } from '@/modules'
 import { db } from '@/firebase'
 import {
   collection,
-  query,
-  where,
-  orderBy,
-  onSnapshot,
   doc,
   updateDoc,
   serverTimestamp,
 } from 'firebase/firestore'
+import {
+  createComment,
+  getComments,
+  addReport,
+  deleteReport,
+} from '@/modules'
 
 export const actions = {
   async create ({ rootGetters }, { threadId, handlename, content }) {
@@ -40,30 +41,6 @@ export const actions = {
     const comments = dispatch('set', querySnapshot)
     return comments
   },
-  watch ({ dispatch }, threadId) {
-    const collectionRef = collection(db, 'comments')
-    const q = query(collectionRef, where('threadId', '==', threadId), orderBy('index'))
-    onSnapshot(q, querySnapshot => {
-      dispatch('set', querySnapshot)
-    })
-  },
-  async switchReport({ getters, rootGetters }, commentId) {
-    const comment = getters.commentWithId(commentId);
-    const uid = rootGetters['user/uid'];
-    const isReported = getters.commentIsReported(commentId);
-    let report;
-    if (isReported) {
-      report = comment.report.filter(id => id !== uid);
-    } else {
-      report = [...comment.report, uid];
-    }
-    const collectionRef = collection(db, 'comments');
-    const docRef = doc(collectionRef, commentId);
-    await updateDoc(docRef, {
-      report,
-      updatedAt: serverTimestamp(),
-    });
-  },
   async delete (context, commentId) {
     const collectionRef = collection(db, 'comments')
     const docRef = doc(collectionRef, commentId)
@@ -71,5 +48,15 @@ export const actions = {
       isDeleted: true,
       updatedAt: serverTimestamp()
     })
+  },
+  async addReport({ rootGetters }, commentId) {
+    const uid = rootGetters['user/uid']
+    const threadId = rootGetters['thread/id']
+    await addReport(threadId, commentId, uid)
+  },
+  async deleteReport({ rootGetters }, commentId) {
+    const uid = rootGetters['user/uid']
+    const threadId = rootGetters['thread/id']
+    await deleteReport(threadId, commentId, uid)
   },
 }

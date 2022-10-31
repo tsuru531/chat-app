@@ -71,10 +71,8 @@ export default {
   },
   async mounted() {
     const threadElement = this.$refs.thread
-    await this.$store.dispatch('thread/getThread', this.threadId)
+    this.unsubscribe = await this.$store.dispatch('thread/watch', this.threadId)
     this.isLoaded = true
-    this.$store.dispatch('thread/comments/watch', this.threadId)
-    this.$store.dispatch('thread/likes/watch', this.threadId)
     threadElement.addEventListener('scroll', () => {
       if (threadElement.scrollHeight - threadElement.scrollTop - threadElement.clientHeight <= 10) {
         if (!this.isScrolledBottom) {
@@ -98,7 +96,10 @@ export default {
         }
       }
     })
-  }
+  },
+  unmounted() {
+    this.unsubscribe()
+  },
 }
 </script>
 

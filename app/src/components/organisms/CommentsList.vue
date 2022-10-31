@@ -1,8 +1,13 @@
 <template>
 <div>
   <ul>
-    <li v-for="(comment) in comments" :key="comment.id">
-      <CommentItem :comment="comment" @deleteItem="displayModal(comment)" @reply="reply" />
+    <li v-for="(comment, index) in comments" :key="comment.id">
+      <CommentItem
+        :comment="comment"
+        :index="index"
+        @deleteItem="displayModal(comment)"
+        @reply="reply"
+      />
     </li>
   </ul>
   <ModalDialog v-if="modal.isDisplayed" @close="hideModal">

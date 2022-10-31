@@ -5,7 +5,7 @@ import {
   doc,
   getDoc,
 } from 'firebase/firestore';
-import { createThread, deleteThread } from '@/modules';
+import { createThread, deleteThread, watchThread } from '@/modules';
 
 export const actions = {
   async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, showId, characterLimit, limitCount }) {
@@ -15,7 +15,7 @@ export const actions = {
     const threadData = { uid, title, topic, gender, age, place, showId, characterLimit, limitCount, commentsCount };
     try {
       const payload = await createThread(threadData);
-      commit('setThread', payload);
+      commit('set', payload);
       await dispatch('thread/comments/create', {
         threadId: payload.id,
         handlename,
@@ -27,13 +27,20 @@ export const actions = {
       console.error(error);
     }
   },
-  async getThread({ commit }, threadId) {
+  async get({ commit }, threadId) {
     const collectionRef = collection(db, 'threads')
     const docRef = doc(collectionRef, threadId)
     const docSnapshot = await getDoc(docRef)
     const data = docSnapshot.data()
-    commit('setThread', { ...data })
+    commit('set', { ...data })
     return data
+  },
+  async watch({ commit }, threadId) {
+    const unsubscribe = await watchThread(threadId, (thread) => {
+      commit('set', thread)
+      commit('thread/comments/set', thread.comments, { root: true })
+    })
+    return unsubscribe
   },
   async delete({ commit }, threadId) {
     await deleteThread(threadId);

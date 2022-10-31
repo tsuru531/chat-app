@@ -7,24 +7,19 @@ export async function createComment(threadId, uid, handlename, content) {
   const commentRef = doc(collection(db, 'threads', threadId, 'comments'));
   const threadRef = doc(collection(db, 'threads'), threadId);
   const id = commentRef.id;
-  batch.set(commentRef, {
+  const payload = {
     id,
     threadId,
     uid,
     handlename,
     content,
+    likes: [],
     reports: [],
     createdAt: timestamp,
-  });
+  };
+  batch.set(commentRef, payload);
   batch.update(threadRef, {
-    comments: arrayUnion({
-      id,
-      uid,
-      handlename,
-      content,
-      reports: [],
-      createdAt: timestamp,
-    }),
+    comments: arrayUnion(payload),
     updatedAt: timestamp,
   });
   try {

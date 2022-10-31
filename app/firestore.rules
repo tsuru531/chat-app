@@ -26,63 +26,51 @@ service cloud.firestore {
     match /threads/{threadId} {
       function isValidCreateComment(data, resourceData) {
         return data.keys().hasAll(['comments', 'updatedAt'])
-            && data.comments.size() == resourceData.comments.size() + 1
+            && data.comments.hasAll(resourceData.comments)
+            && data.comments.size() == resourceData.comments.size() + 1;
+      }
+      function isValidUpdateComments(data, resourceData) {
+        return data.diff(resourceData).changedKeys().hasOnly(['comments'])
+            && ((data.comments.hasAll(resourceData.comments)
+                && data.comments.size() == resourceData.comments.size() + 1)
+              || resourceData.comments.removeAll(data.comments).size() == 1);
       }
       allow read: if true;
       allow create: if isAuthenticated();
-      allow update: if isValidCreateComment(request.resource.data, resource.data);
+      allow update: if isValidCreateComment(request.resource.data, resource.data)
+                    || isValidUpdateComments(request.resource.data, resource.data);
       allow delete: if isAuthenticated()
                     && request.auth.uid == resource.data.uid
                     || isAdmin();
       match /comments/{commentId} {
+        function isDeleted(data) {
+          return 'deletedAt' in data;
+        }
         function isValidCreateComment(data) {
-          return data.size() == 7
-              && data.keys().hasAll(['id', 'threadId', 'uid', 'handlename', 'content', 'reports', 'createdAt'])
+          return data.size() == 8
+              && data.keys().hasAll(['id', 'threadId', 'uid', 'handlename', 'content', 'likes', 'reports', 'createdAt'])
               && data.id is string
               && data.threadId is string
               && data.uid is string
               && data.handlename is string
               && data.content is string
+              && data.likes is list
               && data.reports is list
               && data.createdAt is timestamp
         }
+        function isValidSwitchReport(data, resourceData) {
+          return data.diff(resourceData).changedKeys().hasOnly(['reports', 'updatedAt'])
+              && data.keys().hasAll(['reports', 'updatedAt'])
+              && data.reports is list
+              && data.updatedAt is timestamp
+              && ( data.reports.size() == resourceData.reports.size() + 1
+                || data.reports.size() == resourceData.reports.size() - 1 )
+              && data.updatedAt > resourceData.updatedAt
+        }
+        allow get: if !isDeleted(resource.data);
         allow create: if isValidCreateComment(request.resource.data);
+        allow update: if isValidSwitchReport(request.resource.data, resource.data);
       }
-    }
-    match /comments/{commentId} {
-      function isThreadOwner(uid) {
-        return uid == get(/databases/$(database)/documents/threads/$(resource.data.threadId)).data.uid
-      }
-      allow read: if true;
-      allow update: if isAuthenticated()
-                    && isValid(request.resource.data)
-                    && request.resource.data.id == resource.data.id
-                    && request.resource.data.uid == resource.data.uid
-                    && request.resource.data.threadId == resource.data.threadId
-                    && request.resource.data.handlename == resource.data.handlename
-                    && request.resource.data.index == resource.data.index
-                    && request.resource.data.content == resource.data.content
-                    && request.resource.data.createdAt == resource.data.createdAt
-                    && request.resource.data.updatedAt > resource.data.updatedAt;
-      allow delete: if isAuthenticated()
-                    && isThreadOwner(request.auth.uid)
-                    || isAdmin();
-    }
-    match /likes/{id} {
-      function isValid(data) {
-        return data.size() == 6
-        && 'id' in data && data.id is string
-        && 'userId' in data && data.userId is string
-        && 'threadId' in data && data.threadId is string
-        && 'commentId' in data && data.commentId is string
-        && 'createdAt' in data && data.createdAt is timestamp
-        && 'updatedAt' in data && data.updatedAt is timestamp
-      }
-      allow list: if true;
-      allow create: if isUserAuthenticated(request.resource.data.userId)
-                    && isValid(request.resource.data);
-      allow delete: if isAuthenticated()
-                    && request.auth.uid == resource.data.userId;
     }
   }
 }

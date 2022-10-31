@@ -2,18 +2,18 @@
 <div class="comment_item-wrapper">
   <div class="comment_item-info font-caption">
     <span>
-      <span class="comment-item index">{{ comment.index }}. </span>
+      <span class="comment-item index">{{ index + 1 }}. </span>
       <span class="comment-item handlename">{{ comment.handlename }}</span>
     </span>
-    <ReportButton v-if="!comment.isDeleted" :isReported="isReported" @click="switchReport" />
+    <ReportButton v-if="!comment.deletedAt" :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
-    <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
-    <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
-    <div v-if="!comment.isDeleted">
+    <p class="comment-item content" ref="content">{{ comment.deletedAt ? deletedText : comment.content }}</p>
+    <time class="comment-item created-at font-caption">{{ createdAt }}</time>
+    <div v-if="!comment.deletedAt">
       <ReplyButton @click="reply" />
       <LikeButton :isLike="isLike" @click="switchLike" />
-      <DeleteButton v-if="isDisplayedDelete" @click="deleteItem" />
+      <DeleteButton v-if="canDeleted" @click="deleteItem" />
     </div>
   </div>
 </div>
@@ -37,7 +37,14 @@ export default {
     DeleteButton
   },
   props: {
-    comment: Object
+    comment: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
   data() {
     return {
@@ -45,33 +52,35 @@ export default {
     }
   },
   computed: {
-    isReported() {
-      return this.$store.getters['thread/comments/isReported'](this.comment.id)
+    uid() {
+      return this.$store.getters['user/uid']
     },
     threadId() {
       return this.$store.getters['thread/id']
     },
-    userId() {
-      const userId = this.$store.getters['user/uid']
-      return userId
+    createdAt() {
+      return convertToCommentDate(this.comment.createdAt)
     },
-    isDisplayedDelete() {
+    isReported() {
+      return this.comment.reports.includes(this.uid)
+    },
+    isLike() {
+      return this.comment.likes.includes(this.uid)
+    },
+    canDeleted() {
       const uid = this.$store.getters['user/uid']
       const isOwner = uid === this.comment.uid && uid !== ''
       const isAdmin = this.$store.getters['user/isAdmin']
       return isOwner || isAdmin
     },
-    convertedCreatedAt() {
-      return convertToCommentDate(this.comment.createdAt)
-    },
-    isLike() {
-      const isExist = Boolean(this.$store.getters['thread/likes/findById'](`${this.userId}${this.comment.id}`))
-      return isExist
-    },
   },
   methods: {
-    switchReport() {
-      this.$store.dispatch('thread/switchCommentReport', this.comment.id)
+    async switchReport() {
+      if (!this.isReported) {
+        await this.$store.dispatch('thread/comments/addReport', this.comment.id)
+      } else {
+        await this.$store.dispatch('thread/comments/deleteReport', this.comment.id)
+      }
     },
     deleteItem() {
       this.$emit('deleteItem')
@@ -81,7 +90,7 @@ export default {
     },
     switchLike() {
       this.$store.dispatch('thread/likes/switch', {
-        userId: this.userId,
+        userId: this.uid,
         commentId: this.comment.id,
         threadId: this.threadId
       })
