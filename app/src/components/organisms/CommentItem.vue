@@ -26,7 +26,7 @@ import ReplyButton from '@/components/atoms/ReplyButton'
 import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
 import Anchor from '@/components/molecules/Anchor'
-import { convertToCommentDate } from '@/helpers/definition'
+import { convertTimestamp } from '@/modules'
 
 export default {
   name: 'CommentItem',
@@ -59,7 +59,7 @@ export default {
       return this.$store.getters['thread/id']
     },
     createdAt() {
-      return convertToCommentDate(this.comment.createdAt)
+      return convertTimestamp(this.comment.createdAt)
     },
     isReported() {
       return this.comment.reports.includes(this.uid)
