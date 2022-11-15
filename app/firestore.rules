@@ -60,16 +60,24 @@ service cloud.firestore {
         }
         function isValidSwitchReport(data, resourceData) {
           return data.diff(resourceData).changedKeys().hasOnly(['reports', 'updatedAt'])
-              && data.keys().hasAll(['reports', 'updatedAt'])
+              && data.keys().hasAll(['reports'])
               && data.reports is list
-              && data.updatedAt is timestamp
               && ( data.reports.size() == resourceData.reports.size() + 1
                 || data.reports.size() == resourceData.reports.size() - 1 )
-              && data.updatedAt > resourceData.updatedAt
+        }
+        function isValidDelete(data, resourceData) {
+          return data.diff(resourceData).changedKeys().hasOnly(['deletedAt', 'updatedAt'])
+              && data.keys().hasAll(['deletedAt'])
+              && data.deletedAt is timestamp
         }
         allow get: if !isDeleted(resource.data);
         allow create: if isValidCreateComment(request.resource.data);
-        allow update: if isValidSwitchReport(request.resource.data, resource.data);
+        allow update: if !isDeleted(resource.data)
+                      && request.resource.data.keys().hasAll(['updatedAt'])
+                      && request.resource.data.updatedAt is timestamp
+                      && request.resource.data.updatedAt > resource.data.updatedAt
+                      && isValidSwitchReport(request.resource.data, resource.data)
+                      || isValidDelete(request.resource.data, resource.data);
       }
     }
   }

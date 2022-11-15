@@ -5,5 +5,6 @@ export * from './getComments';
 export * from './watchThreads';
 export * from './watchThread';
 export * from './addReport';
+export * from './deleteComment';
 export * from './deleteReport';
 export * from './convertTimestamp';

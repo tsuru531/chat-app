@@ -1,13 +1,7 @@
-import { db } from '@/firebase'
-import {
-  collection,
-  doc,
-  updateDoc,
-  serverTimestamp,
-} from 'firebase/firestore'
 import {
   createComment,
   getComments,
+  deleteComment,
   addReport,
   deleteReport,
 } from '@/modules'
@@ -41,13 +35,9 @@ export const actions = {
     const comments = dispatch('set', querySnapshot)
     return comments
   },
-  async delete (context, commentId) {
-    const collectionRef = collection(db, 'comments')
-    const docRef = doc(collectionRef, commentId)
-    await updateDoc(docRef, {
-      isDeleted: true,
-      updatedAt: serverTimestamp()
-    })
+  async delete ({ rootGetters }, commentId) {
+    const threadId = rootGetters['thread/id']
+    await deleteComment(threadId, commentId)
   },
   async addReport({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']

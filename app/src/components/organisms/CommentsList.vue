@@ -12,7 +12,7 @@
   </ul>
   <ModalDialog v-if="modal.isDisplayed" @close="hideModal">
     <template v-slot:content>
-      <p>このコメントを削除してもよろしいですか？</p>
+      <p>{{ deleteMessage }}</p>
       <p>{{ modal.content }}</p>
     </template>
     <template v-slot:footer>
@@ -39,11 +39,12 @@ export default {
   },
   data() {
     return {
+      deleteMessage: 'このコメントを削除してもよろしいですか？',
       modal: {
         isDisplayed: false,
-        comment_id: '',
+        commentId: '',
         content: ''
-      }
+      },
     }
   },
   computed: {
@@ -55,16 +56,16 @@ export default {
     displayModal(comment) {
       const { id, content } = comment
       this.modal.isDisplayed = true
-      this.modal.comment_id = id
+      this.modal.commentId = id
       this.modal.content = content
     },
     hideModal() {
       this.modal.isDisplayed = false
-      this.modal.comment_id = ''
+      this.modal.commentId = ''
       this.modal.content = ''
     },
     deleteComment() {
-      this.$store.dispatch('thread/deleteComment', this.modal.comment_id)
+      this.$store.dispatch('thread/comments/delete', this.modal.commentId)
       this.hideModal()
     },
     reply(index) {
