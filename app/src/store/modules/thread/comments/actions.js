@@ -2,6 +2,8 @@ import {
   createComment,
   getComments,
   deleteComment,
+  createLike,
+  deleteLike,
   addReport,
   deleteReport,
 } from '@/modules'
@@ -38,6 +40,16 @@ export const actions = {
   async delete ({ rootGetters }, commentId) {
     const threadId = rootGetters['thread/id']
     await deleteComment(threadId, commentId)
+  },
+  async createLike({ rootGetters }, commentId) {
+    const uid = rootGetters['user/uid']
+    const threadId = rootGetters['thread/id']
+    await createLike(threadId, commentId, uid)
+  },
+  async deleteLike({ rootGetters }, commentId) {
+    const uid = rootGetters['user/uid']
+    const threadId = rootGetters['thread/id']
+    await deleteLike(threadId, commentId, uid)
   },
   async addReport({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']

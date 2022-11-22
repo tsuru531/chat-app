@@ -7,8 +7,8 @@ export async function createThread(threadData) {
   const payload = {
     id: docRef.id,
     ...threadData,
+    comments: [],
     createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
   };
   try {
     await setDoc(docRef, payload);

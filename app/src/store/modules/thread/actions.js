@@ -11,8 +11,7 @@ export const actions = {
   async createThread({ commit, dispatch, rootGetters }, { title, comment, topic, gender, age, place, showId, characterLimit, limitCount }) {
     const uid = rootGetters['user/uid'];
     const handlename = '';
-    const commentsCount = 0;
-    const threadData = { uid, title, topic, gender, age, place, showId, characterLimit, limitCount, commentsCount };
+    const threadData = { uid, title, topic, gender, age, place, showId, characterLimit, limitCount };
     try {
       const payload = await createThread(threadData);
       commit('set', payload);

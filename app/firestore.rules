@@ -24,19 +24,36 @@ service cloud.firestore {
       allow create: if isValid(request.resource.data);
     }
     match /threads/{threadId} {
+      function isValidCreateThread(data) {
+        return data.keys().hasAll(['id', 'uid', 'title', 'topic', 'gender', 'age', 'place', 'comments', 'createdAt'])
+            && data.id is string
+            && data.uid is string
+            && data.title is string
+            && data.topic is string
+            && data.gender is string
+            && data.age is string
+            && data.place is string
+            && data.comments is list
+            && data.createdAt is timestamp
+      }
       function isValidCreateComment(data, resourceData) {
         return data.keys().hasAll(['comments', 'updatedAt'])
+            && data.comments is list
+            && data.updatedAt is timestamp
+            && data.updatedAt > resourceData.updatedAt
             && data.comments.hasAll(resourceData.comments)
             && data.comments.size() == resourceData.comments.size() + 1;
       }
       function isValidUpdateComments(data, resourceData) {
         return data.diff(resourceData).changedKeys().hasOnly(['comments'])
+            && data.comments is list
             && ((data.comments.hasAll(resourceData.comments)
                 && data.comments.size() == resourceData.comments.size() + 1)
               || resourceData.comments.removeAll(data.comments).size() == 1);
       }
       allow read: if true;
-      allow create: if isAuthenticated();
+      allow create: if isAuthenticated()
+                    && isValidCreateThread(request.resource.data);
       allow update: if isValidCreateComment(request.resource.data, resource.data)
                     || isValidUpdateComments(request.resource.data, resource.data);
       allow delete: if isAuthenticated()
@@ -65,6 +82,13 @@ service cloud.firestore {
               && ( data.reports.size() == resourceData.reports.size() + 1
                 || data.reports.size() == resourceData.reports.size() - 1 )
         }
+        function isValidSwitchLike(data, resourceData) {
+          return data.diff(resourceData).changedKeys().hasOnly(['likes', 'updatedAt'])
+              && data.keys().hasAll(['likes'])
+              && data.likes is list
+              && ( data.likes.size() == resourceData.likes.size() + 1
+                || data.likes.size() == resourceData.likes.size() - 1 )
+        }
         function isValidDelete(data, resourceData) {
           return data.diff(resourceData).changedKeys().hasOnly(['deletedAt', 'updatedAt'])
               && data.keys().hasAll(['deletedAt'])
@@ -77,6 +101,7 @@ service cloud.firestore {
                       && request.resource.data.updatedAt is timestamp
                       && request.resource.data.updatedAt > resource.data.updatedAt
                       && isValidSwitchReport(request.resource.data, resource.data)
+                      || isValidSwitchLike(request.resource.data, resource.data)
                       || isValidDelete(request.resource.data, resource.data);
       }
     }

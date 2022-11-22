@@ -88,12 +88,12 @@ export default {
     reply() {
       this.$emit('reply', this.comment.index)
     },
-    switchLike() {
-      this.$store.dispatch('thread/likes/switch', {
-        userId: this.uid,
-        commentId: this.comment.id,
-        threadId: this.threadId
-      })
+    async switchLike() {
+      if (!this.isLike) {
+        await this.$store.dispatch('thread/comments/createLike', this.comment.id)
+      } else {
+        await this.$store.dispatch('thread/comments/deleteLike', this.comment.id)
+      }
     },
   },
   mounted() {

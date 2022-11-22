@@ -8,3 +8,5 @@ export * from './addReport';
 export * from './deleteComment';
 export * from './deleteReport';
 export * from './convertTimestamp';
+export * from './createLike';
+export * from './deleteLike';
