@@ -20,7 +20,6 @@ export const actions = {
         handlename,
         content: comment,
       }, { root: true });
-      dispatch('threads/add', payload, { root: true });
       Router.push(`/thread/${payload.id}`);
     } catch (error) {
       console.error(error);

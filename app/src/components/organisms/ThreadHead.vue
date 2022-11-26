@@ -29,7 +29,7 @@ export default {
     },
     commentsCount() {
       const comments = this.$store.getters['thread/comments/array']
-      return comments.length
+      return comments ? comments.length : 1
     }
   },
   methods: {
