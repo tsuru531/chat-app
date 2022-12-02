@@ -36,74 +36,12 @@ service cloud.firestore {
             && data.comments is list
             && data.createdAt is timestamp
       }
-      function isValidCreateComment(data, resourceData) {
-        return data.keys().hasAll(['comments', 'updatedAt'])
-            && data.comments is list
-            && data.updatedAt is timestamp
-            && data.updatedAt > resourceData.updatedAt
-            && data.comments.hasAll(resourceData.comments)
-            && data.comments.size() == resourceData.comments.size() + 1;
-      }
-      function isValidUpdateComments(data, resourceData) {
-        return data.diff(resourceData).changedKeys().hasOnly(['comments'])
-            && data.comments is list
-            && ((data.comments.hasAll(resourceData.comments)
-                && data.comments.size() == resourceData.comments.size() + 1)
-              || resourceData.comments.removeAll(data.comments).size() == 1);
-      }
       allow read: if true;
       allow create: if isAuthenticated()
                     && isValidCreateThread(request.resource.data);
-      allow update: if isValidCreateComment(request.resource.data, resource.data)
-                    || isValidUpdateComments(request.resource.data, resource.data);
       allow delete: if isAuthenticated()
                     && request.auth.uid == resource.data.uid
                     || isAdmin();
-      match /comments/{commentId} {
-        function isDeleted(data) {
-          return 'deletedAt' in data;
-        }
-        function isValidCreateComment(data) {
-          return data.size() == 8
-              && data.keys().hasAll(['id', 'threadId', 'uid', 'handlename', 'content', 'likes', 'reports', 'createdAt'])
-              && data.id is string
-              && data.threadId is string
-              && data.uid is string
-              && data.handlename is string
-              && data.content is string
-              && data.likes is list
-              && data.reports is list
-              && data.createdAt is timestamp
-        }
-        function isValidSwitchReport(data, resourceData) {
-          return data.diff(resourceData).changedKeys().hasOnly(['reports', 'updatedAt'])
-              && data.keys().hasAll(['reports'])
-              && data.reports is list
-              && ( data.reports.size() == resourceData.reports.size() + 1
-                || data.reports.size() == resourceData.reports.size() - 1 )
-        }
-        function isValidSwitchLike(data, resourceData) {
-          return data.diff(resourceData).changedKeys().hasOnly(['likes', 'updatedAt'])
-              && data.keys().hasAll(['likes'])
-              && data.likes is list
-              && ( data.likes.size() == resourceData.likes.size() + 1
-                || data.likes.size() == resourceData.likes.size() - 1 )
-        }
-        function isValidDelete(data, resourceData) {
-          return data.diff(resourceData).changedKeys().hasOnly(['deletedAt', 'updatedAt'])
-              && data.keys().hasAll(['deletedAt'])
-              && data.deletedAt is timestamp
-        }
-        allow get: if !isDeleted(resource.data);
-        allow create: if isValidCreateComment(request.resource.data);
-        allow update: if !isDeleted(resource.data)
-                      && request.resource.data.keys().hasAll(['updatedAt'])
-                      && request.resource.data.updatedAt is timestamp
-                      && request.resource.data.updatedAt > resource.data.updatedAt
-                      && isValidSwitchReport(request.resource.data, resource.data)
-                      || isValidSwitchLike(request.resource.data, resource.data)
-                      || isValidDelete(request.resource.data, resource.data);
-      }
     }
   }
 }
