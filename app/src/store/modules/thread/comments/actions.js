@@ -9,10 +9,10 @@ import {
 } from '@/modules'
 
 export const actions = {
-  async create ({ rootGetters }, { threadId, handlename, content }) {
+  async create ({ rootGetters }, { threadId, handlename, body }) {
     if (!handlename) handlename = '名無しさん'
     const uid = rootGetters['user/uid']
-    await createComment(threadId, uid, handlename, content)
+    await createComment(threadId, uid, handlename, body)
   },
   set ({ commit }, commentsSnap) {
     if (commentsSnap) {

@@ -64,7 +64,7 @@ export default {
       this.$store.dispatch('thread/comments/create', {
         threadId: this.threadId,
         handlename: this.handlename,
-        content: this.response
+        body: this.response
       })
       this.response = ''
     }
