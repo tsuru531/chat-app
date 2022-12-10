@@ -17,23 +17,21 @@ export async function createComment(threadId, uid, handlename, body) {
   try {
     await runTransaction(db, async (transaction) => {
       const commentsDoc = await transaction.get(commentsRef);
+      const data = {
+        uid,
+        threadId,
+        handlename,
+        body,
+        createdAt: timestamp,
+      };
       let commentsCount;
       if (commentsDoc.exists()) {
-        commentsCount = commentsDoc.list.length + 1;
+        commentsCount = commentsDoc.data().list.length + 1;
+        await transaction.update(commentsRef, { list: arrayUnion({ ...data, index: commentsCount }) });
       } else {
         commentsCount = 1;
+        await transaction.set(commentsRef, { list: { ...data, index: commentsCount } });
       }
-      const payload = {
-        list: arrayUnion({
-          index: commentsCount,
-          uid,
-          threadId,
-          handlename,
-          body,
-          createdAt: timestamp,
-        }),
-      };
-      await transaction.set(commentsRef, payload);
       await transaction.update(threadRef, { commentsCount, updatedAt: timestamp });
     });
   } catch (e) {
