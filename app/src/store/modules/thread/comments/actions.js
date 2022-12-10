@@ -1,6 +1,7 @@
 import {
   createComment,
   getComments,
+  watchComments,
   deleteComment,
   createLike,
   deleteLike,
@@ -32,10 +33,14 @@ export const actions = {
       return comments
     }
   },
-  async get ({ dispatch }, threadId) {
+  async get({ dispatch }, threadId) {
     const querySnapshot = await getComments(threadId)
     const comments = dispatch('set', querySnapshot)
     return comments
+  },
+  async watch({ commit }, threadId) {
+    const unsubscribe = await watchComments(threadId, (list) => commit('set', list))
+    return unsubscribe
   },
   async delete ({ rootGetters }, commentId) {
     const threadId = rootGetters['thread/id']
