@@ -2,13 +2,13 @@
 <div class="comment_item-wrapper">
   <div class="comment_item-info font-caption">
     <span>
-      <span class="comment-item index">{{ index + 1 }}. </span>
-      <span class="comment-item handlename">{{ comment.handlename }}</span>
+      <span class="comment-item index">{{ index }}. </span>
+      <span class="comment-item handlename">{{ handlename }}</span>
     </span>
     <ReportButton v-if="!comment.deletedAt" :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
-    <p class="comment-item content" ref="content">{{ comment.deletedAt ? deletedText : comment.content }}</p>
+    <p class="comment-item content" ref="content">{{ comment.deletedAt ? deletedText : body }}</p>
     <time class="comment-item created-at font-caption">{{ createdAt }}</time>
     <div v-if="!comment.deletedAt">
       <ReplyButton @click="reply" />
@@ -37,12 +37,20 @@ export default {
     DeleteButton
   },
   props: {
-    comment: {
-      type: Object,
-      required: true,
-    },
     index: {
       type: Number,
+      required: true,
+    },
+    handlename: {
+      type: String,
+      required: true,
+    },
+    body: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: Object,
       required: true,
     },
   },
@@ -62,9 +70,11 @@ export default {
       return convertTimestamp(this.comment.createdAt)
     },
     isReported() {
+      if (!this.comment.reports) return false
       return this.comment.reports.includes(this.uid)
     },
     isLike() {
+      if (!this.comment.likes) return false
       return this.comment.likes.includes(this.uid)
     },
     canDeleted() {
@@ -107,7 +117,7 @@ export default {
         const anchorNumber = Number(item.textContent)
         const comments = this.$store.getters['thread/comments/array']
         const anchorComment = comments[anchorNumber - 1]
-        const text = anchorComment.content
+        const text = anchorComment.body
         const AnchorComponent = Vue.extend(Anchor)
         const instance = new AnchorComponent({ propsData: { index: anchorNumber, text }})
         instance.$mount()

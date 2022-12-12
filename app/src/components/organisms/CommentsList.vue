@@ -1,10 +1,12 @@
 <template>
 <div>
   <ul>
-    <li v-for="(comment, index) in comments" :key="comment.id">
+    <li v-for="(comment) in comments" :key="comment.index">
       <CommentItem
+        :index="comment.index"
+        :handlename="comment.handlename"
+        :body="comment.body"
         :comment="comment"
-        :index="index"
         @deleteItem="displayModal(comment)"
         @reply="reply"
       />
@@ -13,7 +15,7 @@
   <ModalDialog v-if="modal.isDisplayed" @close="hideModal">
     <template v-slot:content>
       <p>{{ deleteMessage }}</p>
-      <p>{{ modal.content }}</p>
+      <p>{{ modal.body }}</p>
     </template>
     <template v-slot:footer>
       <div class="button-wrapper">
@@ -43,7 +45,7 @@ export default {
       modal: {
         isDisplayed: false,
         commentId: '',
-        content: ''
+        body: ''
       },
     }
   },
@@ -54,15 +56,14 @@ export default {
   },
   methods: {
     displayModal(comment) {
-      const { id, content } = comment
       this.modal.isDisplayed = true
-      this.modal.commentId = id
-      this.modal.content = content
+      this.modal.commentId = comment.index
+      this.modal.body = comment.body
     },
     hideModal() {
       this.modal.isDisplayed = false
       this.modal.commentId = ''
-      this.modal.content = ''
+      this.modal.body = ''
     },
     deleteComment() {
       this.$store.dispatch('thread/comments/delete', this.modal.commentId)
