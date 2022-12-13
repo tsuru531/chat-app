@@ -1,5 +1,5 @@
 import { db } from '@/firebase';
-import { collection, doc, runTransaction, arrayUnion, Timestamp } from 'firebase/firestore';
+import { collection, doc, runTransaction, Timestamp } from 'firebase/firestore';
 
 export async function createComment(threadId, uid, handlename, body) {
   if (
@@ -13,10 +13,9 @@ export async function createComment(threadId, uid, handlename, body) {
   }
   const timestamp = Timestamp.fromDate(new Date());
   const threadRef = doc(collection(db, 'threads'), threadId)
-  const commentsRef = doc(collection(db, 'threads', threadId, 'comments'), '0');
   try {
     await runTransaction(db, async (transaction) => {
-      const commentsDoc = await transaction.get(commentsRef);
+      const threadDoc = await transaction.get(threadRef);
       const data = {
         uid,
         threadId,
@@ -24,14 +23,9 @@ export async function createComment(threadId, uid, handlename, body) {
         body,
         createdAt: timestamp,
       };
-      let commentsCount;
-      if (commentsDoc.exists()) {
-        commentsCount = commentsDoc.data().list.length + 1;
-        await transaction.update(commentsRef, { list: arrayUnion({ ...data, index: commentsCount }) });
-      } else {
-        commentsCount = 1;
-        await transaction.set(commentsRef, { list: { ...data, index: commentsCount } });
-      }
+      const commentsCount = threadDoc.data().commentsCount ? threadDoc.data().commentsCount + 1 : 1;
+      const commentsRef = doc(collection(db, 'threads', threadId, 'comments'), String(commentsCount));
+      await transaction.set(commentsRef, { ...data, index: commentsCount });
       await transaction.update(threadRef, { commentsCount, updatedAt: timestamp });
     });
   } catch (e) {

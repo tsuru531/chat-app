@@ -52,18 +52,18 @@ service cloud.firestore {
                     && request.auth.uid == resource.data.uid
                     || isAdmin();
       match /comments/{index} {
-        function isValidCreateComments(data) {
-          return data.keys().hasOnly(['list'])
-              && data.list is list;
-        }
         function isValidCreateComment(data) {
-          return data.keys().hasOnly(['list'])
-              && data.list.hasAll(resource.data.list)
-              && data.list.size() == resource.data.list.size() + 1;
+          return data.keys().hasOnly(['uid', 'threadId', 'handlename', 'body', 'createdAt', 'index'])
+              && data.keys().hasAll(['uid', 'threadId', 'handlename', 'body', 'createdAt', 'index'])
+              && data.uid is string
+              && data.threadId is string
+              && data.handlename is string
+              && data.body is string
+              && data.createdAt is timestamp
+              && data.index is number
         }
-        allow create: if isValidCreateComments(request.resource.data);
+        allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
-        allow update: if isValidCreateComment(request.resource.data);
       }
     }
   }
