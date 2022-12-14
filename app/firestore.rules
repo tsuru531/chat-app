@@ -64,6 +64,7 @@ service cloud.firestore {
         }
         allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
+        allow list: if true;
       }
     }
   }
