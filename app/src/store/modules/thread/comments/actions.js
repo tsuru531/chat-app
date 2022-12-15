@@ -2,7 +2,7 @@ import {
   createComment,
   getComments,
   watchComments,
-  deleteComment,
+  removeComment,
   createLike,
   deleteLike,
   addReport,
@@ -42,9 +42,9 @@ export const actions = {
     const unsubscribe = await watchComments(threadId, (list) => commit('set', list))
     return unsubscribe
   },
-  async delete ({ rootGetters }, commentId) {
+  async delete({ rootGetters }, index) {
     const threadId = rootGetters['thread/id']
-    await deleteComment(threadId, commentId)
+    await removeComment(threadId, index)
   },
   async createLike({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']

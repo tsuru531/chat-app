@@ -44,8 +44,8 @@ export default {
       deleteMessage: 'このコメントを削除してもよろしいですか？',
       modal: {
         isDisplayed: false,
-        commentId: '',
-        body: ''
+        index: 0,
+        body: '',
       },
     }
   },
@@ -57,16 +57,16 @@ export default {
   methods: {
     displayModal(comment) {
       this.modal.isDisplayed = true
-      this.modal.commentId = comment.index
+      this.modal.index = comment.index
       this.modal.body = comment.body
     },
     hideModal() {
       this.modal.isDisplayed = false
-      this.modal.commentId = ''
+      this.modal.index = 0
       this.modal.body = ''
     },
-    deleteComment() {
-      this.$store.dispatch('thread/comments/delete', this.modal.commentId)
+    async deleteComment() {
+      await this.$store.dispatch('thread/comments/delete', this.modal.index)
       this.hideModal()
     },
     reply(index) {

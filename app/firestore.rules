@@ -62,9 +62,15 @@ service cloud.firestore {
               && data.createdAt is timestamp
               && data.index is number
         }
+        function isValidRemoveComment(data) {
+          return data.keys().hasAll(['deletedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['deletedAt'])
+              && data.deletedAt is timestamp
+        }
         allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
         allow list: if true;
+        allow update: if isValidRemoveComment(request.resource.data);
       }
     }
   }

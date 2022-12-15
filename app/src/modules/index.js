@@ -5,3 +5,4 @@ export * from './watchThread';
 export * from './convertTimestamp';
 export * from './createComment';
 export * from './watchComments';
+export * from './removeComment';
