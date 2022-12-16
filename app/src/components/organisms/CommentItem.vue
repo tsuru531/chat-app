@@ -100,9 +100,9 @@ export default {
     },
     async switchLike() {
       if (!this.isLike) {
-        await this.$store.dispatch('thread/comments/createLike', this.comment.id)
+        await this.$store.dispatch('thread/comments/addLike', this.comment.index)
       } else {
-        await this.$store.dispatch('thread/comments/deleteLike', this.comment.id)
+        await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
       }
     },
   },

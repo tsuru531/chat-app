@@ -3,9 +3,9 @@ import {
   getComments,
   watchComments,
   removeComment,
-  createLike,
-  deleteLike,
+  addLike,
   addReport,
+  removeLike,
   deleteReport,
 } from '@/modules'
 
@@ -46,17 +46,17 @@ export const actions = {
     const threadId = rootGetters['thread/id']
     await removeComment(threadId, index)
   },
-  async createLike({ rootGetters }, commentId) {
+  async addLike({ rootGetters }, index) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
-    await createLike(threadId, commentId, uid)
+    await addLike(threadId, index, uid)
   },
-  async deleteLike({ rootGetters }, commentId) {
+  async removeLike({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
-    await deleteLike(threadId, commentId, uid)
+    await removeLike(threadId, commentId, uid)
   },
-  async addReport({ rootGetters }, commentId) {
+  async createReport({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
     await addReport(threadId, commentId, uid)
