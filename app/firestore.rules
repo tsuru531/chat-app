@@ -70,12 +70,14 @@ service cloud.firestore {
               && data.diff(resource.data).changedKeys().hasOnly(['deletedAt'])
               && data.deletedAt is timestamp
         }
-        function isValidAddLike(data) {
+        function isValidSwitchLike(data) {
           return data.keys().hasAll(['likes', 'updatedAt'])
               && data.diff(resource.data).changedKeys().hasOnly(['likes', 'updatedAt'])
               && data.likes is list
-              && data.updatedAt is timestamp
-              && (data.updatedAt > resource.data.updatedAt
+              && data.updatedAt is timestamp;
+        }
+        function isValidAddLike(data) {
+          return (data.updatedAt > resource.data.updatedAt
               || isUndefined(resource.data, 'updatedAt')
               )
               && (data.likes.hasAll(resource.data.likes)
@@ -84,11 +86,18 @@ service cloud.firestore {
               && data.likes.size() == 1
               );
         }
+        function isValidRemoveLike(data) {
+          return data.updatedAt > resource.data.updatedAt
+              && resource.data.likes.removeAll(data.likes).size() == 1;
+        }
         allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
         allow list: if true;
         allow update: if isValidRemoveComment(request.resource.data);
-        allow update: if isValidAddLike(request.resource.data);
+        allow update: if isValidAddLike(request.resource.data)
+                      && isValidSwitchLike(request.resource.data);
+        allow update: if isValidRemoveLike(request.resource.data)
+                      && isValidSwitchLike(request.resource.data);
       }
     }
   }
