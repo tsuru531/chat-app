@@ -14,6 +14,16 @@ service cloud.firestore {
     function isUndefined(data, field) {
       return !data.keys().hasAll([field]);
     }
+    function addOnlyOne(listField) {
+      return request.resource.data[listField].hasAll(resource.data[listField])
+          && request.resource.data[listField].size() == resource.data[listField].size() + 1
+          || isUndefined(resource.data, listField)
+          && request.resource.data[listField].size() == 1;
+    }
+    function isNewTimestamp(timestampField) {
+      return request.resource.data[timestampField] > resource.data[timestampField]
+          || isUndefined(resource.data, timestampField);
+    }
     match /users/{uid} {
       function isValidCreateUser(data) {
         return data.size() == 5
@@ -76,28 +86,31 @@ service cloud.firestore {
               && data.likes is list
               && data.updatedAt is timestamp;
         }
-        function isValidAddLike(data) {
-          return (data.updatedAt > resource.data.updatedAt
-              || isUndefined(resource.data, 'updatedAt')
-              )
-              && (data.likes.hasAll(resource.data.likes)
-              && data.likes.size() == resource.data.likes.size() + 1
-              || isUndefined(resource.data, 'likes')
-              && data.likes.size() == 1
-              );
+        function isValidAddLike() {
+          return isNewTimestamp('updatedAt')
+              && addOnlyOne('likes');
         }
         function isValidRemoveLike(data) {
           return data.updatedAt > resource.data.updatedAt
               && resource.data.likes.removeAll(data.likes).size() == 1;
         }
+        function isValidCreateReport(data) {
+          return data.keys().hasAll(['reports', 'updatedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['reports', 'updatedAt'])
+              && data.reports is list
+              && data.updatedAt is timestamp
+              && addOnlyOne('reports')
+              && isNewTimestamp('updatedAt')
+        }
         allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
         allow list: if true;
         allow update: if isValidRemoveComment(request.resource.data);
-        allow update: if isValidAddLike(request.resource.data)
+        allow update: if isValidAddLike()
                       && isValidSwitchLike(request.resource.data);
         allow update: if isValidRemoveLike(request.resource.data)
                       && isValidSwitchLike(request.resource.data);
+        allow update: if isValidCreateReport(request.resource.data);
       }
     }
   }

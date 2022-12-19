@@ -87,9 +87,9 @@ export default {
   methods: {
     async switchReport() {
       if (!this.isReported) {
-        await this.$store.dispatch('thread/comments/addReport', this.comment.id)
+        await this.$store.dispatch('thread/comments/createReport', this.comment.index)
       } else {
-        await this.$store.dispatch('thread/comments/deleteReport', this.comment.id)
+        await this.$store.dispatch('thread/comments/deleteReport', this.comment.index)
       }
     },
     deleteItem() {

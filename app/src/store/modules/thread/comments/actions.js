@@ -4,8 +4,8 @@ import {
   watchComments,
   removeComment,
   addLike,
-  addReport,
   removeLike,
+  createReport,
   deleteReport,
 } from '@/modules'
 
@@ -56,10 +56,10 @@ export const actions = {
     const threadId = rootGetters['thread/id']
     await removeLike(threadId, commentId, uid)
   },
-  async createReport({ rootGetters }, commentId) {
+  async createReport({ rootGetters }, index) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
-    await addReport(threadId, commentId, uid)
+    await createReport(threadId, index, uid)
   },
   async deleteReport({ rootGetters }, commentId) {
     const uid = rootGetters['user/uid']
