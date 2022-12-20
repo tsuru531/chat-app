@@ -20,9 +20,16 @@ service cloud.firestore {
           || isUndefined(resource.data, listField)
           && request.resource.data[listField].size() == 1;
     }
+    function removeOnlyOne(listField) {
+      return resource.data[listField].removeAll(request.resource.data[listField]).size() == 1;
+    }
     function isNewTimestamp(timestampField) {
       return request.resource.data[timestampField] > resource.data[timestampField]
           || isUndefined(resource.data, timestampField);
+    }
+    function isValidUpdatedAt() {
+      return request.resource.data.updatedAt is timestamp
+          && isNewTimestamp('updatedAt');
     }
     match /users/{uid} {
       function isValidCreateUser(data) {
@@ -54,7 +61,7 @@ service cloud.firestore {
             && data.keys().hasAll(['commentsCount', 'updatedAt'])
             && data.commentsCount is number
             && data.updatedAt is timestamp
-            && data.updatedAt > resource.data.updatedAt;
+            && isNewTimestamp('updatedAt');
       }
       allow create: if isAuthenticated()
                     && isValidCreateThread(request.resource.data);
@@ -84,33 +91,30 @@ service cloud.firestore {
           return data.keys().hasAll(['likes', 'updatedAt'])
               && data.diff(resource.data).changedKeys().hasOnly(['likes', 'updatedAt'])
               && data.likes is list
-              && data.updatedAt is timestamp;
-        }
-        function isValidAddLike() {
-          return isNewTimestamp('updatedAt')
-              && addOnlyOne('likes');
-        }
-        function isValidRemoveLike(data) {
-          return data.updatedAt > resource.data.updatedAt
-              && resource.data.likes.removeAll(data.likes).size() == 1;
+              && isValidUpdatedAt()
+              && (addOnlyOne('likes') || removeOnlyOne('likes'));
         }
         function isValidCreateReport(data) {
           return data.keys().hasAll(['reports', 'updatedAt'])
               && data.diff(resource.data).changedKeys().hasOnly(['reports', 'updatedAt'])
               && data.reports is list
-              && data.updatedAt is timestamp
               && addOnlyOne('reports')
-              && isNewTimestamp('updatedAt')
+              && isValidUpdatedAt();
+        }
+        function isValidDeleteReport(data) {
+          return data.keys().hasAll(['reports', 'updatedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['reports', 'updatedAt'])
+              && data.reports is list
+              && removeOnlyOne('reports')
+              && isValidUpdatedAt();
         }
         allow create: if isValidCreateComment(request.resource.data);
         allow get: if true;
         allow list: if true;
         allow update: if isValidRemoveComment(request.resource.data);
-        allow update: if isValidAddLike()
-                      && isValidSwitchLike(request.resource.data);
-        allow update: if isValidRemoveLike(request.resource.data)
-                      && isValidSwitchLike(request.resource.data);
+        allow update: if isValidSwitchLike(request.resource.data);
         allow update: if isValidCreateReport(request.resource.data);
+        allow update: if isValidDeleteReport(request.resource.data);
       }
     }
   }
