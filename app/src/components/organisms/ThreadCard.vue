@@ -1,7 +1,7 @@
 <template>
 <Card>
   <CardTitle :value="thread.title" />
-  <CommentsCounter :count="thread.comments.length" />
+  <CommentsCounter :count="thread.commentsCount" />
   <ChipsList :values="chipValues" />
 </Card>
 </template>
