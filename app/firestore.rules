@@ -74,15 +74,18 @@ service cloud.firestore {
             && data.commentsCount is number
             && isValidUpdatedAt();
       }
+      function isValidDeleteThread() {
+        return isAuthenticated()
+            && (request.auth.uid == resource.data.uid
+            || isAdmin());
+      }
       allow create: if isAuthenticated()
                     && isValidCreateThread(request.resource.data);
       allow get: if true;
       allow list: if true;
       allow update: if isValidCreateComment(request.resource.data);
       allow update: if isValidCommentsDelete(request.resource.data);
-      allow delete: if isAuthenticated()
-                    && (request.auth.uid == resource.data.uid
-                    || isAdmin());
+      allow delete: if isValidDeleteThread();
       match /comments/{commentIndex} {
         function isValidCreateComment(data) {
           return data.keys().hasOnly(['uid', 'threadId', 'handlename', 'body', 'createdAt', 'index'])

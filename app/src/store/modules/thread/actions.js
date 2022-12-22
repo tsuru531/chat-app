@@ -35,7 +35,7 @@ export const actions = {
   },
   async watch({ commit }, threadId) {
     const unsubscribe = await watchThread(threadId, (thread) => {
-      commit('set', thread)
+      if (thread) commit('set', thread)
     })
     return unsubscribe
   },
