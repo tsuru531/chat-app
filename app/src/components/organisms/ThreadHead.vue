@@ -28,8 +28,8 @@ export default {
       return this.$store.getters['user/isHaveThreadPermission']
     },
     commentsCount() {
-      const comments = this.$store.getters['thread/comments']
-      return comments.length
+      const comments = this.$store.getters['thread/comments/array']
+      return comments ? comments.length : 1
     }
   },
   methods: {

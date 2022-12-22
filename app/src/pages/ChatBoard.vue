@@ -61,20 +61,19 @@ export default {
       this.handlename = value
     },
     sendComment() {
-      this.$store.dispatch('thread/addComment', {
+      this.$store.dispatch('thread/comments/create', {
         threadId: this.threadId,
         handlename: this.handlename,
-        content: this.response
+        body: this.response
       })
       this.response = ''
     }
   },
   async mounted() {
     const threadElement = this.$refs.thread
-    await this.$store.dispatch('thread/getThread', this.threadId)
+    this.unsubscribeThread = await this.$store.dispatch('thread/watch', this.threadId)
+    this.unsubscribeComments = await this.$store.dispatch('thread/comments/watch', this.threadId)
     this.isLoaded = true
-    this.$store.dispatch('thread/watchComments', this.threadId)
-    this.$store.dispatch('thread/likes/watch', this.threadId)
     threadElement.addEventListener('scroll', () => {
       if (threadElement.scrollHeight - threadElement.scrollTop - threadElement.clientHeight <= 10) {
         if (!this.isScrolledBottom) {
@@ -98,7 +97,11 @@ export default {
         }
       }
     })
-  }
+  },
+  unmounted() {
+    this.unsubscribeThread()
+    this.unsubscribeComments()
+  },
 }
 </script>
 

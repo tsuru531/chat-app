@@ -2,18 +2,18 @@
 <div class="comment_item-wrapper">
   <div class="comment_item-info font-caption">
     <span>
-      <span class="comment-item index">{{ comment.index }}. </span>
-      <span class="comment-item handlename">{{ comment.handlename }}</span>
+      <span class="comment-item index">{{ index }}. </span>
+      <span class="comment-item handlename">{{ handlename }}</span>
     </span>
-    <ReportButton v-if="!comment.isDeleted" :isReported="isReported" @click="switchReport" />
+    <ReportButton v-if="!comment.deletedAt" :isReported="isReported" @click="switchReport" />
   </div>
   <div class="comment-item body">
-    <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
-    <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
-    <div v-if="!comment.isDeleted">
+    <p class="comment-item content" ref="content">{{ comment.deletedAt ? deletedText : body }}</p>
+    <time class="comment-item created-at font-caption">{{ createdAt }}</time>
+    <div v-if="!comment.deletedAt">
       <ReplyButton @click="reply" />
       <LikeButton :isLike="isLike" @click="switchLike" />
-      <DeleteButton v-if="isDisplayedDelete" @click="deleteItem" />
+      <DeleteButton v-if="canDeleted" @click="deleteItem" />
     </div>
   </div>
 </div>
@@ -26,7 +26,7 @@ import ReplyButton from '@/components/atoms/ReplyButton'
 import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
 import Anchor from '@/components/molecules/Anchor'
-import { convertToCommentDate } from '@/helpers/definition'
+import { convertTimestamp } from '@/modules'
 
 export default {
   name: 'CommentItem',
@@ -37,7 +37,22 @@ export default {
     DeleteButton
   },
   props: {
-    comment: Object
+    index: {
+      type: Number,
+      required: true,
+    },
+    handlename: {
+      type: String,
+      required: true,
+    },
+    body: {
+      type: String,
+      required: true,
+    },
+    comment: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
@@ -45,33 +60,37 @@ export default {
     }
   },
   computed: {
-    isReported() {
-      return this.$store.getters['thread/commentIsReported'](this.comment.id)
+    uid() {
+      return this.$store.getters['user/uid']
     },
     threadId() {
       return this.$store.getters['thread/id']
     },
-    userId() {
-      const userId = this.$store.getters['user/uid']
-      return userId
+    createdAt() {
+      return convertTimestamp(this.comment.createdAt)
     },
-    isDisplayedDelete() {
+    isReported() {
+      if (!this.comment.reports) return false
+      return this.comment.reports.includes(this.uid)
+    },
+    isLike() {
+      if (!this.comment.likes) return false
+      return this.comment.likes.includes(this.uid)
+    },
+    canDeleted() {
       const uid = this.$store.getters['user/uid']
       const isOwner = uid === this.comment.uid && uid !== ''
       const isAdmin = this.$store.getters['user/isAdmin']
       return isOwner || isAdmin
     },
-    convertedCreatedAt() {
-      return convertToCommentDate(this.comment.createdAt)
-    },
-    isLike() {
-      const isExist = Boolean(this.$store.getters['thread/likes/findById'](`${this.userId}${this.comment.id}`))
-      return isExist
-    },
   },
   methods: {
-    switchReport() {
-      this.$store.dispatch('thread/switchCommentReport', this.comment.id)
+    async switchReport() {
+      if (!this.isReported) {
+        await this.$store.dispatch('thread/comments/createReport', this.comment.index)
+      } else {
+        await this.$store.dispatch('thread/comments/deleteReport', this.comment.index)
+      }
     },
     deleteItem() {
       this.$emit('deleteItem')
@@ -79,12 +98,12 @@ export default {
     reply() {
       this.$emit('reply', this.comment.index)
     },
-    switchLike() {
-      this.$store.dispatch('thread/likes/switch', {
-        userId: this.userId,
-        commentId: this.comment.id,
-        threadId: this.threadId
-      })
+    async switchLike() {
+      if (!this.isLike) {
+        await this.$store.dispatch('thread/comments/addLike', this.comment.index)
+      } else {
+        await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
+      }
     },
   },
   mounted() {
@@ -95,11 +114,12 @@ export default {
       ref.innerHTML = replaceHTML
       const nodeList = ref.querySelectorAll('span')
       nodeList.forEach(item => {
-        const index = Number(item.textContent)
-        const anchor = this.$store.getters['thread/comment'](index)
-        const text = anchor.content
+        const anchorNumber = Number(item.textContent)
+        const comments = this.$store.getters['thread/comments/array']
+        const anchorComment = comments[anchorNumber - 1]
+        const text = anchorComment.body
         const AnchorComponent = Vue.extend(Anchor)
-        const instance = new AnchorComponent({ propsData: { index, text }})
+        const instance = new AnchorComponent({ propsData: { index: anchorNumber, text }})
         instance.$mount()
         item.replaceWith(instance.$el)
       })

@@ -2,7 +2,6 @@ export const initialState = {
   id: '',
   uid: '',
   title: '',
-  comments: [],
   commentsCount: 0,
   topic: '',
   gender: '',
@@ -10,7 +9,7 @@ export const initialState = {
   place: '',
   showId: false,
   characterLimit: false,
-  limitLount: 0
-};
+  limitLount: 0,
+}
 
-export const state = { ...initialState };
+export const state = { ...initialState }

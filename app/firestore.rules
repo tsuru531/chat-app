@@ -1,4 +1,5 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
     function isAuthenticated() {
@@ -8,82 +9,133 @@ service cloud.firestore {
       return isAuthenticated() && uid == request.auth.uid;
     }
     function isAdmin() {
-      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return isAuthenticated()
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    function isThreadOwner(threadId) {
+      return isAuthenticated()
+          && get(/databases/$(database)/documents/threads/$(threadId)).data.uid == request.auth.uid;
+    }
+    function isUndefined(data, field) {
+      return !data.keys().hasAll([field]);
+    }
+    function addOnlyOne(listField) {
+      return request.resource.data[listField].hasAll(resource.data[listField])
+          && request.resource.data[listField].size() == resource.data[listField].size() + 1
+          || isUndefined(resource.data, listField)
+          && request.resource.data[listField].size() == 1;
+    }
+    function removeOnlyOne(listField) {
+      return resource.data[listField].removeAll(request.resource.data[listField]).size() == 1;
+    }
+    function isNewTimestamp(timestampField) {
+      return request.resource.data[timestampField] > resource.data[timestampField]
+          || isUndefined(resource.data, timestampField);
+    }
+    function isValidUpdatedAt() {
+      return request.resource.data.updatedAt is timestamp
+          && isNewTimestamp('updatedAt');
     }
     match /users/{uid} {
-      function isValid(user) {
-        return user.size() == 5
-        && 'uid' in user && user.uid is string
-        && 'email' in user && user.email is string
-        && 'name' in user && user.name is string
-        && 'role' in user && user.role is string
-        && 'createdAt' in user && user.createdAt is timestamp
+      function isValidCreateUser(data) {
+        return data.size() == 5
+        && 'uid' in data && data.uid is string
+        && 'email' in data && data.email is string
+        && 'name' in data && data.name is string
+        && 'role' in data && data.role is string
+        && 'createdAt' in data && data.createdAt is timestamp
       }
       allow get: if isUserAuthenticated(uid);
-      allow create: if isValid(request.resource.data);
+      allow create: if isValidCreateUser(request.resource.data);
     }
     match /threads/{threadId} {
-      function isValidUpdateCommentsCount(requestData, resourceData) {
-        return 'commentsCount' in requestData && requestData.commentsCount is number
-            && 'updatedAt' in requestData && requestData.updatedAt is timestamp
-            && requestData.commentsCount > resourceData.commentsCount;
+      function isValidCreateThread(data) {
+        return data.keys().hasAll(['id', 'uid', 'title', 'topic', 'gender', 'age', 'place', 'comments', 'createdAt'])
+            && data.id is string
+            && data.uid is string
+            && data.title is string
+            && data.topic is string
+            && data.gender is string
+            && data.age is string
+            && data.place is string
+            && data.comments is list
+            && data.createdAt is timestamp
       }
-      allow read: if true;
-      allow create: if isAuthenticated();
-      allow update: if isValidUpdateCommentsCount(request.resource.data, resource.data);
-      allow delete: if isAuthenticated()
-                    && request.auth.uid == resource.data.uid
-                    || isAdmin();
-    }
-    match /comments/{commentId} {
-      function isValid(comment) {
-        return comment.size() == 11
-            && 'id' in comment && comment.id is string
-            && 'uid' in comment && comment.uid is string
-            && 'threadId' in comment && comment.threadId is string
-            && 'handlename' in comment && comment.handlename is string
-            && 'index' in comment && comment.index is number
-            && 'content' in comment && comment.content is string
-            && 'isPinned' in comment && comment.isPinned is bool
-            && 'isDeleted' in comment && comment.isDeleted is bool
-            && 'report' in comment && comment.report is list
-            && 'createdAt' in comment && comment.createdAt is timestamp
-            && 'updatedAt' in comment && comment.updatedAt is timestamp
+      function isValidCreateComment(data) {
+        return data.diff(resource.data).changedKeys().hasOnly(['commentsCount', 'updatedAt'])
+            && data.keys().hasAll(['commentsCount', 'updatedAt'])
+            && data.commentsCount is number
+            && data.updatedAt is timestamp
+            && isNewTimestamp('updatedAt');
       }
-      function isThreadOwner(uid) {
-        return uid == get(/databases/$(database)/documents/threads/$(resource.data.threadId)).data.uid
+      function isValidCommentsDelete(data) {
+        return data.keys().hasAll(['commentsCount', 'updatedAt'])
+            && data.diff(resource.data).changedKeys().hasOnly(['commentsCount', 'updatedAt'])
+            && data.commentsCount is number
+            && isValidUpdatedAt();
       }
-      allow read: if true;
-      allow create: if isValid(request.resource.data);
-      allow update: if isAuthenticated()
-                    && isValid(request.resource.data)
-                    && request.resource.data.id == resource.data.id
-                    && request.resource.data.uid == resource.data.uid
-                    && request.resource.data.threadId == resource.data.threadId
-                    && request.resource.data.handlename == resource.data.handlename
-                    && request.resource.data.index == resource.data.index
-                    && request.resource.data.content == resource.data.content
-                    && request.resource.data.createdAt == resource.data.createdAt
-                    && request.resource.data.updatedAt > resource.data.updatedAt;
-      allow delete: if isAuthenticated()
-                    && isThreadOwner(request.auth.uid)
-                    || isAdmin();
-    }
-    match /likes/{id} {
-      function isValid(data) {
-        return data.size() == 6
-        && 'id' in data && data.id is string
-        && 'userId' in data && data.userId is string
-        && 'threadId' in data && data.threadId is string
-        && 'commentId' in data && data.commentId is string
-        && 'createdAt' in data && data.createdAt is timestamp
-        && 'updatedAt' in data && data.updatedAt is timestamp
+      function isValidDeleteThread() {
+        return isAuthenticated()
+            && (request.auth.uid == resource.data.uid
+            || isAdmin());
       }
+      allow create: if isAuthenticated()
+                    && isValidCreateThread(request.resource.data);
+      allow get: if true;
       allow list: if true;
-      allow create: if isUserAuthenticated(request.resource.data.userId)
-                    && isValid(request.resource.data);
-      allow delete: if isAuthenticated()
-                    && request.auth.uid == resource.data.userId;
+      allow update: if isValidCreateComment(request.resource.data);
+      allow update: if isValidCommentsDelete(request.resource.data);
+      allow delete: if isValidDeleteThread();
+      match /comments/{commentIndex} {
+        function isValidCreateComment(data) {
+          return data.keys().hasOnly(['uid', 'threadId', 'handlename', 'body', 'createdAt', 'index'])
+              && data.keys().hasAll(['uid', 'threadId', 'handlename', 'body', 'createdAt', 'index'])
+              && data.uid is string
+              && data.threadId is string
+              && data.handlename is string
+              && data.body is string
+              && data.createdAt is timestamp
+              && data.index is number
+        }
+        function isValidRemoveComment(data) {
+          return data.keys().hasAll(['deletedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['deletedAt'])
+              && data.deletedAt is timestamp
+        }
+        function isValidSwitchLike(data) {
+          return data.keys().hasAll(['likes', 'updatedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['likes', 'updatedAt'])
+              && data.likes is list
+              && isValidUpdatedAt()
+              && (addOnlyOne('likes') || removeOnlyOne('likes'));
+        }
+        function isValidCreateReport(data) {
+          return data.keys().hasAll(['reports', 'updatedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['reports', 'updatedAt'])
+              && data.reports is list
+              && addOnlyOne('reports')
+              && isValidUpdatedAt();
+        }
+        function isValidDeleteReport(data) {
+          return data.keys().hasAll(['reports', 'updatedAt'])
+              && data.diff(resource.data).changedKeys().hasOnly(['reports', 'updatedAt'])
+              && data.reports is list
+              && removeOnlyOne('reports')
+              && isValidUpdatedAt();
+        }
+        function isValidCommentsDelete() {
+          return isThreadOwner(resource.data.threadId)
+              || isAdmin();
+        }
+        allow create: if isValidCreateComment(request.resource.data);
+        allow get: if true;
+        allow list: if true;
+        allow update: if isValidRemoveComment(request.resource.data);
+        allow update: if isValidSwitchLike(request.resource.data);
+        allow update: if isValidCreateReport(request.resource.data);
+        allow update: if isValidDeleteReport(request.resource.data);
+        allow delete: if isValidCommentsDelete();
+      }
     }
   }
 }

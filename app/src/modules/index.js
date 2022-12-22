@@ -1,4 +1,13 @@
 export * from './createThread';
-export { deleteThread } from './deleteThread';
-export * from './createComment';
+export * from './deleteThread';
 export * from './watchThreads';
+export * from './watchThread';
+export * from './convertTimestamp';
+export * from './createComment';
+export * from './watchComments';
+export * from './removeComment';
+export * from './addLike';
+export * from './removeLike';
+export * from './createReport';
+export * from './deleteReport';
+export * from './deleteComments';

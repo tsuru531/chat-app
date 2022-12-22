@@ -1,14 +1,21 @@
 <template>
 <div>
   <ul>
-    <li v-for="(comment) in comments" :key="comment.id">
-      <CommentItem :comment="comment" @deleteItem="displayModal(comment)" @reply="reply" />
+    <li v-for="(comment) in comments" :key="comment.index">
+      <CommentItem
+        :index="comment.index"
+        :handlename="comment.handlename"
+        :body="comment.body"
+        :comment="comment"
+        @deleteItem="displayModal(comment)"
+        @reply="reply"
+      />
     </li>
   </ul>
   <ModalDialog v-if="modal.isDisplayed" @close="hideModal">
     <template v-slot:content>
-      <p>このコメントを削除してもよろしいですか？</p>
-      <p>{{ modal.content }}</p>
+      <p>{{ deleteMessage }}</p>
+      <p>{{ modal.body }}</p>
     </template>
     <template v-slot:footer>
       <div class="button-wrapper">
@@ -34,32 +41,32 @@ export default {
   },
   data() {
     return {
+      deleteMessage: 'このコメントを削除してもよろしいですか？',
       modal: {
         isDisplayed: false,
-        comment_id: '',
-        content: ''
-      }
+        index: 0,
+        body: '',
+      },
     }
   },
   computed: {
     comments() {
-      return this.$store.getters['thread/comments']
+      return this.$store.getters['thread/comments/array']
     }
   },
   methods: {
     displayModal(comment) {
-      const { id, content } = comment
       this.modal.isDisplayed = true
-      this.modal.comment_id = id
-      this.modal.content = content
+      this.modal.index = comment.index
+      this.modal.body = comment.body
     },
     hideModal() {
       this.modal.isDisplayed = false
-      this.modal.comment_id = ''
-      this.modal.content = ''
+      this.modal.index = 0
+      this.modal.body = ''
     },
-    deleteComment() {
-      this.$store.dispatch('thread/deleteComment', this.modal.comment_id)
+    async deleteComment() {
+      await this.$store.dispatch('thread/comments/delete', this.modal.index)
       this.hideModal()
     },
     reply(index) {

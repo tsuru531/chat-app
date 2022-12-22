@@ -1,7 +1,7 @@
 import { initialState } from './state';
 
 export const mutations = {
-  setThread(state, { id, uid, title, topic, gender, age, place, showId, characterLimit, limitCount, commentsCount }) {
+  set(state, { id, uid, title, topic, gender, age, place, showId, characterLimit, limitCount }) {
     state.id = id;
     state.uid = uid;
     state.title = title;
@@ -12,19 +12,11 @@ export const mutations = {
     state.showId = showId;
     state.characterLimit = characterLimit;
     state.limitCount = limitCount;
-    state.commentsCount = commentsCount;
   },
   resetThread(state) {
     Object.assign(state, {
       ...initialState,
-      comments: state.comments,
       threads: state.threads,
     })
   },
-  setComments(state, comments) {
-    state.comments = comments
-  },
-  resetComments(state) {
-    state.comments = []
-  }
-};
+}
