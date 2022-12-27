@@ -1,36 +1,42 @@
-import { shallowMount } from '@vue/test-utils'
-import LikeButton from '@/components/atoms/LikeButton'
-import BaseIconButton from '@/components/atoms/BaseIconButton'
+import { shallowMount } from '@vue/test-utils';
+import LikeButton from '@/components/molecules/LikeButton';
+import BaseIconButton from '@/components/atoms/BaseIconButton';
+import Icons from '@/components/atoms/Icons';
+import Counter from '@/components/atoms/Counter';
 
-describe('LikeButton.vue', () => {
+describe('components/LikeButton', () => {
   const propsData = {
-    isLike: false
-  }
-  let wrapper
+    isLike: false,
+    commentsCount: 0,
+  };
+  const stubs = {
+    BaseIconButton,
+    Icons,
+    Counter,
+  };
+  let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(LikeButton, {
-      stubs: {
-        BaseIconButton
-      },
-      propsData
-    })
-  })
-  it('Receive props', () => {
+    wrapper = shallowMount(LikeButton, { propsData, stubs });
+  });
+  it('Can receive props.', () => {
     Object.keys(propsData).forEach(key => {
-      expect(wrapper.props()[key]).toBe(propsData[key])
-    })
+      expect(wrapper.props()[key]).toBe(propsData[key]);
+    });
+  });
+  it('Can pass props to Icons component.', () => {
+    const child = wrapper.findComponent(Icons);
+    expect(child.exists()).toBe(true);
+    expect(child.props().type).toBe('like-false');
+  });
+  it('Can pass props to Counter component.', () => {
+    const child = wrapper.findComponent(Counter);
+    expect(child.exists()).toBe(true);
+    expect(child.props().count).toBe(0);
+  });
+  it('Emit by clicking the button', async () => {
+    const button = wrapper.findComponent(BaseIconButton);
+    expect(button.exists()).toBe(true);
+    await button.trigger('click');
+    expect(wrapper.emitted().click.length).toBe(1);
   })
-  it('Emit by clicking the button', () => {
-    const button = wrapper.findComponent(BaseIconButton)
-    button.trigger('click')
-    expect(wrapper.emitted().click.length).toBe(1)
-  })
-  it('Switch the displayed content by isLike props', async () => {
-    const svg = wrapper.findAll('svg')
-    expect(svg.length).toBe(1)
-    expect(svg.wrappers[0].attributes()['data-is-like']).toBe("false")
-    await wrapper.setProps({ ...propsData, isLike: true })
-    expect(svg.length).toBe(1)
-    expect(svg.wrappers[0].attributes()['data-is-like']).toBe("true")
-  })
-})
+});
