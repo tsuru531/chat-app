@@ -1,7 +1,7 @@
 <template>
 <BaseIconButton @click="click">
   <Icons :type="iconType" />
-  <Counter :count="commentsCount" />
+  <Counter :count="count" />
 </BaseIconButton>
 </template>
 
@@ -22,7 +22,7 @@ export default {
       type: Boolean,
       required: true,
     },
-    commentsCount: {
+    count: {
       type: Number,
       required: true,
     },

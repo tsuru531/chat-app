@@ -7,7 +7,7 @@ import Counter from '@/components/atoms/Counter';
 describe('components/LikeButton', () => {
   const propsData = {
     isLike: false,
-    commentsCount: 0,
+    count: 0,
   };
   const stubs = {
     BaseIconButton,
