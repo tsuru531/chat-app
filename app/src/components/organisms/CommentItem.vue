@@ -1,19 +1,18 @@
 <template>
 <div class="comment_item-wrapper">
-  <div class="comment_item-info font-caption">
-    <span>
-      <span class="comment-item index">{{ index }}. </span>
-      <span class="comment-item handlename">{{ handlename }}</span>
-    </span>
-    <ReportButton v-if="!comment.deletedAt" :isReported="isReported" @click="switchReport" />
-  </div>
+  <CommentHeader
+    :index="index"
+    :handlename="handlename"
+    :isReported="isReported"
+    :isDeleted="isDeleted"
+  />
   <div class="comment-item body">
     <p class="comment-item content" ref="content">{{ comment.deletedAt ? deletedText : body }}</p>
     <time class="comment-item created-at font-caption">{{ createdAt }}</time>
     <div v-if="!comment.deletedAt">
       <ReplyButton @click="reply" />
       <LikeButton :isLike="isLike" @click="switchLike" />
-      <DeleteButton v-if="canDeleted" @click="deleteItem" />
+      <DeleteButton v-if="canDelete" @click="deleteItem" />
     </div>
   </div>
 </div>
@@ -21,37 +20,33 @@
 
 <script>
 import Vue from 'vue'
-import ReportButton from '@/components/atoms/ReportButton'
 import ReplyButton from '@/components/atoms/ReplyButton'
 import LikeButton from '@/components/atoms/LikeButton'
 import DeleteButton from '@/components/atoms/DeleteButton'
+import CommentHeader from '@/components/molecules/CommentHeader'
 import Anchor from '@/components/molecules/Anchor'
 import { convertTimestamp } from '@/modules'
 
 export default {
   name: 'CommentItem',
   components: {
-    ReportButton,
     ReplyButton,
     LikeButton,
-    DeleteButton
+    DeleteButton,
+    CommentHeader,
   },
   props: {
-    index: {
-      type: Number,
-      required: true,
-    },
-    handlename: {
-      type: String,
-      required: true,
-    },
-    body: {
-      type: String,
-      required: true,
-    },
     comment: {
       type: Object,
       required: true,
+      validator(value) {
+        const valueKeys = Object.keys(value);
+        let isIncludeAllNeedKey = true;
+        ['index', ].forEach((needKey)=>{
+          isIncludeAllNeedKey = isIncludeAllNeedKey && valueKeys.includes(needKey)
+        });
+        return isIncludeAllNeedKey
+      },
     },
   },
   data() {
@@ -77,7 +72,10 @@ export default {
       if (!this.comment.likes) return false
       return this.comment.likes.includes(this.uid)
     },
-    canDeleted() {
+    isDeleted() {
+      return this.comment.deletedAt ? true : false
+    },
+    canDelete() {
       const uid = this.$store.getters['user/uid']
       const isOwner = uid === this.comment.uid && uid !== ''
       const isAdmin = this.$store.getters['user/isAdmin']
@@ -134,24 +132,9 @@ export default {
   flex-direction: column;
   gap: 4px;
 }
-.comment-item.content {
-  display: inline-block;
-  vertical-align: top;
-  box-sizing: border-box;
-  border: solid 1px rgba(0, 0, 0, .4);
-  border-radius: 8px;
-  margin: 0;
-  padding: 4px 8px;
-  white-space: pre-wrap;
-  min-width: 112px;
-  min-height: 34px;
-}
 .comment-item.body {
   display: flex;
   align-items: flex-end;
-}
-.comment-item.created-at {
-  padding: 4px;
 }
 .comment_item-info {
   display: flex;
