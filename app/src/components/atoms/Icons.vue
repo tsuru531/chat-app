@@ -14,7 +14,7 @@ export default {
   name: 'Icons',
   props: {
     type: {
-      type: "like-false" | "like-true",
+      type: String,
       required: true,
     },
   },
