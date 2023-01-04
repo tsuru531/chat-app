@@ -4,6 +4,7 @@ import CommentItem from '@/components/organisms/CommentItem';
 import CommentHeader from '@/components/molecules/CommentHeader';
 import CommentBody from '@/components/molecules/CommentBody';
 import CommentButtons from '@/components/molecules/CommentButtons';
+import Anchor from '@/components/molecules/Anchor';
 import { Timestamp } from 'firebase/firestore';
 import { convertTimestamp } from '@/modules';
 
@@ -20,11 +21,24 @@ describe('components/CommentItem', () => {
       isAdmin: () => false,
     },
   };
+  const comments = {
+    namespaced: true,
+    actions: {
+      createReport: jest.fn(),
+      deleteReport: jest.fn(),
+      addLike: jest.fn(),
+      removeLike: jest.fn(),
+    },
+  };
+  const thread = {
+    namespaced: true,
+    modules: { comments },
+  };
   const comment = {
     uid: 'another user',
     index: 1,
     handlename: '名無しさん',
-    body: 'test>>2',
+    body: 'test',
     createdAt: timestamp,
   };
   const propsData = { comment };
@@ -36,16 +50,24 @@ describe('components/CommentItem', () => {
   let store;
   let wrapper;
   beforeEach(() => {
-    store = new Vuex.Store({ modules: { user } });
+    store = new Vuex.Store({ modules: { user, thread } });
     wrapper = shallowMount(CommentItem, { store, localVue, propsData, stubs });
   });
   it('Can receive props.', () => {
-  Object.keys(propsData).forEach(key => {
-    expect(wrapper.props()[key]).toBe(propsData[key]);
+    Object.keys(propsData).forEach(key => {
+      expect(wrapper.props()[key]).toBe(propsData[key]);
+    });
   });
-});
   it('Exists CommentHeader component.', () => {
     const child = wrapper.findComponent(CommentHeader);
+    expect(child.exists()).toBe(true);
+  });
+  it('Exists CommentBody component.', () => {
+    const child = wrapper.findComponent(CommentBody);
+    expect(child.exists()).toBe(true);
+  });
+  it('Exists CommentButtons component.', () => {
+    const child = wrapper.findComponent(CommentButtons);
     expect(child.exists()).toBe(true);
   });
   it('Can pass props to CommentHeader component.', async () => {
@@ -63,17 +85,9 @@ describe('components/CommentItem', () => {
     expect(child.props().isReported).toBe(true);
     expect(child.props().isDeleted).toBe(true);
   });
-  it('Exists CommentBody component.', () => {
-    const child = wrapper.findComponent(CommentBody);
-    expect(child.exists()).toBe(true);
-  });
   it('Can pass props to CommentBody component.', () => {
     const child = wrapper.findComponent(CommentBody);
     expect(child.props().timestamp).toBe(createdAt);
-  });
-  it('Exists CommentButtons component.', () => {
-    const child = wrapper.findComponent(CommentButtons);
-    expect(child.exists()).toBe(true);
   });
   it('Can pass props to CommentButtons component.', () => {
     const child = wrapper.findComponent(CommentButtons);
@@ -121,5 +135,53 @@ describe('components/CommentItem', () => {
     await wrapper.setProps({ comment: { ...comment, deletedAt: timestamp } });
     await wrapper.vm.$nextTick();
     expect(child.exists()).toBe(false);
+  });
+  it('Execute createReport if isReported is false when CommentHeader emit report.', async () => {
+    await wrapper.setProps({ comment: { ...comment, reports: [] } });
+    await wrapper.vm.$nextTick();
+    const child = wrapper.findComponent(CommentHeader);
+    child.vm.$emit('report');
+    expect(comments.actions.createReport).toHaveBeenCalled();
+  });
+  it('Execute deleteReport if isReported is true when CommentHeader emit report.', async () => {
+    await wrapper.setProps({ comment: { ...comment, reports: ['login user'] } });
+    await wrapper.vm.$nextTick();
+    const child = wrapper.findComponent(CommentHeader);
+    child.vm.$emit('report');
+    expect(comments.actions.deleteReport).toHaveBeenCalled();
+  });
+  it('Emit reply when CommentButtons emit reply.', () => {
+    const child = wrapper.findComponent(CommentButtons);
+    child.vm.$emit('reply');
+    expect(wrapper.emitted().reply.length).toBe(1);
+  });
+  it('Execute addLike if isLike is false when CommentButtons emit like.', async () => {
+    await wrapper.setProps({ comment: { ...comment, likes: [] } });
+    await wrapper.vm.$nextTick();
+    const child = wrapper.findComponent(CommentButtons);
+    child.vm.$emit('like');
+    expect(comments.actions.addLike).toHaveBeenCalled();
+  });
+  it('Execute removeLike if isLike is true when CommentButtons emit like.', async () => {
+    await wrapper.setProps({ comment: { ...comment, likes: ['login user'] } });
+    await wrapper.vm.$nextTick();
+    const child = wrapper.findComponent(CommentButtons);
+    child.vm.$emit('like');
+    expect(comments.actions.removeLike).toHaveBeenCalled();
+  });
+  it('Emit deleteItem when CommentButtons emit delete.', () => {
+    const child = wrapper.findComponent(CommentButtons);
+    child.vm.$emit('delete');
+    expect(wrapper.emitted().deleteItem.length).toBe(1);
+  });
+  it('CommentBody does not contain Anchor.', () => {
+    const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
+    expect(anchor.exists()).toBe(false);
+  });
+  it('Anchor exists in CommentBody when comment.body contains anchor text.', async () => {
+    await wrapper.setProps({ comment: { ...comment, body: 'test>>2' } });
+    await wrapper.vm.$nextTick();
+    const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
+    expect(anchor.exists()).toBe(true);
   });
 });

@@ -1,18 +1,16 @@
 export function convertComment(text) {
-  const textArray = text.split(/(&gt;&gt;\d+)/g);
+  const textArray = text.split(/(>>\d+)/g).filter(v => v !== '');
   let array = [];
-  textArray.forEach(item => {
-    if (item === '') {
-      return false;
-    } else if (item.match(/&gt;&gt;(\d+)/)) {
+  textArray.forEach((item, index) => {
+    if (item.match(/>>(\d+)/)) {
       array = [
         ...array,
-        { type: 'anchor', body: item.replace(/&gt;&gt;(\d+)/, '$1') },
+        { type: 'anchor', body: item.replace(/>>(\d+)/, '$1'), key: index },
       ];
     } else {
       array = [
         ...array,
-        { type: 'text', body: item },
+        { type: 'text', body: item, key: index },
       ];
     }
   });
