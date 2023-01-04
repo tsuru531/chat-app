@@ -5,16 +5,29 @@
     :handlename="comment.handlename"
     :isReported="isReported"
     :isDeleted="isDeleted"
+    @report="switchReport"
   />
   <div class="comment-item body">
     <CommentBody :timestamp="createdAt">
-      {{ comment.deletedAt ? deletedText : body }}
+      <template v-for="item in commentBodys">
+        <template v-if="comment.deletedAt">{{ deletedText }}</template>
+        <template v-else-if="item.type == 'text'">{{ item.body }}</template>
+        <Anchor
+          v-else-if="item.type == 'anchor'"
+          :key="item.key"
+          :index="Number(item.body)"
+          text=""
+        />
+      </template>
     </CommentBody>
     <CommentButtons
       v-if="!comment.deletedAt"
       :isLike="isLike"
       :likesCount="likesCount"
       :showDelete="canDelete"
+      @reply="reply"
+      @like="switchLike"
+      @delete="deleteItem"
     />
   </div>
 </div>
@@ -24,7 +37,8 @@
 import CommentHeader from '@/components/molecules/CommentHeader'
 import CommentBody from '@/components/molecules/CommentBody'
 import CommentButtons from '@/components/molecules/CommentButtons'
-import { convertTimestamp } from '@/modules'
+import Anchor from '@/components/molecules/Anchor'
+import { convertTimestamp, convertComment } from '@/modules'
 
 export default {
   name: 'CommentItem',
@@ -32,6 +46,7 @@ export default {
     CommentHeader,
     CommentBody,
     CommentButtons,
+    Anchor,
   },
   props: {
     comment: {
@@ -53,6 +68,9 @@ export default {
     },
     createdAt() {
       return convertTimestamp(this.comment.createdAt)
+    },
+    commentBodys() {
+      return convertComment(this.comment.body)
     },
     isReported() {
       if (!this.comment.reports) return false
