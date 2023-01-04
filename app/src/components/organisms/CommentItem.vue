@@ -49,18 +49,6 @@ export default {
     Anchor,
   },
   props: {
-    index: {
-      type: Number,
-      required: true,
-    },
-    handlename: {
-      type: String,
-      required: true,
-    },
-    body: {
-      type: String,
-      required: true,
-    },
     comment: {
       type: Object,
       required: true,
