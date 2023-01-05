@@ -29,6 +29,19 @@ describe('components/CommentItem', () => {
       addLike: jest.fn(),
       removeLike: jest.fn(),
     },
+    getters: {
+      comment: () => {
+        return () => {
+          return {
+            uid: 'another user',
+            index: 2,
+            handlename: '名無しさん',
+            body: '2つ目のコメント',
+            createdAt: timestamp,
+          };
+        };
+      },
+    },
   };
   const thread = {
     namespaced: true,
@@ -183,5 +196,12 @@ describe('components/CommentItem', () => {
     await wrapper.vm.$nextTick();
     const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
     expect(anchor.exists()).toBe(true);
+  });
+  it('Pass props correcty to Anchor component.', async () => {
+    await wrapper.setProps({ comment: { ...comment, body: 'test>>2' } });
+    await wrapper.vm.$nextTick();
+    const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
+    expect(anchor.props().index).toBe(2);
+    expect(anchor.props().text).toBe('2つ目のコメント');
   });
 });

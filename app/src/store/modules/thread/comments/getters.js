@@ -2,8 +2,8 @@ export const getters = {
   array (state) {
     return state.comments
   },
-  comment: (state) => (commentId) => {
-    const comment = state.comments.find(comment => comment.id == commentId)
+  comment: (state) => (index) => {
+    const comment = state.comments.find(comment => comment.index == index)
     return comment
   },
   isReported: (state, getters, rootState, rootGetters) => commentId => {

@@ -16,7 +16,7 @@
           v-else-if="item.type == 'anchor'"
           :key="item.key"
           :index="Number(item.body)"
-          text=""
+          :text="getComment(Number(item.body)).body"
         />
       </template>
     </CommentBody>
@@ -114,6 +114,9 @@ export default {
       } else {
         await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
       }
+    },
+    getComment(index) {
+      return this.$store.getters['thread/comments/comment'](index)
     },
   },
 }
