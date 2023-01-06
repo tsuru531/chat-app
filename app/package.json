@@ -6,7 +6,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "test": "jest"
+    "test": "jest --maxWorkers=1"
   },
   "dependencies": {
     "algoliasearch": "^4.12.1",

@@ -11,3 +11,4 @@ export * from './removeLike';
 export * from './createReport';
 export * from './deleteReport';
 export * from './deleteComments';
+export * from './convertComment';
