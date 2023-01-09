@@ -30,6 +30,19 @@
       @delete="deleteItem"
     />
   </div>
+  <ModalDialog v-if="displayedLoginModal" @close="hideLoginModal">
+    <template v-slot:content>
+      <p>この機能はログインすることで使用できます。</p>
+    </template>
+    <template v-slot:footer>
+      <div class="button-wrapper">
+        <Button label="閉じる" @click="hideLoginModal"/>
+        <router-link to="/signin">
+          <Button label="ログイン" />
+        </router-link>
+      </div>
+    </template>
+  </ModalDialog>
 </div>
 </template>
 
@@ -38,6 +51,8 @@ import CommentHeader from '@/components/molecules/CommentHeader'
 import CommentBody from '@/components/molecules/CommentBody'
 import CommentButtons from '@/components/molecules/CommentButtons'
 import Anchor from '@/components/molecules/Anchor'
+import ModalDialog from '@/components/molecules/ModalDialog'
+import Button from '@/components/atoms/Button'
 import { convertTimestamp, convertComment } from '@/modules'
 
 export default {
@@ -47,6 +62,8 @@ export default {
     CommentBody,
     CommentButtons,
     Anchor,
+    ModalDialog,
+    Button,
   },
   props: {
     comment: {
@@ -57,9 +74,13 @@ export default {
   data() {
     return {
       deletedText: 'このコメントは削除されました',
+      displayedLoginModal: false,
     }
   },
   computed: {
+    isSignedIn() {
+      return this.$store.getters['user/isSignedIn']
+    },
     uid() {
       return this.$store.getters['user/uid']
     },
@@ -109,14 +130,21 @@ export default {
       this.$emit('reply', this.comment.index)
     },
     async switchLike() {
-      if (!this.isLike) {
-        await this.$store.dispatch('thread/comments/addLike', this.comment.index)
+      if (this.isSignedIn) {
+        if (!this.isLike) {
+          await this.$store.dispatch('thread/comments/addLike', this.comment.index)
+        } else {
+          await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
+        }
       } else {
-        await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
+        this.displayedLoginModal = true
       }
     },
     getComment(index) {
       return this.$store.getters['thread/comments/comment'](index)
+    },
+    hideLoginModal() {
+      this.displayedLoginModal = false
     },
   },
 }
@@ -131,5 +159,9 @@ export default {
 .comment-item.body {
   display: flex;
   align-items: flex-end;
+}
+.button-wrapper {
+  display: flex;
+  gap: 8px;
 }
 </style>

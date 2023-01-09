@@ -19,8 +19,8 @@
     </template>
     <template v-slot:footer>
       <div class="button-wrapper">
-        <Button label="いいえ" @click="hideModal" />
         <Button label="はい" color="danger" @click="deleteComment" />
+        <Button label="いいえ" @click="hideModal" />
       </div>
     </template>
   </ModalDialog>
