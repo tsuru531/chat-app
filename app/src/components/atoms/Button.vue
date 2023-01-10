@@ -18,7 +18,8 @@ export default {
     classObject() {
       return {
         cp: this.color === 'primary',
-        cd: this.color === 'danger'
+        cd: this.color === 'danger',
+        cg: this.color === 'green',
       }
     }
   },
@@ -46,9 +47,14 @@ button {
 }
 button.cp {
   background-color: #4676D7;
+  color: #eee;
 }
 button.cd {
   background-color: #dc3545;
+  color: #eee;
+}
+button.cg {
+  background-color: #347D39;
   color: #eee;
 }
 </style>

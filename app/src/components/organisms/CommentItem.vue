@@ -32,13 +32,13 @@
   </div>
   <ModalDialog v-if="displayedLoginModal" @close="hideLoginModal">
     <template v-slot:content>
-      <p>この機能はログインすることで使用できます。</p>
+      <p>{{ loginModalText }}</p>
     </template>
     <template v-slot:footer>
       <div class="button-wrapper">
         <Button label="閉じる" @click="hideLoginModal"/>
         <router-link to="/signin">
-          <Button label="ログイン" />
+          <Button label="ログイン" color="green" />
         </router-link>
       </div>
     </template>
@@ -74,6 +74,7 @@ export default {
   data() {
     return {
       deletedText: 'このコメントは削除されました',
+      loginModalText: 'この機能はログインすることで使用できます。',
       displayedLoginModal: false,
     }
   },

@@ -7,7 +7,8 @@ describe('Button.vue', () => {
   }
   const colorClass = {
     primary: 'cp',
-    danger: 'cd'
+    danger: 'cd',
+    green: 'cg',
   }
   let wrapper
   beforeEach(() => {
