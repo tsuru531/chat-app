@@ -5,6 +5,7 @@ import CommentHeader from '@/components/molecules/CommentHeader';
 import CommentBody from '@/components/molecules/CommentBody';
 import CommentButtons from '@/components/molecules/CommentButtons';
 import Anchor from '@/components/molecules/Anchor';
+import ModalDialog from '@/components/molecules/ModalDialog';
 import { Timestamp } from 'firebase/firestore';
 import { convertTimestamp } from '@/modules';
 
@@ -17,6 +18,7 @@ describe('components/CommentItem', () => {
   const user = {
     namespaced: true,
     getters: {
+      isSignedIn: () => true,
       uid: () => 'login user',
       isAdmin: () => false,
     },
@@ -55,14 +57,15 @@ describe('components/CommentItem', () => {
     createdAt: timestamp,
   };
   const propsData = { comment };
-  const stubs = {
-    CommentHeader,
-    CommentBody,
-    CommentButtons,
-  };
+  let stubs;
   let store;
   let wrapper;
   beforeEach(() => {
+    stubs = {
+      CommentHeader,
+      CommentBody,
+      CommentButtons,
+    };
     store = new Vuex.Store({ modules: { user, thread } });
     wrapper = shallowMount(CommentItem, { store, localVue, propsData, stubs });
   });
@@ -203,5 +206,33 @@ describe('components/CommentItem', () => {
     const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
     expect(anchor.props().index).toBe(2);
     expect(anchor.props().text).toBe('2つ目のコメント');
+  });
+  it('ModalDialog does not exist.', () => {
+    const component = wrapper.findComponent(ModalDialog);
+    expect(component.exists()).toBe(false);
+  });
+  it('Exists ModalDialog when displayedLoginModal is true.', async () => {
+    await wrapper.setData({ displayedLoginModal: true });
+    await wrapper.vm.$nextTick();
+    const component = wrapper.findComponent(ModalDialog);
+    expect(component.exists()).toBe(true);
+  });
+  it('displayedLoginModal is true when like emit while not logged in.', () => {
+    store = new Vuex.Store({
+      modules: {
+        user: {
+          namespaced: true,
+          getters: {
+            isSignedIn: () => false,
+            uid: () => 'login user',
+            isAdmin: () => false,
+          },
+        }
+      }
+    });
+    wrapper = shallowMount(CommentItem, { store, localVue, propsData, stubs });
+    const buttons = wrapper.findComponent(CommentButtons);
+    buttons.vm.$emit('like');
+    expect(wrapper.vm.displayedLoginModal).toBe(true);
   });
 });
