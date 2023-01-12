@@ -160,6 +160,7 @@ export default {
 .comment-item.body {
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
 }
 .button-wrapper {
   display: flex;

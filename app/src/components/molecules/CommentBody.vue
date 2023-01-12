@@ -31,6 +31,7 @@ export default {
   white-space: pre-wrap;
   min-width: 112px;
   min-height: 34px;
+  overflow-wrap: anywhere;
 }
 .comment-timestamp {
   padding: 4px;
