@@ -7,11 +7,6 @@
 <script>
 export default {
   name: 'BaseIconButton',
-  props: {},
-  data() {
-    return {}
-  },
-  computed: {},
   methods: {
     click() {
       this.$emit('click')
