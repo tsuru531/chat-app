@@ -11,7 +11,7 @@
 <script>
 import ResizeTextarea from '@/components/atoms/ResizeTextarea'
 import InputHandlename from '@/components/molecules/InputHandlename'
-import SendIconButton from '@/components/atoms/SendIconButton'
+import SendIconButton from '@/components/molecules/SendIconButton'
 
 export default {
   name: 'ResponseForm',

@@ -1,19 +1,18 @@
 <template>
 <BaseIconButton @click="click">
-  <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
-    <path d="M0 0h24v24H0z" fill="none"/>
-    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
-  </svg>
+  <Icons type="send-active" />
 </BaseIconButton>
 </template>
 
 <script>
 import BaseIconButton from '@/components/atoms/BaseIconButton'
+import Icons from '@/components/atoms/Icons'
 
 export default {
   name: 'SendIconButton',
   components: {
-    BaseIconButton
+    Icons,
+    BaseIconButton,
   },
   methods: {
     click() {

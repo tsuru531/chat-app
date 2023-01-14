@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils';
 import ResponseForm from '@/components/molecules/ResponseForm';
 import InputHandlename from '@/components/molecules/InputHandlename';
-import SendIconButton from '@/components/atoms/SendIconButton';
+import SendIconButton from '@/components/molecules/SendIconButton';
 
 describe('components/ResponseForm', () => {
   const propsData = {
