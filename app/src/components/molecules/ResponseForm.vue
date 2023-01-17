@@ -3,7 +3,7 @@
   <ResizeTextarea ref="resize_textarea" :text="response" @change="changeResponse" />
   <div class="response_form bottom">
     <InputHandlename v-model="modelHandlename" />
-    <SendIconButton @click="send" />
+    <SendIconButton :isActive="true" @click="send" />
   </div>
 </form>
 </template>

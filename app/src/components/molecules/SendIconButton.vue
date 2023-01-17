@@ -1,6 +1,6 @@
 <template>
-<BaseIconButton @click="click">
-  <Icons type="send-active" />
+<BaseIconButton @click="click" :isInactive="!isActive">
+  <Icons :type="isActive ? 'send-active' : 'send-inactive'" />
 </BaseIconButton>
 </template>
 
@@ -13,6 +13,12 @@ export default {
   components: {
     Icons,
     BaseIconButton,
+  },
+  props: {
+    isActive: {
+      type: Boolean,
+      required: true,
+    },
   },
   methods: {
     click() {
