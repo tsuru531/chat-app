@@ -4,16 +4,18 @@ import InputHandlename from '@/components/molecules/InputHandlename';
 import SendIconButton from '@/components/molecules/SendIconButton';
 
 describe('components/ResponseForm', () => {
-  const propsData = {
-    response: '',
-    handlename: 'handlename'
-  };
-  const stubs = {
-    InputHandlename,
-    SendIconButton,
-  };
+  let propsData;
+  let stubs;
   let wrapper;
   beforeEach(() => {
+    propsData = {
+      response: '',
+      handlename: 'handlename'
+    };
+    stubs = {
+      InputHandlename,
+      SendIconButton,
+    };
     wrapper = shallowMount(ResponseForm, { propsData, stubs });
   });
   it('Receive props', () => {
@@ -40,5 +42,21 @@ describe('components/ResponseForm', () => {
     const button = wrapper.findComponent(SendIconButton);
     button.vm.$emit('click');
     expect(wrapper.emitted().send.length).toBe(1);
+  });
+  it('isNonemptyForm is false when response is empty.', async () => {
+    await wrapper.setProps({ ...propsData, response: '' });
+    expect(wrapper.vm.isNonemptyForm).toBe(false);
+  });
+  it('isNonemptyForm is true when response is nonempty.', async () => {
+    await wrapper.setProps({ ...propsData, response: 'value' });
+    expect(wrapper.vm.isNonemptyForm).toBe(true);
+  });
+  it('Passing false to the SendIconButton isActive props when response is empty.', async () => {
+    await wrapper.setProps({ ...propsData, response: '' });
+    expect(wrapper.findComponent(SendIconButton).props().isActive).toBe(false);
+  });
+  it('Passing true to the SendIconButton isActive props when response is nonempty.', async () => {
+    await wrapper.setProps({ ...propsData, response: 'value' });
+    expect(wrapper.findComponent(SendIconButton).props().isActive).toBe(true);
   });
 });

@@ -3,7 +3,7 @@
   <ResizeTextarea ref="resize_textarea" :text="response" @change="changeResponse" />
   <div class="response_form bottom">
     <InputHandlename v-model="modelHandlename" />
-    <SendIconButton :isActive="true" @click="send" />
+    <SendIconButton :isActive="isNonemptyForm" @click="send" />
   </div>
 </form>
 </template>
@@ -32,7 +32,10 @@ export default {
       set(value) {
         this.$emit('change_handlename', value)
       }
-    }
+    },
+    isNonemptyForm() {
+      return Boolean(this.response)
+    },
   },
   methods: {
     changeResponse(value) {
