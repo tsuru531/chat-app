@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import ResponseForm from '@/components/molecules/ResponseForm';
+import ResponseForm from '@/components/organisms/ResponseForm';
 import InputHandlename from '@/components/molecules/InputHandlename';
 import SendIconButton from '@/components/molecules/SendIconButton';
 

@@ -26,7 +26,7 @@
 import Loading from '@/components/atoms/Loading'
 import Header from '@/components/organisms/Header'
 import Thread from '@/components/organisms/Thread'
-import ResponseForm from '@/components/molecules/ResponseForm'
+import ResponseForm from '@/components/organisms/ResponseForm'
 
 export default {
   name: 'ChatBoard',
