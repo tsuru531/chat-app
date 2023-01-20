@@ -1,6 +1,6 @@
 <template>
 <form class="response_form wrapper">
-  <ResizeTextarea ref="resize_textarea" :text="response" @change="changeResponse" />
+  <ResizeTextarea ref="resize_textarea" :text="body" @change="change" />
   <div class="response_form bottom">
     <InputHandlename v-model="modelHandlename" />
     <SendIconButton :isActive="isNonemptyForm" @click="send" />
@@ -21,28 +21,43 @@ export default {
     SendIconButton,
   },
   props: {
-    response: String,
-    handlename: String
+    body: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      handlename: '',
+    }
   },
   computed: {
+    threadId() {
+      return this.$store.getters['thread/id']
+    },
     modelHandlename: {
       get() {
         return this.handlename
       },
       set(value) {
-        this.$emit('change_handlename', value)
+        this.handlename = value
       }
     },
     isNonemptyForm() {
-      return Boolean(this.response)
+      return Boolean(this.body)
     },
   },
   methods: {
-    changeResponse(value) {
-      this.$emit('change_response', value)
+    change(value) {
+      this.$emit('change', value)
     },
     send() {
-      this.$emit('send')
+      this.$store.dispatch('thread/comments/create', {
+        threadId: this.threadId,
+        handlename: this.handlename,
+        body: this.body
+      })
+      this.$emit('change', '')
     },
     focusTextarea() {
       this.$refs.resize_textarea.focus()
