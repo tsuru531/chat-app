@@ -77,8 +77,14 @@ describe('components/ResponseForm', () => {
     wrapper.findComponent(InputHandlename).vm.$emit('input', 'value');
     expect(wrapper.vm.handlename).toBe('value');
   });
-  it('Execute action[thread/comments/create] when SendIconButton emit click.', () => {
+  it('Execute action[thread/comments/create] when SendIconButton emit click.', async () => {
+    await wrapper.setProps({ ...propsData, body: 'test' });
     wrapper.findComponent(SendIconButton).vm.$emit('click');
     expect(commentsModule.actions.create).toHaveBeenCalled();
+  });
+  it('Do not execute action[thread/comments/create] if body is empty.', async () => {
+    await wrapper.setProps({ ...propsData, body: '' });
+    wrapper.findComponent(SendIconButton).vm.$emit('click');
+    expect(commentsModule.actions.create).not.toHaveBeenCalled();
   });
 });

@@ -52,12 +52,14 @@ export default {
       this.$emit('change', value)
     },
     send() {
-      this.$store.dispatch('thread/comments/create', {
-        threadId: this.threadId,
-        handlename: this.handlename,
-        body: this.body
-      })
-      this.$emit('change', '')
+      if (this.isNonemptyForm) {
+        this.$store.dispatch('thread/comments/create', {
+          threadId: this.threadId,
+          handlename: this.handlename,
+          body: this.body
+        })
+        this.$emit('change', '')
+      }
     },
     focusTextarea() {
       this.$refs.resize_textarea.focus()
