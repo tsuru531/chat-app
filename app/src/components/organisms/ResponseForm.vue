@@ -1,9 +1,9 @@
 <template>
 <form class="response_form wrapper">
-  <ResizeTextarea ref="resize_textarea" :text="response" @change="changeResponse" />
+  <ResizeTextarea ref="resize_textarea" :text="body" @change="change" />
   <div class="response_form bottom">
     <InputHandlename v-model="modelHandlename" />
-    <SendIconButton @click="send" />
+    <SendIconButton :isActive="isNonemptyForm" @click="send" />
   </div>
 </form>
 </template>
@@ -11,7 +11,7 @@
 <script>
 import ResizeTextarea from '@/components/atoms/ResizeTextarea'
 import InputHandlename from '@/components/molecules/InputHandlename'
-import SendIconButton from '@/components/atoms/SendIconButton'
+import SendIconButton from '@/components/molecules/SendIconButton'
 
 export default {
   name: 'ResponseForm',
@@ -21,25 +21,45 @@ export default {
     SendIconButton,
   },
   props: {
-    response: String,
-    handlename: String
+    body: {
+      type: String,
+      required: true,
+    },
+  },
+  data() {
+    return {
+      handlename: '',
+    }
   },
   computed: {
+    threadId() {
+      return this.$store.getters['thread/id']
+    },
     modelHandlename: {
       get() {
         return this.handlename
       },
       set(value) {
-        this.$emit('change_handlename', value)
+        this.handlename = value
       }
-    }
+    },
+    isNonemptyForm() {
+      return Boolean(this.body)
+    },
   },
   methods: {
-    changeResponse(value) {
-      this.$emit('change_response', value)
+    change(value) {
+      this.$emit('change', value)
     },
     send() {
-      this.$emit('send')
+      if (this.isNonemptyForm) {
+        this.$store.dispatch('thread/comments/create', {
+          threadId: this.threadId,
+          handlename: this.handlename,
+          body: this.body
+        })
+        this.$emit('change', '')
+      }
     },
     focusTextarea() {
       this.$refs.resize_textarea.focus()
