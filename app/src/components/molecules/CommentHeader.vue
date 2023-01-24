@@ -5,17 +5,22 @@
     <span>. </span>
     <span data-label="handlename">{{ handlename }}</span>
   </span>
-  <ReportButton v-if="!isDeleted" :isReported="isReported" @click="report" />
+  <template v-if="!isDeleted">
+    <ReportButton v-if="!isHideReport" :isReported="isReported" @click="report" />
+    <ConfirmReportButton v-if="isShowConfirmReport" />
+  </template>
 </div>
 </template>
 
 <script>
 import ReportButton from '@/components/atoms/ReportButton'
+import ConfirmReportButton from '@/components/molecules/ConfirmReportButton'
 
 export default {
   name: 'CommentHeader',
   components: {
     ReportButton,
+    ConfirmReportButton,
   },
   props: {
     index: {
@@ -26,6 +31,17 @@ export default {
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      required: true,
+    },
+    reports:{
+      type: Array,
+      required: false,
+      default() {
+        return []
+      },
+    },
     isReported: {
       type: Boolean,
       required: true,
@@ -34,6 +50,14 @@ export default {
       type: Boolean,
       required: true,
     }
+  },
+  computed: {
+    isHideReport() {
+      return this.role === 'admin'
+    },
+    isShowConfirmReport() {
+      return this.isHideReport && Boolean(this.reports.length)
+    },
   },
   methods: {
     report() {

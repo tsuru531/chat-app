@@ -3,6 +3,8 @@
   <CommentHeader
     :index="comment.index"
     :handlename="comment.handlename"
+    :role="'general'"
+    :reports="[]"
     :isReported="isReported"
     :isDeleted="isDeleted"
     @report="switchReport"
