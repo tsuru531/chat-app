@@ -1,13 +1,17 @@
 import { shallowMount } from '@vue/test-utils';
-import ReportButton from '@/components/atoms/ReportButton';
+import ReportButton from '@/components/molecules/ReportButton';
+import UnderlineButton from '@/components/atoms/UnderlineButton';
 
 describe('ReportButton.vue', () => {
   const propsData = {
     isReported: false,
   };
+  const stubs = {
+    UnderlineButton,
+  };
   let wrapper;
   beforeEach(() => {
-    wrapper = shallowMount(ReportButton, { propsData });
+    wrapper = shallowMount(ReportButton, { propsData, stubs });
   });
   it('Emit by clicking the button', () => {
     const button = wrapper.find('button[type="button"]');
@@ -24,5 +28,8 @@ describe('ReportButton.vue', () => {
     expect(button.text()).toBe("通報");
     await wrapper.setProps({ ...propsData, isReported: true });
     expect(button.text()).toBe("通報を取り消す");
+  });
+  it('Exists UnderlineButton component.', () => {
+    expect(wrapper.findComponent(UnderlineButton).exists()).toBe(true);
   });
 });

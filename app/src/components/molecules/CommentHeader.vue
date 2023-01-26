@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import ReportButton from '@/components/atoms/ReportButton'
+import ReportButton from '@/components/molecules/ReportButton'
 import ConfirmReportButton from '@/components/molecules/ConfirmReportButton'
 
 export default {

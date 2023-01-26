@@ -1,6 +1,6 @@
 import { shallowMount } from '@vue/test-utils';
 import CommentHeader from '@/components/molecules/CommentHeader';
-import ReportButton from '@/components/atoms/ReportButton';
+import ReportButton from '@/components/molecules/ReportButton';
 import ConfirmReportButton from '@/components/molecules/ConfirmReportButton';
 
 describe('components/CommentHeader', () => {
