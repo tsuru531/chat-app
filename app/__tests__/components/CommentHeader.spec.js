@@ -73,4 +73,10 @@ describe('components/CommentHeader', () => {
     await wrapper.vm.$nextTick();
     expect(wrapper.findComponent(ConfirmReportButton).exists()).toBe(true);
   });
+  it('Can emit confirm by emitting click of ConfirmReportButton component.', async () => {
+    await wrapper.setProps({ ...propsData, role: 'admin', reports: ['uid']});
+    await wrapper.vm.$nextTick();
+    wrapper.findComponent(ConfirmReportButton).vm.$emit('click');
+    expect(wrapper.emitted().confirm.length).toBe(1);
+  });
 });

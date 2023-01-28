@@ -7,7 +7,7 @@
   </span>
   <template v-if="!isDeleted">
     <ReportButton v-if="!isHideReport" :isReported="isReported" @click="report" />
-    <ConfirmReportButton v-if="isShowConfirmReport" />
+    <ConfirmReportButton v-if="isShowConfirmReport" @click="confirm" />
   </template>
 </div>
 </template>
@@ -62,6 +62,9 @@ export default {
   methods: {
     report() {
       this.$emit('report')
+    },
+    confirm() {
+      this.$emit('confirm')
     },
   },
 }
