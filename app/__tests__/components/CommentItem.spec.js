@@ -21,6 +21,7 @@ describe('components/CommentItem', () => {
       isSignedIn: () => true,
       uid: () => 'login user',
       isAdmin: () => false,
+      role: () => 'general',
     },
   };
   const comments = {
@@ -49,14 +50,15 @@ describe('components/CommentItem', () => {
     namespaced: true,
     modules: { comments },
   };
-  const comment = {
-    uid: 'another user',
-    index: 1,
-    handlename: '名無しさん',
-    body: 'test',
-    createdAt: timestamp,
+  const propsData = {
+    comment: {
+      uid: 'another user',
+      index: 1,
+      handlename: '名無しさん',
+      body: 'test',
+      createdAt: timestamp,
+    },
   };
-  const propsData = { comment };
   let stubs;
   let store;
   let wrapper;
@@ -92,9 +94,9 @@ describe('components/CommentItem', () => {
     expect(child.props().handlename).toBe('名無しさん');
     expect(child.props().isReported).toBe(false);
     expect(child.props().isDeleted).toBe(false);
-    await wrapper.setProps({ comment: {
-      ...comment,
-      reports: 'login user',
+    await wrapper.setProps({ ... propsData, comment: {
+      ...propsData.comment,
+      reports: ['login user'],
       deletedAt: timestamp,
     }});
     await wrapper.vm.$nextTick();
@@ -113,25 +115,25 @@ describe('components/CommentItem', () => {
   });
   it('isLike props are correctly passed to CommentButtons component.', async () => {
     const child = wrapper.findComponent(CommentButtons);
-    await wrapper.setProps({ comment: { ...comment, likes: ['another user'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: ['another user'] } });
     await wrapper.vm.$nextTick();
     expect(child.props().isLike).toBe(false);
-    await wrapper.setProps({ comment: { ...comment, likes: ['login user'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: ['login user'] } });
     await wrapper.vm.$nextTick();
     expect(child.props().isLike).toBe(true);
   });
   it('likesCount props are correctly passed to CommentButtons component.', async () => {
     const child = wrapper.findComponent(CommentButtons);
-    await wrapper.setProps({ comment: { ...comment, likes: ['test'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: ['test'] } });
     await wrapper.vm.$nextTick();
     expect(child.props().likesCount).toBe(1);
-    await wrapper.setProps({ comment: { ...comment, likes: ['test', 'test2'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: ['test', 'test2'] } });
     await wrapper.vm.$nextTick();
     expect(child.props().likesCount).toBe(2);
   });
   it('Pass true in CommentButtons showDelete props when uid matches.', async () => {
     const child = wrapper.findComponent(CommentButtons);
-    await wrapper.setProps({ comment: { ...comment, uid: 'login user' } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, uid: 'login user' } });
     await wrapper.vm.$nextTick();
     expect(child.props().showDelete).toBe(true);
   });
@@ -139,6 +141,7 @@ describe('components/CommentItem', () => {
     store = new Vuex.Store({ modules: { user: {
       ...user,
       getters: {
+        ...user.getters,
         isAdmin: () => true,
       },
     }}});
@@ -148,19 +151,19 @@ describe('components/CommentItem', () => {
   });
   it('Hide CommentButtns if deletedAt exists.', async () => {
     const child = wrapper.findComponent(CommentButtons);
-    await wrapper.setProps({ comment: { ...comment, deletedAt: timestamp } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, deletedAt: timestamp } });
     await wrapper.vm.$nextTick();
     expect(child.exists()).toBe(false);
   });
   it('Execute createReport if isReported is false when CommentHeader emit report.', async () => {
-    await wrapper.setProps({ comment: { ...comment, reports: [] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, reports: [] } });
     await wrapper.vm.$nextTick();
     const child = wrapper.findComponent(CommentHeader);
     child.vm.$emit('report');
     expect(comments.actions.createReport).toHaveBeenCalled();
   });
   it('Execute deleteReport if isReported is true when CommentHeader emit report.', async () => {
-    await wrapper.setProps({ comment: { ...comment, reports: ['login user'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, reports: ['login user'] } });
     await wrapper.vm.$nextTick();
     const child = wrapper.findComponent(CommentHeader);
     child.vm.$emit('report');
@@ -172,14 +175,14 @@ describe('components/CommentItem', () => {
     expect(wrapper.emitted().reply.length).toBe(1);
   });
   it('Execute addLike if isLike is false when CommentButtons emit like.', async () => {
-    await wrapper.setProps({ comment: { ...comment, likes: [] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: [] } });
     await wrapper.vm.$nextTick();
     const child = wrapper.findComponent(CommentButtons);
     child.vm.$emit('like');
     expect(comments.actions.addLike).toHaveBeenCalled();
   });
   it('Execute removeLike if isLike is true when CommentButtons emit like.', async () => {
-    await wrapper.setProps({ comment: { ...comment, likes: ['login user'] } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, likes: ['login user'] } });
     await wrapper.vm.$nextTick();
     const child = wrapper.findComponent(CommentButtons);
     child.vm.$emit('like');
@@ -195,13 +198,13 @@ describe('components/CommentItem', () => {
     expect(anchor.exists()).toBe(false);
   });
   it('Anchor exists in CommentBody when comment.body contains anchor text.', async () => {
-    await wrapper.setProps({ comment: { ...comment, body: 'test>>2' } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, body: 'test>>2' } });
     await wrapper.vm.$nextTick();
     const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
     expect(anchor.exists()).toBe(true);
   });
   it('Pass props correcty to Anchor component.', async () => {
-    await wrapper.setProps({ comment: { ...comment, body: 'test>>2' } });
+    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, body: 'test>>2' } });
     await wrapper.vm.$nextTick();
     const anchor = wrapper.findComponent(CommentBody).findComponent(Anchor);
     expect(anchor.props().index).toBe(2);
@@ -223,6 +226,7 @@ describe('components/CommentItem', () => {
         user: {
           namespaced: true,
           getters: {
+            ...user.getters,
             isSignedIn: () => false,
             uid: () => 'login user',
             isAdmin: () => false,

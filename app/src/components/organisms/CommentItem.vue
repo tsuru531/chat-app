@@ -3,8 +3,8 @@
   <CommentHeader
     :index="comment.index"
     :handlename="comment.handlename"
-    :role="'general'"
-    :reports="[]"
+    :role="role"
+    :reports="comment.reports"
     :isReported="isReported"
     :isDeleted="isDeleted"
     @report="switchReport"
@@ -49,6 +49,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import CommentHeader from '@/components/molecules/CommentHeader'
 import CommentBody from '@/components/molecules/CommentBody'
 import CommentButtons from '@/components/molecules/CommentButtons'
@@ -81,12 +82,11 @@ export default {
     }
   },
   computed: {
-    isSignedIn() {
-      return this.$store.getters['user/isSignedIn']
-    },
-    uid() {
-      return this.$store.getters['user/uid']
-    },
+    ...mapGetters('user', [
+      'uid',
+      'role',
+      'isSignedIn',
+    ]),
     threadId() {
       return this.$store.getters['thread/id']
     },
