@@ -1,7 +1,7 @@
 import { shallowMount } from '@vue/test-utils';
-import CommentHeader from '@/components/molecules/CommentHeader';
+import CommentHeader from '@/components/organisms/CommentHeader';
 import ReportButton from '@/components/molecules/ReportButton';
-import ConfirmReportButton from '@/components/molecules/ConfirmReportButton';
+import CheckReportsButton from '@/components/organisms/CheckReportsButton';
 
 describe('components/CommentHeader', () => {
   const propsData = {
@@ -13,7 +13,7 @@ describe('components/CommentHeader', () => {
   };
   const stubs = {
     ReportButton,
-    ConfirmReportButton,
+    CheckReportsButton,
   };
   let wrapper;
   beforeEach(() => {
@@ -59,24 +59,12 @@ describe('components/CommentHeader', () => {
     await wrapper.vm.$nextTick();
     expect(wrapper.findComponent(ReportButton).exists()).toBe(false);
   });
-  it('Exists ConfirmReportButton only when role is admin and reports is not empty.', async () => {
-    await wrapper.setProps({ ...propsData, role: 'general', reports: [] });
+  it('Exists CheckReportsButton when role is admin.', async () => {
+    await wrapper.setProps({ ...propsData, role: 'general' });
     await wrapper.vm.$nextTick();
-    expect(wrapper.findComponent(ConfirmReportButton).exists()).toBe(false);
-    await wrapper.setProps({ ...propsData, role: 'admin', reports: []});
+    expect(wrapper.findComponent(CheckReportsButton).exists()).toBe(false);
+    await wrapper.setProps({ ...propsData, role: 'admin' });
     await wrapper.vm.$nextTick();
-    expect(wrapper.findComponent(ConfirmReportButton).exists()).toBe(false);
-    await wrapper.setProps({ ...propsData, role: 'general', reports: ['uid']});
-    await wrapper.vm.$nextTick();
-    expect(wrapper.findComponent(ConfirmReportButton).exists()).toBe(false);
-    await wrapper.setProps({ ...propsData, role: 'admin', reports: ['uid']});
-    await wrapper.vm.$nextTick();
-    expect(wrapper.findComponent(ConfirmReportButton).exists()).toBe(true);
-  });
-  it('Can emit confirm by emitting click of ConfirmReportButton component.', async () => {
-    await wrapper.setProps({ ...propsData, role: 'admin', reports: ['uid']});
-    await wrapper.vm.$nextTick();
-    wrapper.findComponent(ConfirmReportButton).vm.$emit('click');
-    expect(wrapper.emitted().confirm.length).toBe(1);
+    expect(wrapper.findComponent(CheckReportsButton).exists()).toBe(true);
   });
 });

@@ -6,21 +6,21 @@
     <span data-label="handlename">{{ handlename }}</span>
   </span>
   <template v-if="!isDeleted">
-    <ReportButton v-if="!isHideReport" :isReported="isReported" @click="report" />
-    <ConfirmReportButton v-if="isShowConfirmReport" @click="confirm" />
+    <ReportButton v-if="!isAdmim" :isReported="isReported" @click="report" />
+    <CheckReportsButton v-if="isAdmim" :reports="reports" />
   </template>
 </div>
 </template>
 
 <script>
 import ReportButton from '@/components/molecules/ReportButton'
-import ConfirmReportButton from '@/components/molecules/ConfirmReportButton'
+import CheckReportsButton from '@/components/organisms/CheckReportsButton'
 
 export default {
   name: 'CommentHeader',
   components: {
     ReportButton,
-    ConfirmReportButton,
+    CheckReportsButton,
   },
   props: {
     index: {
@@ -52,11 +52,8 @@ export default {
     }
   },
   computed: {
-    isHideReport() {
+    isAdmim() {
       return this.role === 'admin'
-    },
-    isShowConfirmReport() {
-      return this.isHideReport && Boolean(this.reports.length)
     },
   },
   methods: {

@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: 'ModalDialog',
+  name: 'Modal',
   methods: {
     close() {
       this.$emit('close')

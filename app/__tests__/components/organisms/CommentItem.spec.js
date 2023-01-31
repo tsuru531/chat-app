@@ -1,11 +1,11 @@
 import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import CommentItem from '@/components/organisms/CommentItem';
-import CommentHeader from '@/components/molecules/CommentHeader';
+import CommentHeader from '@/components/organisms/CommentHeader';
 import CommentBody from '@/components/molecules/CommentBody';
 import CommentButtons from '@/components/molecules/CommentButtons';
 import Anchor from '@/components/molecules/Anchor';
-import ModalDialog from '@/components/molecules/ModalDialog';
+import Modal from '@/components/atoms/Modal';
 import { Timestamp } from 'firebase/firestore';
 import { convertTimestamp } from '@/modules';
 
@@ -210,14 +210,14 @@ describe('components/CommentItem', () => {
     expect(anchor.props().index).toBe(2);
     expect(anchor.props().text).toBe('2つ目のコメント');
   });
-  it('ModalDialog does not exist.', () => {
-    const component = wrapper.findComponent(ModalDialog);
+  it('Modal does not exist.', () => {
+    const component = wrapper.findComponent(Modal);
     expect(component.exists()).toBe(false);
   });
-  it('Exists ModalDialog when displayedLoginModal is true.', async () => {
+  it('Exists Modal when displayedLoginModal is true.', async () => {
     await wrapper.setData({ displayedLoginModal: true });
     await wrapper.vm.$nextTick();
-    const component = wrapper.findComponent(ModalDialog);
+    const component = wrapper.findComponent(Modal);
     expect(component.exists()).toBe(true);
   });
   it('displayedLoginModal is true when like emit while not logged in.', () => {

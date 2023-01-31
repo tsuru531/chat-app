@@ -32,7 +32,7 @@
       @delete="deleteItem"
     />
   </div>
-  <ModalDialog v-if="displayedLoginModal" @close="hideLoginModal">
+  <Modal v-if="displayedLoginModal" @close="hideLoginModal">
     <template v-slot:content>
       <p>{{ loginModalText }}</p>
     </template>
@@ -44,17 +44,17 @@
         </router-link>
       </div>
     </template>
-  </ModalDialog>
+  </Modal>
 </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import CommentHeader from '@/components/molecules/CommentHeader'
+import CommentHeader from '@/components/organisms/CommentHeader'
 import CommentBody from '@/components/molecules/CommentBody'
 import CommentButtons from '@/components/molecules/CommentButtons'
 import Anchor from '@/components/molecules/Anchor'
-import ModalDialog from '@/components/molecules/ModalDialog'
+import Modal from '@/components/atoms/Modal'
 import Button from '@/components/atoms/Button'
 import { convertTimestamp, convertComment } from '@/modules'
 
@@ -65,7 +65,7 @@ export default {
     CommentBody,
     CommentButtons,
     Anchor,
-    ModalDialog,
+    Modal,
     Button,
   },
   props: {
