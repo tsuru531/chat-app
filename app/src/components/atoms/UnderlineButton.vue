@@ -1,12 +1,17 @@
 <template>
-<button type="button" @click="click">{{ isReported ? "通報を取り消す" : "通報" }}</button>
+<button type="button" @click="click">
+  {{ label }}
+</button>
 </template>
 
 <script>
 export default {
-  name: 'ReportButton',
+  name: 'UnderlineButton',
   props: {
-    isReported: Boolean,
+    label: {
+      type: String,
+      required: true,
+    }
   },
   methods: {
     click() {

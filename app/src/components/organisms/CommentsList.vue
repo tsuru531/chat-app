@@ -12,7 +12,7 @@
       />
     </li>
   </ul>
-  <ModalDialog v-if="modal.isDisplayed" @close="hideModal">
+  <Modal v-if="modal.isDisplayed" @close="hideModal">
     <template v-slot:content>
       <p>{{ deleteMessage }}</p>
       <p>{{ modal.body }}</p>
@@ -23,13 +23,13 @@
         <Button label="いいえ" @click="hideModal" />
       </div>
     </template>
-  </ModalDialog>
+  </Modal>
 </div>
 </template>
 
 <script>
 import Button from '@/components/atoms/Button'
-import ModalDialog from '@/components/molecules/ModalDialog'
+import Modal from '@/components/atoms/Modal'
 import CommentItem from '@/components/organisms/CommentItem'
 
 export default {
@@ -37,7 +37,7 @@ export default {
   components: {
     Button,
     CommentItem,
-    ModalDialog
+    Modal
   },
   data() {
     return {

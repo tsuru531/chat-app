@@ -1,16 +1,19 @@
 import { shallowMount } from '@vue/test-utils';
-import CommentHeader from '@/components/molecules/CommentHeader';
-import ReportButton from '@/components/atoms/ReportButton';
+import CommentHeader from '@/components/organisms/CommentHeader';
+import ReportButton from '@/components/molecules/ReportButton';
+import CheckReportsButton from '@/components/organisms/CheckReportsButton';
 
 describe('components/CommentHeader', () => {
   const propsData = {
     index: 1,
     handlename: '名無しさん',
+    role: 'general',
     isReported: false,
     isDeleted: false,
   };
   const stubs = {
     ReportButton,
+    CheckReportsButton,
   };
   let wrapper;
   beforeEach(() => {
@@ -34,9 +37,7 @@ describe('components/CommentHeader', () => {
     expect(handlename.text()).toBe('テストユーザー');
   });
   it('Can pass props to ReportButton component.', () => {
-    const child = wrapper.findComponent(ReportButton);
-    expect(child.exists()).toBe(true);
-    expect(child.props().isReported).toBe(false);
+    expect(wrapper.findComponent(ReportButton).props().isReported).toBe(false);
   });
   it('isDeleted props is displayed correctly.', async () => {
     const child = wrapper.findComponent(ReportButton);
@@ -44,10 +45,26 @@ describe('components/CommentHeader', () => {
     await wrapper.setProps({ ...propsData, isDeleted: true });
     expect(child.exists()).toBe(false);
   });
-  it('report emit by clicking the ReportButton', async () => {
-    const button = wrapper.findComponent(ReportButton);
-    expect(button.exists()).toBe(true);
-    await button.trigger('click');
+  it('Emit report when ReportButton emit click.', async () => {
+    await wrapper.findComponent(ReportButton).vm.$emit('click');
     expect(wrapper.emitted().report.length).toBe(1);
-  })
+  });
+  it('Exists ReportButton when role is not admin.', async () => {
+    await wrapper.setProps({ ...propsData, role: 'general' });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(ReportButton).exists()).toBe(true);
+  });
+  it('Does not exist ReportButton when role is admin.', async () => {
+    await wrapper.setProps({ ...propsData, role: 'admin' });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(ReportButton).exists()).toBe(false);
+  });
+  it('Exists CheckReportsButton when role is admin.', async () => {
+    await wrapper.setProps({ ...propsData, role: 'general' });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(CheckReportsButton).exists()).toBe(false);
+    await wrapper.setProps({ ...propsData, role: 'admin' });
+    await wrapper.vm.$nextTick();
+    expect(wrapper.findComponent(CheckReportsButton).exists()).toBe(true);
+  });
 });

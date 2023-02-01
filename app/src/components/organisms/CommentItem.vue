@@ -3,6 +3,8 @@
   <CommentHeader
     :index="comment.index"
     :handlename="comment.handlename"
+    :role="role"
+    :reports="comment.reports"
     :isReported="isReported"
     :isDeleted="isDeleted"
     @report="switchReport"
@@ -30,7 +32,7 @@
       @delete="deleteItem"
     />
   </div>
-  <ModalDialog v-if="displayedLoginModal" @close="hideLoginModal">
+  <Modal v-if="displayedLoginModal" @close="hideLoginModal">
     <template v-slot:content>
       <p>{{ loginModalText }}</p>
     </template>
@@ -42,16 +44,17 @@
         </router-link>
       </div>
     </template>
-  </ModalDialog>
+  </Modal>
 </div>
 </template>
 
 <script>
-import CommentHeader from '@/components/molecules/CommentHeader'
+import { mapGetters } from 'vuex'
+import CommentHeader from '@/components/organisms/CommentHeader'
 import CommentBody from '@/components/molecules/CommentBody'
 import CommentButtons from '@/components/molecules/CommentButtons'
 import Anchor from '@/components/molecules/Anchor'
-import ModalDialog from '@/components/molecules/ModalDialog'
+import Modal from '@/components/atoms/Modal'
 import Button from '@/components/atoms/Button'
 import { convertTimestamp, convertComment } from '@/modules'
 
@@ -62,7 +65,7 @@ export default {
     CommentBody,
     CommentButtons,
     Anchor,
-    ModalDialog,
+    Modal,
     Button,
   },
   props: {
@@ -79,12 +82,11 @@ export default {
     }
   },
   computed: {
-    isSignedIn() {
-      return this.$store.getters['user/isSignedIn']
-    },
-    uid() {
-      return this.$store.getters['user/uid']
-    },
+    ...mapGetters('user', [
+      'uid',
+      'role',
+      'isSignedIn',
+    ]),
     threadId() {
       return this.$store.getters['thread/id']
     },
