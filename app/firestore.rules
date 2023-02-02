@@ -135,6 +135,14 @@ service cloud.firestore {
         allow update: if isValidCreateReport(request.resource.data);
         allow update: if isValidDeleteReport(request.resource.data);
         allow delete: if isValidCommentsDelete();
+        match /reports/{uid} {
+          function isValidCreateReport(data) {
+            return data.keys().hasOnly(['body'])
+                && data.keys().hasAll(['body'])
+                && data.body is string;
+          }
+          allow create: if isValidCreateReport(request.resource.data);
+        }
       }
     }
   }
