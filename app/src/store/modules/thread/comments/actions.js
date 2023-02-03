@@ -61,9 +61,9 @@ export const actions = {
     const threadId = rootGetters['thread/id']
     await createReport(threadId, index, uid, 'body')
   },
-  async deleteReport({ rootGetters }, commentId) {
+  async deleteReport({ rootGetters }, index) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
-    await deleteReport(threadId, commentId, uid)
+    await deleteReport(threadId, index, uid)
   },
 }

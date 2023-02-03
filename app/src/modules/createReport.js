@@ -14,11 +14,8 @@ export async function createReport(threadId, index, uid, body) {
   const batch = writeBatch(db);
   const commentsRef = doc(collection(db, 'threads', threadId, 'comments'), String(index));
   const reportsRef = doc(collection(db, 'threads', threadId, 'comments', String(index), 'reports'), uid);
-  batch.update(commentsRef, {
-    reports: arrayUnion(uid),
-    updatedAt: serverTimestamp(),
-  });
-  batch.set(reportsRef, { body });
+  batch.update(commentsRef, { reports: arrayUnion(uid), updatedAt: serverTimestamp() });
+  batch.set(reportsRef, { threadId, index, uid, body });
   try {
     await batch.commit();
   } catch (e) {
