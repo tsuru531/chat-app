@@ -136,6 +136,9 @@ service cloud.firestore {
         allow update: if isValidDeleteReport(request.resource.data);
         allow delete: if isDeleteComments();
         match /reports/{uid} {
+          function isGetReports() {
+            return isAdmin();
+          }
           function isValidCreateReport(data) {
             return data.keys().hasOnly(['threadId', 'index', 'uid', 'body'])
                 && data.keys().hasAll(['threadId', 'index', 'uid', 'body'])
@@ -147,6 +150,7 @@ service cloud.firestore {
           function isDeleteReport() {
             return resource.data.uid == request.auth.uid;
           }
+          allow list: if isGetReports();
           allow create: if isValidCreateReport(request.resource.data);
           allow delete: if isDeleteReport();
         }

@@ -7,6 +7,7 @@ import {
   removeLike,
   createReport,
   deleteReport,
+  getReports,
 } from '@/modules'
 
 export const actions = {
@@ -60,6 +61,11 @@ export const actions = {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
     await createReport(threadId, index, uid, 'body')
+  },
+  async getReports({ rootGetters }, index) {
+    const threadId = rootGetters['thread/id']
+    const reports = await getReports(threadId, index)
+    return reports
   },
   async deleteReport({ rootGetters }, index) {
     const uid = rootGetters['user/uid']
