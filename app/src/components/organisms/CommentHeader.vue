@@ -7,7 +7,7 @@
   </span>
   <template v-if="!isDeleted">
     <ReportButton v-if="!isAdmim" :isReported="isReported" @click="report" />
-    <CheckReportsButton v-if="isAdmim" :reports="reports" />
+    <CheckReportsButton v-if="isAdmim" :isReported="Boolean(reports.length)" :index="index" />
   </template>
 </div>
 </template>
