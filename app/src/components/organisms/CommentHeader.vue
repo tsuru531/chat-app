@@ -6,14 +6,14 @@
     <span data-label="handlename">{{ handlename }}</span>
   </span>
   <template v-if="!isDeleted">
-    <ReportButton v-if="!isAdmim" :isReported="isReported" @click="report" />
+    <ReportButton v-if="!isAdmim" :reports="reports" :index="index" />
     <CheckReportsButton v-if="isAdmim" :isReported="Boolean(reports.length)" :index="index" />
   </template>
 </div>
 </template>
 
 <script>
-import ReportButton from '@/components/molecules/ReportButton'
+import ReportButton from '@/components/organisms/ReportButton'
 import CheckReportsButton from '@/components/organisms/CheckReportsButton'
 
 export default {
@@ -37,13 +37,6 @@ export default {
     },
     reports:{
       type: Array,
-      required: false,
-      default() {
-        return []
-      },
-    },
-    isReported: {
-      type: Boolean,
       required: true,
     },
     isDeleted: {
@@ -54,14 +47,6 @@ export default {
   computed: {
     isAdmim() {
       return this.role === 'admin'
-    },
-  },
-  methods: {
-    report() {
-      this.$emit('report')
-    },
-    confirm() {
-      this.$emit('confirm')
     },
   },
 }

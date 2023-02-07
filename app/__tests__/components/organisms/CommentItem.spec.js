@@ -27,8 +27,6 @@ describe('components/CommentItem', () => {
   const comments = {
     namespaced: true,
     actions: {
-      createReport: jest.fn(),
-      deleteReport: jest.fn(),
       addLike: jest.fn(),
       removeLike: jest.fn(),
     },
@@ -92,15 +90,12 @@ describe('components/CommentItem', () => {
     const child = wrapper.findComponent(CommentHeader);
     expect(child.props().index).toBe(1);
     expect(child.props().handlename).toBe('名無しさん');
-    expect(child.props().isReported).toBe(false);
     expect(child.props().isDeleted).toBe(false);
     await wrapper.setProps({ ... propsData, comment: {
       ...propsData.comment,
-      reports: ['login user'],
       deletedAt: timestamp,
     }});
     await wrapper.vm.$nextTick();
-    expect(child.props().isReported).toBe(true);
     expect(child.props().isDeleted).toBe(true);
   });
   it('Can pass props to CommentBody component.', () => {
@@ -154,20 +149,6 @@ describe('components/CommentItem', () => {
     await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, deletedAt: timestamp } });
     await wrapper.vm.$nextTick();
     expect(child.exists()).toBe(false);
-  });
-  it('Execute createReport if isReported is false when CommentHeader emit report.', async () => {
-    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, reports: [] } });
-    await wrapper.vm.$nextTick();
-    const child = wrapper.findComponent(CommentHeader);
-    child.vm.$emit('report');
-    expect(comments.actions.createReport).toHaveBeenCalled();
-  });
-  it('Execute deleteReport if isReported is true when CommentHeader emit report.', async () => {
-    await wrapper.setProps({ ...propsData, comment: { ...propsData.comment, reports: ['login user'] } });
-    await wrapper.vm.$nextTick();
-    const child = wrapper.findComponent(CommentHeader);
-    child.vm.$emit('report');
-    expect(comments.actions.deleteReport).toHaveBeenCalled();
   });
   it('Emit reply when CommentButtons emit reply.', () => {
     const child = wrapper.findComponent(CommentButtons);
