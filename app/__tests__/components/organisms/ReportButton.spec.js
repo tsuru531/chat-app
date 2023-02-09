@@ -4,6 +4,7 @@ import ReportButton from '@/components/organisms/ReportButton';
 import UnderlineButton from '@/components/atoms/UnderlineButton';
 import Modal from '@/components/atoms/Modal';
 import Button from '@/components/atoms/Button';
+import ResizeTextarea from '@/components/atoms/ResizeTextarea';
 
 const localVue = createLocalVue();
 localVue.use(Vuex);
@@ -34,6 +35,7 @@ describe('ReportButton.vue', () => {
     UnderlineButton,
     Modal,
     Button,
+    ResizeTextarea,
   };
   let store;
   let wrapper;
@@ -88,5 +90,11 @@ describe('ReportButton.vue', () => {
   });
   it('Exists open ref when reports does not contain uid of login user.', async () => {
     expect(wrapper.findComponent({ ref: 'open' }).exists()).toBe(true);
+  });
+  it('modal_textarea and modal.body data are bound by v-model.', async () => {
+    await wrapper.setData({ modal: { isDisplayed: true } });
+    await wrapper.vm.$nextTick();
+    wrapper.findComponent({ ref: "modal_textarea" }).vm.$emit('input', 'payload');
+    expect(wrapper.vm.modal.body).toBe('payload');
   });
 });

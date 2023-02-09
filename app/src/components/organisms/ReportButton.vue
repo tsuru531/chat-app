@@ -4,6 +4,11 @@
   <UnderlineButton v-else-if="isReported" ref="cancel" label="通報を取り消す" @click="deleteReport" />
   <Modal v-if="modal.isDisplayed" @close="hideModal">
     <template v-slot:content>
+      <div>
+        <ResizeTextarea ref="modal_textarea" v-model="modelModalBody" />
+      </div>
+    </template>
+    <template v-slot:footer>
       <Button label="閉じる" @click="hideModal" />
       <Button ref="send" label="送信" color="primary" @click="createReport" />
     </template>
@@ -16,6 +21,7 @@ import { mapGetters } from 'vuex'
 import UnderlineButton from '@/components/atoms/UnderlineButton'
 import Modal from '@/components/atoms/Modal'
 import Button from '@/components/atoms/Button'
+import ResizeTextarea from '@/components/atoms/ResizeTextarea'
 
 export default {
   name: 'ReportButton',
@@ -23,6 +29,7 @@ export default {
     UnderlineButton,
     Modal,
     Button,
+    ResizeTextarea,
   },
   props: {
     reports: {
@@ -37,6 +44,7 @@ export default {
   data() {
     return {
       modal: {
+        body: '',
         isDisplayed: false,
       },
     }
@@ -45,6 +53,14 @@ export default {
     ...mapGetters('user', [
       'uid',
     ]),
+    modelModalBody: {
+      get() {
+        return this.modal.body
+      },
+      set(value) {
+        this.modal.body = value
+      }
+    },
     isReported() {
       if (!this.reports) return false
       return this.reports.includes(this.uid)
@@ -58,7 +74,7 @@ export default {
       this.modal.isDisplayed = false
     },
     async createReport() {
-      await this.$store.dispatch('thread/comments/createReport', this.index)
+      await this.$store.dispatch('thread/comments/createReport', { index: this.index, body: this.modal.body })
       this.hideModal()
     },
     async deleteReport() {

@@ -1,5 +1,5 @@
 <template>
-<div class="dialog-overlay" @click="close">
+<div class="dialog-overlay" @click.self="close">
   <div class="dialog-container">
     <div class="dialog-content">
       <slot name="content"></slot>

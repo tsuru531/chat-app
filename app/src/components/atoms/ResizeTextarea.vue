@@ -6,7 +6,10 @@
 export default {
   name: 'ResizeTextarea',
   props: {
-    text: String
+    value: {
+      type: String,
+      required: true,
+    },
   },
   data() {
     return {
@@ -16,10 +19,10 @@ export default {
   computed: {
     modelText: {
       get() {
-        return this.text
+        return this.value
       },
       set(value) {
-        this.$emit('change', value)
+        this.$emit('input', value)
       }
     },
     styles() {

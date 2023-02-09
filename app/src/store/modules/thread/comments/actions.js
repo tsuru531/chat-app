@@ -57,10 +57,10 @@ export const actions = {
     const threadId = rootGetters['thread/id']
     await removeLike(threadId, commentId, uid)
   },
-  async createReport({ rootGetters }, index) {
+  async createReport({ rootGetters }, { index, body }) {
     const uid = rootGetters['user/uid']
     const threadId = rootGetters['thread/id']
-    await createReport(threadId, index, uid, 'body')
+    await createReport(threadId, index, uid, body)
   },
   async getReports({ rootGetters }, index) {
     const threadId = rootGetters['thread/id']
