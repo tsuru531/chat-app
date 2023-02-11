@@ -2,17 +2,19 @@
 <div>
   <UnderlineButton v-if="!isReported" ref="open" label="通報" @click="showModal" />
   <UnderlineButton v-else-if="isReported" ref="cancel" label="通報を取り消す" @click="deleteReport" />
-  <Modal v-if="modal.isDisplayed" @close="hideModal">
-    <template v-slot:content>
-      <div>
-        <ResizeTextarea ref="modal_textarea" v-model="modelModalBody" />
-      </div>
-    </template>
-    <template v-slot:footer>
-      <Button label="閉じる" @click="hideModal" />
-      <Button ref="send" label="送信" color="primary" @click="createReport" />
-    </template>
-  </Modal>
+  <portal to="modal">
+    <Modal v-if="modal.isDisplayed" @close="hideModal">
+      <template v-slot:content>
+        <div>
+          <ResizeTextarea ref="modal_textarea" v-model="modelModalBody" />
+        </div>
+      </template>
+      <template v-slot:footer>
+        <Button label="閉じる" @click="hideModal" />
+        <Button ref="send" label="送信" color="primary" @click="createReport" />
+      </template>
+    </Modal>
+  </portal>
 </div>
 </template>
 
