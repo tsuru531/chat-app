@@ -5,9 +5,9 @@
   <portal to="modal">
     <Modal v-if="modal.isDisplayed" @close="hideModal">
       <template v-slot:content>
-        <div>
+        <Wrapper>
           <ResizeTextarea ref="modal_textarea" v-model="modelModalBody" />
-        </div>
+        </Wrapper>
       </template>
       <template v-slot:footer>
         <Button label="閉じる" @click="hideModal" />
@@ -24,6 +24,7 @@ import UnderlineButton from '@/components/atoms/UnderlineButton'
 import Modal from '@/components/atoms/Modal'
 import Button from '@/components/atoms/Button'
 import ResizeTextarea from '@/components/atoms/ResizeTextarea'
+import Wrapper from '@/components/atoms/Wrapper'
 
 export default {
   name: 'ReportButton',
@@ -32,6 +33,7 @@ export default {
     Modal,
     Button,
     ResizeTextarea,
+    Wrapper,
   },
   props: {
     reports: {
