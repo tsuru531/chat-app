@@ -1,10 +1,10 @@
 <template>
-<div class="dialog-overlay" @click="close">
-  <div class="dialog-container">
-    <div class="dialog-content">
+<div class="overlay" @click.self="close">
+  <div class="container">
+    <div class="content">
       <slot name="content"></slot>
     </div>
-    <footer class="dialog-footer">
+    <footer>
       <slot name="footer"></slot>
     </footer>
   </div>
@@ -23,7 +23,7 @@ export default {
 </script>
 
 <style scoped>
-.dialog-overlay {
+.overlay {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -35,8 +35,11 @@ export default {
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
 }
-.dialog-container {
-  padding: 8px 24px;
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
   border-radius: 4px;
   background-color: #fff;
   box-shadow:
@@ -44,7 +47,11 @@ export default {
     0px 24px 38px 3px rgb(0 0 0 / 14%),
     0px 9px 46px 8px rgb(0 0 0 / 12%);
 }
-.dialog-footer {
+.container > div,
+.container > footer {
+  padding: 0 24px;
+}
+footer {
   display: flex;
   justify-content: flex-end;
 }

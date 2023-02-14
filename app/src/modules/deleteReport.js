@@ -1,5 +1,5 @@
 import { db } from '@/firebase';
-import { collection, doc, updateDoc, arrayRemove, serverTimestamp } from 'firebase/firestore';
+import { writeBatch, collection, doc, arrayRemove, serverTimestamp } from 'firebase/firestore';
 
 export async function deleteReport(threadId, index, uid) {
   if (
@@ -10,10 +10,13 @@ export async function deleteReport(threadId, index, uid) {
     console.error('Type error.');
     return false;
   }
-  const docRef = doc(collection(db, 'threads', threadId, 'comments'), String(index));
-  const payload = { reports: arrayRemove(uid), updatedAt: serverTimestamp() };
+  const batch = writeBatch(db);
+  const commentsRef = doc(collection(db, 'threads', threadId, 'comments'), String(index));
+  const reportsRef = doc(collection(db, 'threads', threadId, 'comments', String(index), 'reports'), uid);
+  batch.update(commentsRef, { reports: arrayRemove(uid), updatedAt: serverTimestamp() });
+  batch.delete(reportsRef);
   try {
-    await updateDoc(docRef, payload);
+    await batch.commit();
   } catch (e) {
     console.error(e);
   }

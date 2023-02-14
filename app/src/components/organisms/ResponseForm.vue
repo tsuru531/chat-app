@@ -1,6 +1,6 @@
 <template>
 <form class="response_form wrapper">
-  <ResizeTextarea ref="resize_textarea" :text="body" @change="change" />
+  <ResizeTextarea ref="resize_textarea" v-model="modelBody" />
   <div class="response_form bottom">
     <InputHandlename v-model="modelHandlename" />
     <SendIconButton :isActive="isNonemptyForm" @click="send" />
@@ -35,6 +35,14 @@ export default {
     threadId() {
       return this.$store.getters['thread/id']
     },
+    modelBody: {
+      get() {
+        return this.body
+      },
+      set(value) {
+        this.$emit('change', value)
+      },
+    },
     modelHandlename: {
       get() {
         return this.handlename
@@ -48,9 +56,6 @@ export default {
     },
   },
   methods: {
-    change(value) {
-      this.$emit('change', value)
-    },
     send() {
       if (this.isNonemptyForm) {
         this.$store.dispatch('thread/comments/create', {

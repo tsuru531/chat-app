@@ -123,7 +123,7 @@ service cloud.firestore {
               && removeOnlyOne('reports')
               && isValidUpdatedAt();
         }
-        function isValidCommentsDelete() {
+        function isDeleteComments() {
           return isThreadOwner(resource.data.threadId)
               || isAdmin();
         }
@@ -134,7 +134,26 @@ service cloud.firestore {
         allow update: if isValidSwitchLike(request.resource.data);
         allow update: if isValidCreateReport(request.resource.data);
         allow update: if isValidDeleteReport(request.resource.data);
-        allow delete: if isValidCommentsDelete();
+        allow delete: if isDeleteComments();
+        match /reports/{uid} {
+          function isGetReports() {
+            return isAdmin();
+          }
+          function isValidCreateReport(data) {
+            return data.keys().hasOnly(['threadId', 'index', 'uid', 'body'])
+                && data.keys().hasAll(['threadId', 'index', 'uid', 'body'])
+                && data.threadId is string
+                && data.index is number
+                && data.uid is string
+                && data.body is string;
+          }
+          function isDeleteReport() {
+            return resource.data.uid == request.auth.uid;
+          }
+          allow list: if isGetReports();
+          allow create: if isValidCreateReport(request.resource.data);
+          allow delete: if isDeleteReport();
+        }
       }
     }
   }

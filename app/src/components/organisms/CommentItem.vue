@@ -4,10 +4,8 @@
     :index="comment.index"
     :handlename="comment.handlename"
     :role="role"
-    :reports="comment.reports"
-    :isReported="isReported"
+    :reports="reports"
     :isDeleted="isDeleted"
-    @report="switchReport"
   />
   <div class="comment-item body">
     <CommentBody :timestamp="createdAt">
@@ -96,10 +94,6 @@ export default {
     commentBodys() {
       return convertComment(this.comment.body)
     },
-    isReported() {
-      if (!this.comment.reports) return false
-      return this.comment.reports.includes(this.uid)
-    },
     isLike() {
       if (!this.comment.likes) return false
       return this.comment.likes.includes(this.uid)
@@ -117,15 +111,15 @@ export default {
       const isAdmin = this.$store.getters['user/isAdmin']
       return isOwner || isAdmin
     },
-  },
-  methods: {
-    async switchReport() {
-      if (!this.isReported) {
-        await this.$store.dispatch('thread/comments/createReport', this.comment.index)
+    reports() {
+      if (this.comment.reports) {
+        return this.comment.reports
       } else {
-        await this.$store.dispatch('thread/comments/deleteReport', this.comment.index)
+        return []
       }
     },
+  },
+  methods: {
     deleteItem() {
       this.$emit('deleteItem')
     },
