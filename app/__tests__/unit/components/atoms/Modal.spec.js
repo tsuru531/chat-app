@@ -19,7 +19,7 @@ describe('components/Modal', () => {
     });
   });
   it('Can emit by clicking the overlay', () => {
-    const overlay = wrapper.find('[class="dialog-overlay"]');
+    const overlay = wrapper.find('[class="overlay"]');
     overlay.trigger('click');
     expect(wrapper.emitted().close.length).toBe(1);
   });

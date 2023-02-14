@@ -2,7 +2,7 @@
 <form class="response_form wrapper">
   <ResizeTextarea ref="resize_textarea" v-model="modelBody" />
   <div class="response_form bottom">
-    <InputHandlename v-model="modelHandlename" />
+    <Handlename v-model="modelHandlename" />
     <SendIconButton :isActive="isNonemptyForm" @click="send" />
   </div>
 </form>
@@ -10,14 +10,14 @@
 
 <script>
 import ResizeTextarea from '@/components/atoms/ResizeTextarea'
-import InputHandlename from '@/components/molecules/InputHandlename'
+import Handlename from '@/components/organisms/Handlename'
 import SendIconButton from '@/components/molecules/SendIconButton'
 
 export default {
   name: 'ResponseForm',
   components: {
     ResizeTextarea,
-    InputHandlename,
+    Handlename,
     SendIconButton,
   },
   props: {
