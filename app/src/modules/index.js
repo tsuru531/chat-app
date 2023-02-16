@@ -13,4 +13,3 @@ export * from './deleteReport';
 export * from './deleteComments';
 export * from './convertComment';
 export * from './getReports';
-export * from './getSigninUser';
