@@ -22,7 +22,9 @@
         </template>
         <template v-slot:footer>
           <Button label="閉じる" @click="hideModal" />
-          <Button ref="signin" label="ログイン" color="primary" @click="changeHandlename" />
+          <router-link to="/signin">
+            <Button ref="signin" label="ログイン" color="primary" @click="changeHandlename" />
+          </router-link>
         </template>
       </Modal>
     </template>
