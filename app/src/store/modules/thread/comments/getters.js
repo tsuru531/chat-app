@@ -1,6 +1,6 @@
 export const getters = {
   array (state) {
-    return state.comments
+    return state.comments.sort((a, b) => a.index - b.index)
   },
   comment: (state) => (index) => {
     const comment = state.comments.find(comment => comment.index == index)
