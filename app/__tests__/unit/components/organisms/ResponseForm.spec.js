@@ -2,7 +2,7 @@ import { shallowMount, createLocalVue } from '@vue/test-utils';
 import Vuex from 'vuex';
 import ResponseForm from '@/components/organisms/ResponseForm';
 import ResizeTextarea from '@/components/atoms/ResizeTextarea';
-import InputHandlename from '@/components/molecules/InputHandlename';
+import Handlename from '@/components/organisms/Handlename';
 import SendIconButton from '@/components/molecules/SendIconButton';
 
 const localVue = createLocalVue();
@@ -44,17 +44,17 @@ describe('components/ResponseForm', () => {
     };
     stubs = {
       ResizeTextarea,
-      InputHandlename,
+      Handlename,
       SendIconButton,
     };
     wrapper = shallowMount(ResponseForm, { store, localVue, propsData, stubs });
   });
-  it('Exists InputHandlename component.', () => {
-    const child = wrapper.findComponent(InputHandlename);
+  it('Exists Handlename component.', () => {
+    const child = wrapper.findComponent(Handlename);
     expect(child.exists()).toBe(true);
   });
-  it('Can pass props to InputHandlename component.', () => {
-    const child = wrapper.findComponent(InputHandlename);
+  it('Can pass props to Handlename component.', () => {
+    const child = wrapper.findComponent(Handlename);
     expect(child.props().value).toBe(defaultData.handlename);
   });
   it('isNonemptyForm is false when body is empty.', async () => {
@@ -73,8 +73,8 @@ describe('components/ResponseForm', () => {
     await wrapper.setProps({ ...propsData, body: 'value' });
     expect(wrapper.findComponent(SendIconButton).props().isActive).toBe(true);
   });
-  it('Change handlename with input emit of InputHandlename.', () => {
-    wrapper.findComponent(InputHandlename).vm.$emit('input', 'value');
+  it('Change handlename with input emit of Handlename.', () => {
+    wrapper.findComponent(Handlename).vm.$emit('input', 'value');
     expect(wrapper.vm.handlename).toBe('value');
   });
   it('Execute action[thread/comments/create] when SendIconButton emit click.', async () => {

@@ -32,7 +32,7 @@ export default {
     }
   },
   watch: {
-    text() {
+    value() {
       this.resize()
     }
   },
