@@ -12,6 +12,7 @@
     "algoliasearch": "^4.12.1",
     "core-js": "^3.6.5",
     "firebase": "^9.1.1",
+    "portal-vue": "^2.1.7",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
@@ -41,6 +42,9 @@
     "vue-template-compiler": "^2.6.11"
   },
   "jest": {
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
+    ],
     "moduleFileExtensions": [
       "js",
       "ts",

@@ -1,8 +1,9 @@
 export const getters = {
-  isSignedIn: state => state.isSignedIn,
-  isEmailVerified: state => state.isEmailVerified,
   uid: state => state.uid,
   name: state => state.name,
+  role: state => state.role,
+  isSignedIn: state => state.isSignedIn,
+  isEmailVerified: state => state.isEmailVerified,
   isHaveThreadPermission: (state, getters, rootState, rootGetters) => {
     const { role, uid } = state
     const threadUid = rootGetters['thread/uid']
@@ -14,5 +15,5 @@ export const getters = {
     const { role } = state
     const isAdmin = role === 'admin'
     return isAdmin
-  }
+  },
 }

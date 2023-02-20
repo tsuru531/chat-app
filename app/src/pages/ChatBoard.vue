@@ -9,14 +9,7 @@
   </div>
   <div class="chatboard-form_wrapper">
     <div class="chatboard-form">
-      <ResponseForm
-        ref="response_form"
-        :response="response"
-        :handlename="handlename"
-        @change_response="changeResponse"
-        @change_handlename="changeHandlename"
-        @send="sendComment"
-      />
+      <ResponseForm ref="response_form" :body="body" @change="changeBody" />
     </div>
   </div>
 </div>
@@ -26,7 +19,7 @@
 import Loading from '@/components/atoms/Loading'
 import Header from '@/components/organisms/Header'
 import Thread from '@/components/organisms/Thread'
-import ResponseForm from '@/components/molecules/ResponseForm'
+import ResponseForm from '@/components/organisms/ResponseForm'
 
 export default {
   name: 'ChatBoard',
@@ -39,8 +32,7 @@ export default {
   data() {
     return {
       isLoaded: false,
-      response: '',
-      handlename: '',
+      body: '',
       isScrolledBottom: false,
     }
   },
@@ -51,30 +43,18 @@ export default {
   },
   methods: {
     reply(index) {
-      this.response = `>>${index}\n${this.response}`
+      this.body = `>>${index}\n${this.body}`
       this.$refs.response_form.focusTextarea()
     },
-    changeResponse(value) {
-      this.response = value
+    changeBody(value) {
+      this.body = value
     },
-    changeHandlename(value) {
-      this.handlename = value
-    },
-    sendComment() {
-      this.$store.dispatch('thread/addComment', {
-        threadId: this.threadId,
-        handlename: this.handlename,
-        content: this.response
-      })
-      this.response = ''
-    }
   },
   async mounted() {
     const threadElement = this.$refs.thread
-    await this.$store.dispatch('thread/getThread', this.threadId)
+    this.unsubscribeThread = await this.$store.dispatch('thread/watch', this.threadId)
+    this.unsubscribeComments = await this.$store.dispatch('thread/comments/watch', this.threadId)
     this.isLoaded = true
-    this.$store.dispatch('thread/watchComments', this.threadId)
-    this.$store.dispatch('thread/likes/watch', this.threadId)
     threadElement.addEventListener('scroll', () => {
       if (threadElement.scrollHeight - threadElement.scrollTop - threadElement.clientHeight <= 10) {
         if (!this.isScrolledBottom) {
@@ -98,7 +78,11 @@ export default {
         }
       }
     })
-  }
+  },
+  unmounted() {
+    this.unsubscribeThread()
+    this.unsubscribeComments()
+  },
 }
 </script>
 

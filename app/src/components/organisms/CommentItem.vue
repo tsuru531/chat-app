@@ -1,110 +1,149 @@
 <template>
 <div class="comment_item-wrapper">
-  <div class="comment_item-info font-caption">
-    <span>
-      <span class="comment-item index">{{ comment.index }}. </span>
-      <span class="comment-item handlename">{{ comment.handlename }}</span>
-    </span>
-    <ReportButton v-if="!comment.isDeleted" :isReported="isReported" @click="switchReport" />
-  </div>
+  <CommentHeader
+    :index="comment.index"
+    :handlename="comment.handlename"
+    :role="role"
+    :reports="reports"
+    :isDeleted="isDeleted"
+  />
   <div class="comment-item body">
-    <p class="comment-item content" ref="content">{{ comment.isDeleted ? deletedText : comment.content }}</p>
-    <time class="comment-item created-at font-caption">{{ convertedCreatedAt }}</time>
-    <div v-if="!comment.isDeleted">
-      <ReplyButton @click="reply" />
-      <LikeButton :isLike="isLike" @click="switchLike" />
-      <DeleteButton v-if="isDisplayedDelete" @click="deleteItem" />
-    </div>
+    <CommentBody :timestamp="createdAt">
+      <template v-for="item in commentBodys">
+        <template v-if="comment.deletedAt">{{ deletedText }}</template>
+        <template v-else-if="item.type == 'text'">{{ item.body }}</template>
+        <Anchor
+          v-else-if="item.type == 'anchor'"
+          :key="item.key"
+          :index="Number(item.body)"
+          :text="getComment(Number(item.body)).body"
+        />
+      </template>
+    </CommentBody>
+    <CommentButtons
+      v-if="!comment.deletedAt"
+      :isLike="isLike"
+      :likesCount="likesCount"
+      :showDelete="canDelete"
+      @reply="reply"
+      @like="switchLike"
+      @delete="deleteItem"
+    />
   </div>
+  <Modal v-if="displayedLoginModal" @close="hideLoginModal">
+    <template v-slot:content>
+      <p>{{ loginModalText }}</p>
+    </template>
+    <template v-slot:footer>
+      <div class="button-wrapper">
+        <Button label="閉じる" @click="hideLoginModal"/>
+        <router-link to="/signin">
+          <Button label="ログイン" color="green" />
+        </router-link>
+      </div>
+    </template>
+  </Modal>
 </div>
 </template>
 
 <script>
-import Vue from 'vue'
-import ReportButton from '@/components/atoms/ReportButton'
-import ReplyButton from '@/components/atoms/ReplyButton'
-import LikeButton from '@/components/atoms/LikeButton'
-import DeleteButton from '@/components/atoms/DeleteButton'
+import { mapGetters } from 'vuex'
+import CommentHeader from '@/components/organisms/CommentHeader'
+import CommentBody from '@/components/molecules/CommentBody'
+import CommentButtons from '@/components/molecules/CommentButtons'
 import Anchor from '@/components/molecules/Anchor'
-import { convertToCommentDate } from '@/helpers/definition'
+import Modal from '@/components/atoms/Modal'
+import Button from '@/components/atoms/Button'
+import { convertTimestamp, convertComment } from '@/modules'
 
 export default {
   name: 'CommentItem',
   components: {
-    ReportButton,
-    ReplyButton,
-    LikeButton,
-    DeleteButton
+    CommentHeader,
+    CommentBody,
+    CommentButtons,
+    Anchor,
+    Modal,
+    Button,
   },
   props: {
-    comment: Object
+    comment: {
+      type: Object,
+      required: true,
+    },
   },
   data() {
     return {
       deletedText: 'このコメントは削除されました',
+      loginModalText: 'この機能はログインすることで使用できます。',
+      displayedLoginModal: false,
     }
   },
   computed: {
-    isReported() {
-      return this.$store.getters['thread/commentIsReported'](this.comment.id)
-    },
+    ...mapGetters('user', [
+      'uid',
+      'role',
+      'isSignedIn',
+    ]),
     threadId() {
       return this.$store.getters['thread/id']
     },
-    userId() {
-      const userId = this.$store.getters['user/uid']
-      return userId
+    createdAt() {
+      return convertTimestamp(this.comment.createdAt)
     },
-    isDisplayedDelete() {
+    commentBodys() {
+      return convertComment(this.comment.body)
+    },
+    isLike() {
+      if (!this.comment.likes) return false
+      return this.comment.likes.includes(this.uid)
+    },
+    likesCount() {
+      if (!this.comment.likes) return 0
+      return this.comment.likes.length
+    },
+    isDeleted() {
+      return this.comment.deletedAt ? true : false
+    },
+    canDelete() {
       const uid = this.$store.getters['user/uid']
       const isOwner = uid === this.comment.uid && uid !== ''
       const isAdmin = this.$store.getters['user/isAdmin']
       return isOwner || isAdmin
     },
-    convertedCreatedAt() {
-      return convertToCommentDate(this.comment.createdAt)
-    },
-    isLike() {
-      const isExist = Boolean(this.$store.getters['thread/likes/findById'](`${this.userId}${this.comment.id}`))
-      return isExist
+    reports() {
+      if (this.comment.reports) {
+        return this.comment.reports
+      } else {
+        return []
+      }
     },
   },
   methods: {
-    switchReport() {
-      this.$store.dispatch('thread/switchCommentReport', this.comment.id)
-    },
     deleteItem() {
       this.$emit('deleteItem')
     },
     reply() {
       this.$emit('reply', this.comment.index)
     },
-    switchLike() {
-      this.$store.dispatch('thread/likes/switch', {
-        userId: this.userId,
-        commentId: this.comment.id,
-        threadId: this.threadId
-      })
+    async switchLike() {
+      if (this.isSignedIn) {
+        if (!this.isLike) {
+          await this.$store.dispatch('thread/comments/addLike', this.comment.index)
+        } else {
+          await this.$store.dispatch('thread/comments/removeLike', this.comment.index)
+        }
+      } else {
+        this.displayedLoginModal = true
+      }
+    },
+    getComment(index) {
+      return this.$store.getters['thread/comments/comment'](index)
+    },
+    hideLoginModal() {
+      this.displayedLoginModal = false
     },
   },
-  mounted() {
-    const anchorRegexp = /&gt;&gt;(\d+)/g
-    const ref = this.$refs.content
-    if (ref.innerHTML.match(anchorRegexp)) {
-      const replaceHTML = ref.innerHTML.replace(anchorRegexp, '<span>$1</span>')
-      ref.innerHTML = replaceHTML
-      const nodeList = ref.querySelectorAll('span')
-      nodeList.forEach(item => {
-        const index = Number(item.textContent)
-        const anchor = this.$store.getters['thread/comment'](index)
-        const text = anchor.content
-        const AnchorComponent = Vue.extend(Anchor)
-        const instance = new AnchorComponent({ propsData: { index, text }})
-        instance.$mount()
-        item.replaceWith(instance.$el)
-      })
-    }
-  }
 }
 </script>
 
@@ -114,25 +153,13 @@ export default {
   flex-direction: column;
   gap: 4px;
 }
-.comment-item.content {
-  display: inline-block;
-  vertical-align: top;
-  box-sizing: border-box;
-  border: solid 1px rgba(0, 0, 0, .4);
-  border-radius: 16px;
-  margin: 0;
-  padding: 4px 8px;
-  white-space: pre-wrap;
-}
 .comment-item.body {
   display: flex;
   align-items: flex-end;
+  flex-wrap: wrap;
 }
-.comment-item.created-at {
-  padding: 4px;
-}
-.comment_item-info {
+.button-wrapper {
   display: flex;
-  gap: 4px;
+  gap: 8px;
 }
 </style>

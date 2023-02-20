@@ -2,7 +2,7 @@ import { state } from './state'
 import { getters } from './getters'
 import { mutations } from './mutations'
 import { actions } from './actions'
-import { likes } from './likes'
+import { comments } from './comments'
 
 export const thread = {
   namespaced: true,
@@ -11,6 +11,6 @@ export const thread = {
   mutations,
   actions,
   modules: {
-    likes
-  }
+    comments,
+  },
 }

@@ -1,5 +1,5 @@
 <template>
-<button type="button" @click="click">
+<button :class="classObject" type="button" @click="click">
   <slot></slot>
 </button>
 </template>
@@ -7,16 +7,26 @@
 <script>
 export default {
   name: 'BaseIconButton',
-  props: {},
-  data() {
-    return {}
+  props: {
+    isInactive: {
+      type: Boolean,
+      default: false,
+      required: false,
+    },
   },
-  computed: {},
+  computed: {
+    classObject() {
+      return {
+        active: !this.isInactive,
+        inactive: this.isInactive,
+      }
+    },
+  },
   methods: {
     click() {
       this.$emit('click')
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -36,7 +46,10 @@ button {
   padding: 0;
   appearance: none;
 }
-button:hover {
+button.active:hover {
   background-color: rgba(0, 0, 0, .05);
+}
+button.inactive {
+  cursor: default;
 }
 </style>

@@ -24,8 +24,11 @@ export default {
     }
   },
   async mounted() {
-    await this.$store.dispatch('threads/getPopularity')
+    this.unsubscribe = await this.$store.dispatch('threads/watch')
     this.isLoaded = true
+  },
+  unmounted() {
+    this.unsubscribe()
   },
 }
 </script>
